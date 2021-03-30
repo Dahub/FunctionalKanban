@@ -8,7 +8,7 @@
 
     public static class TaskEntity
     {
-        public static Validation<(Event @event, TaskState state)> Create(CreateTask cmd)
+        public static Validation<EventAndState> Create(CreateTask cmd)
         {
             var @event = new TaskCreated()
             {
@@ -28,11 +28,11 @@
                 TaskStatus = @event.Status
             };
 
-            return (@event, state);
+            return new EventAndState(@event, state);
         }
        
 
-        public static Validation<(Event @event, TaskState state)> ChangeStatus(this TaskState state, ChangeTaskStatus cmd)
+        public static Validation<EventAndState> ChangeStatus(this TaskState state, ChangeTaskStatus cmd)
         {
             var @event = new TaskStatusChanged() 
             { 
@@ -44,7 +44,7 @@
 
             return state
                 .ApplyEvent(@event)
-                .Bind<TaskState, (Event, TaskState)>((s) => (@event, s));
+                .Bind<TaskState, EventAndState>((s) => new EventAndState(@event, s));
         }
 
         private static Validation<TaskState> ApplyEvent(this TaskState state, Event @event) =>

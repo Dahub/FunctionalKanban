@@ -2,11 +2,11 @@
 {
     using System;
     using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Functional;
-    using Unit = System.ValueTuple;
     using static FunctionalKanban.Functional.F;
-    using FunctionalKanban.Domain.Task;
+    using Unit = System.ValueTuple;
 
     public class CommandHandler
     {
@@ -25,15 +25,28 @@
         public Validation<Unit> Handle(Command command) =>
             (command) switch
             {
-                CreateTask createTaskCommand => TaskEntity.Create(createTaskCommand).Bind<(Event evt, TaskState state), Unit>((tuple) => _publishEvent(tuple.evt)),
-                ChangeTaskStatus changeTaskStatusCommand => _getEntity(changeTaskStatusCommand.EntityId)
-                                                                .Bind(CastToEntityState<TaskState>)
-                                                                .Bind((e) => e.ChangeStatus(changeTaskStatusCommand))
-                
+                CreateTask c => TaskEntity.Create(c).BindAndPublishEvent(_publishEvent),
+                ChangeTaskStatus c => Handle<TaskState>(c, _getEntity, (e) => e.ChangeStatus(c)),
                 _ => Invalid("Commande non prise en charge")
             };
 
+        private Validation<Unit> Handle<T>(
+            Command command,
+            Func<Guid, Option<State>> getEntity,
+            Func<T, Option<Validation<EventAndState>>> f) where T : State =>
+                getEntity(command.EntityId)
+                    .CastTo<T>()
+                    .Bind(f)
+                    .Match(
+                        None: () => Invalid("Erreur lors de l'exécution de la commande"),
+                        Some: (x) => x.BindAndPublishEvent(_publishEvent));
+    }
 
-        private Option<T> CastToEntityState<T>(State state) where T : State => state is T ? (T)state : None;
+    internal static class CommandHandlerExt
+    {
+        public static Validation<Unit> BindAndPublishEvent(this Validation<EventAndState> v, Func<Event, Unit> publishEvent) => 
+            v.Bind<EventAndState, Unit>((x) => publishEvent(x.@event));
+
+        public static Option<T> CastTo<T>(this Option<State> v) where T : State => v.Bind<State, T>((state) => state is T ? (T)state : None);
     }
 }
