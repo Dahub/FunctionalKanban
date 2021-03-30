@@ -5,5 +5,7 @@
         public string Name { get; init; }
 
         public TaskStatus Status { get; init; }
+
+        public uint RemanigWork { get; init; }
     }
 }

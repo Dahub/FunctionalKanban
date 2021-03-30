@@ -1,6 +1,13 @@
 ﻿namespace FunctionalKanban.Domain.Task
 {
-    public record TaskState(
-        string TaskName,
-        TaskStatus TaskStatus);
+    using FunctionalKanban.Domain.Common;
+
+    public record TaskState : State
+    {
+        public string TaskName { get; init; }
+
+        public TaskStatus TaskStatus { get; init; }
+
+        public uint RemaningWork { get; init; }
+    }
 }

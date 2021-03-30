@@ -1,10 +1,11 @@
 namespace FunctionalKanban.Domain.Test
 {
     using System;
-    using Xunit;
     using FluentAssertions;
-    using FunctionalKanban.Domain.Task.Events;
     using FunctionalKanban.Domain.Task;
+    using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Domain.Task.Events;
+    using Xunit;
 
     public class TaskShould
     {
@@ -25,22 +26,23 @@ namespace FunctionalKanban.Domain.Test
         {
             var expectedTaskStatus = TaskStatus.InProgress;
 
-            var taskStatusChangedEvent = new TaskStatusChanged()
+            var changeTaskStatus = new ChangeTaskStatus()
             {
-                EntityId = Guid.NewGuid(),
-                EntityVersion = 2,
-                TimeStamp = DateTime.Now,
-                NewStatus = expectedTaskStatus
+                TaskId = Guid.NewGuid(),
+                TaskStatus = expectedTaskStatus,
+                TimeStamp = DateTime.Now
             };
 
-            var taskState = BuildNewTask().Apply(taskStatusChangedEvent);
+            var eventAndState = BuildNewTask().ChangeStatus(changeTaskStatus);
 
-            taskState.TaskStatus.Should().Equals(expectedTaskStatus);
+            eventAndState.Match(
+                Invalid: (errors) => false,
+                Valid: (tuple) => tuple.state.TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
         private static TaskState BuildNewTask(
-                string taskName = "fake task", 
-                TaskStatus taskStatus = TaskStatus.Todo) => 
+                string taskName = "fake task",
+                TaskStatus taskStatus = TaskStatus.Todo) =>
             TaskEntity.Create(BuildTaskCreatedEvent(taskName, taskStatus));
 
         private static TaskCreated BuildTaskCreatedEvent(string taskName, TaskStatus taskStatus) =>
@@ -50,7 +52,8 @@ namespace FunctionalKanban.Domain.Test
                 EntityVersion = 1,
                 Name = taskName,
                 TimeStamp = DateTime.Now,
-                Status = taskStatus
+                Status = taskStatus,
+                RemanigWork = 10
             };
     }
 }

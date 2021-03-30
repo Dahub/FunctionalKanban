@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalKanban.Domain", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalKanban.Domain.Test", "FunctionalKanban.Domain.Test\FunctionalKanban.Domain.Test.csproj", "{F850094A-AFF2-47F5-8DD8-DEE95E1CB363}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalKanban.Functional", "FunctionalKanban.Functional\FunctionalKanban.Functional.csproj", "{9807F81E-7765-4F77-A8A3-1B0D1EB87758}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F850094A-AFF2-47F5-8DD8-DEE95E1CB363}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F850094A-AFF2-47F5-8DD8-DEE95E1CB363}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F850094A-AFF2-47F5-8DD8-DEE95E1CB363}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9807F81E-7765-4F77-A8A3-1B0D1EB87758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9807F81E-7765-4F77-A8A3-1B0D1EB87758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9807F81E-7765-4F77-A8A3-1B0D1EB87758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9807F81E-7765-4F77-A8A3-1B0D1EB87758}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,12 +2,8 @@
 {
     using System;
 
-    public abstract record Event
+    public record Command
     {
-        public Guid EntityId { get; init; }
-
         public DateTime TimeStamp { get; init; }
-
-        public uint EntityVersion { get; init; }
     }
 }
