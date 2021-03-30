@@ -2,7 +2,7 @@
 {
     using FunctionalKanban.Domain.Common;
 
-    public record TaskState : State
+    public sealed record TaskState : State
     {
         public string TaskName { get; init; }
 

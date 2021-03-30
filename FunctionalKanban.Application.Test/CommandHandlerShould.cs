@@ -33,8 +33,9 @@ namespace FunctionalKanban.Application.Test
                 (id) => new TaskState(),
                 (evt) => { lastPublishedEvent = evt as TaskCreated; return Unit.Create(); });
 
-            commandHandler.Handle(command);
+            var validationResult = commandHandler.Handle(command);
 
+            validationResult.IsValid.Should().BeTrue();
             lastPublishedEvent.Should().NotBeNull();
             lastPublishedEvent.EntityId.Should().Equals(expectedEntityId);
             lastPublishedEvent.EntityVersion.Should().Equals(1);
@@ -70,8 +71,9 @@ namespace FunctionalKanban.Application.Test
                 },
                 (evt) => { lastPublishedEvent = evt as TaskStatusChanged; return Unit.Create(); });
 
-            commandHandler.Handle(command);
+            var validationResult = commandHandler.Handle(command);
 
+            validationResult.IsValid.Should().BeTrue();
             lastPublishedEvent.Should().NotBeNull();
             lastPublishedEvent.TimeStamp.Should().Equals(expectedTimeStamp);
             lastPublishedEvent.EntityVersion.Should().Equals(expectedEntityVersion);
@@ -94,9 +96,7 @@ namespace FunctionalKanban.Application.Test
 
             var validationResult = commandHandler.Handle(command);
 
-            validationResult.Match(
-                Invalid: (errors) => true,
-                Valid: (x) => false).Should().BeTrue();
+            validationResult.IsValid.Should().BeFalse();
         }
     }
 }
