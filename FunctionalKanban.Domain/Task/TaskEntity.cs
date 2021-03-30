@@ -1,6 +1,5 @@
 ﻿namespace FunctionalKanban.Domain.Task
 {
-    using System;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
@@ -9,19 +8,35 @@
 
     public static class TaskEntity
     {
-        public static TaskState Create(TaskCreated @event) => new TaskState()
+        public static Validation<(Event @event, TaskState state)> Create(CreateTask cmd)
         {
-            Version = 1,
-            RemaningWork = @event.RemanigWork,
-            TaskName = @event.Name,
-            TaskStatus = @event.Status
-        };
+            var @event = new TaskCreated()
+            {
+                EntityId = cmd.EntityId,
+                Name = cmd.Name,
+                RemaningWork = cmd.RemaningWork,
+                TimeStamp = cmd.TimeStamp,
+                Status = TaskStatus.Todo,
+                EntityVersion = 1
+            };
+
+            var state = new TaskState()
+            {
+                Version = 1,
+                RemaningWork = @event.RemaningWork,
+                TaskName = @event.Name,
+                TaskStatus = @event.Status
+            };
+
+            return (@event, state);
+        }
+       
 
         public static Validation<(Event @event, TaskState state)> ChangeStatus(this TaskState state, ChangeTaskStatus cmd)
         {
             var @event = new TaskStatusChanged() 
             { 
-                EntityId = cmd.TaskId, 
+                EntityId = cmd.EntityId, 
                 EntityVersion = state.Version + 1, 
                 NewStatus = cmd.TaskStatus,
                 TimeStamp = cmd.TimeStamp

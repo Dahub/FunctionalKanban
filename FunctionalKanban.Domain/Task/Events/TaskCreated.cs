@@ -6,6 +6,6 @@
 
         public TaskStatus Status { get; init; }
 
-        public uint RemanigWork { get; init; }
+        public uint RemaningWork { get; init; }
     }
 }

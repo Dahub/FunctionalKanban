@@ -5,8 +5,6 @@
 
     public record ChangeTaskStatus : Command
     {
-        public Guid TaskId { get; init; }
-
         public TaskStatus TaskStatus { get; init; }
     }
 }
