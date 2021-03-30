@@ -11,39 +11,38 @@ namespace FunctionalKanban.Domain.Test
     public class TaskShould
     {
         [Fact]
-        public bool ReturnTaskStateWithNameAndStatusWhenCreated()
+        public void ReturnTaskStateWithNameAndStatusWhenCreated()
         {
             var expectedTaskName = Guid.NewGuid().ToString();
             var expectedTaskStatus = TaskStatus.Todo;
 
-            var taskState = BuildNewTask(expectedTaskName);
+            var eventAndTask = BuildNewTask(expectedTaskName);
 
-            taskState.Match(
+            eventAndTask.Match(
                 Invalid: (errors) => false,
-                Valid: (tuple) => tuple.state.TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Valid: (x) => ((TaskState)x.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
-        //[Fact]
-        //public void ChangeTaskStateStatusWhenStatusChange()
-        //{
-        //    var expectedTaskStatus = TaskStatus.InProgress;
+        [Fact]
+        public void ChangeTaskStateStatusWhenStatusChange()
+        {
+            var expectedTaskStatus = TaskStatus.InProgress;
 
-        //    var changeTaskStatus = new ChangeTaskStatus()
-        //    {
-        //        TaskId = Guid.NewGuid(),
-        //        TaskStatus = expectedTaskStatus,
-        //        TimeStamp = DateTime.Now
-        //    };
+            var changeTaskStatus = new ChangeTaskStatus()
+            {
+                EntityId = Guid.NewGuid(),
+                TaskStatus = expectedTaskStatus,
+                TimeStamp = DateTime.Now
+            };
 
-        //    var eventAndState = BuildNewTask().Bind<Event, TaskState>((evt, state) => state.ChangeStatus(changeTaskStatus);
+            var eventAndState = BuildNewTask().Bind((x) => ((TaskState)x.state).ChangeStatus(changeTaskStatus));
 
-        //    eventAndState.Match(
-        //        Invalid: (errors) => false,
-        //        Valid: (tuple) => tuple.state.TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
-        //}
+            eventAndState.Match(
+                Invalid: (errors) => false,
+                Valid: (x) => ((TaskState)x.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+        }
 
-        private static Validation<(Event,TaskState)> BuildNewTask(
-                string taskName = "fake task") =>
+        private static Validation<EventAndState> BuildNewTask(string taskName = "fake task") =>
             TaskEntity.Create(BuildCreateTaskCommand(taskName));
 
         private static CreateTask BuildCreateTaskCommand(string taskName) =>
