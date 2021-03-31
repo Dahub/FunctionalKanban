@@ -39,8 +39,12 @@ namespace FunctionalKanban.Api.Test
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
                     "task", Guid.NewGuid());
-
+         
             httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.BadRequest);
+
+            var msg = await httpResponseMessage.Content.ReadAsStringAsync();
+
+            msg.Should().Equals("Les données de la requête ne sont pas serialisables en commande CreateTask");
         }
 
         private HttpClient BuildNewHttpClient<T>() where T : class

@@ -1,6 +1,5 @@
 ﻿namespace FunctionalKanban.Api
 {
-    using System;
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
@@ -35,11 +34,11 @@
         {
             try
             {
-                return await context.Request.ReadFromJsonAsync<T>().ConfigureAwait(false);
+                return await context.Request.ReadFromJsonAsync<T>();
             }
-            catch (Exception e)
+            catch
             {
-                return Invalid(Error(e.Message));
+                return Invalid(Error($"Les données de la requête ne sont pas serialisables en commande {typeof(T).Name}"));
             }
         }
     }
