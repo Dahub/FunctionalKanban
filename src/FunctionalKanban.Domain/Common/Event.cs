@@ -4,7 +4,9 @@
 
     public abstract record Event
     {
-        public Guid EntityId { get; init; }
+        public Guid AggregateId { get; init; }
+
+        public string AggregateName { get; set; }
 
         public DateTime TimeStamp { get; init; }
 

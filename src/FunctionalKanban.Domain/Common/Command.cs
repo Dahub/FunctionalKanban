@@ -4,7 +4,7 @@
 
     public record Command
     {
-        public Guid EntityId { get; init; }
+        public Guid AggregateId { get; init; }
 
         public DateTime TimeStamp { get; init; }
     }

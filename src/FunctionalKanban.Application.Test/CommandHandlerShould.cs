@@ -14,16 +14,17 @@ namespace FunctionalKanban.Application.Test
         [Fact]
         public void PublishTaskCreatedWhenHandleCreateTaskCommand()
         {
-            var expectedEntityId = Guid.NewGuid();
+            var expectedAggregateId = Guid.NewGuid();
             var expectedEntityName = Guid.NewGuid().ToString();
             var expectedRemaningWork = 10;
             var expectedTimeStamp = DateTime.Now;
+            var expectedAggregateName = typeof(TaskEntity).Name;
 
             TaskCreated lastPublishedEvent = null;
 
             var command = new CreateTask()
             {
-                EntityId = expectedEntityId,
+                AggregateId = expectedAggregateId,
                 Name = expectedEntityName,
                 RemaningWork = (uint)expectedRemaningWork,
                 TimeStamp = expectedTimeStamp
@@ -37,17 +38,18 @@ namespace FunctionalKanban.Application.Test
 
             validationResult.IsValid.Should().BeTrue();
             lastPublishedEvent.Should().NotBeNull();
-            lastPublishedEvent.EntityId.Should().Equals(expectedEntityId);
+            lastPublishedEvent.AggregateId.Should().Equals(expectedAggregateId);
             lastPublishedEvent.EntityVersion.Should().Equals(1);
             lastPublishedEvent.Name.Should().Equals(expectedEntityName);
             lastPublishedEvent.RemaningWork.Should().Equals(expectedRemaningWork);
             lastPublishedEvent.TimeStamp.Should().Equals(expectedTimeStamp);
+            lastPublishedEvent.AggregateName.Should().Be(expectedAggregateName);
         }
 
         [Fact]
         public void PublishTaskStatusChangedWhenHandleChangeTaskStatusCommandOnExistingEntity()
         {            
-            var entityId = Guid.NewGuid();
+            var aggregateId = Guid.NewGuid();
             var expectedTimeStamp = DateTime.Now;
             var expectedTaskStatus = TaskStatus.InProgress;
             var expectedEntityVersion = 2;
@@ -56,7 +58,7 @@ namespace FunctionalKanban.Application.Test
 
             var command = new ChangeTaskStatus()
             {
-                EntityId = entityId,
+                AggregateId = aggregateId,
                 TimeStamp = expectedTimeStamp,
                 TaskStatus = expectedTaskStatus
             };
@@ -85,7 +87,7 @@ namespace FunctionalKanban.Application.Test
         {
             var command = new ChangeTaskStatus()
             {
-                EntityId = Guid.NewGuid(),
+                AggregateId = Guid.NewGuid(),
                 TimeStamp = DateTime.Now,
                 TaskStatus = TaskStatus.InProgress
             };

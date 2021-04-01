@@ -12,7 +12,8 @@
         {
             var @event = new TaskCreated()
             {
-                EntityId = cmd.EntityId,
+                AggregateId = cmd.AggregateId,
+                AggregateName = typeof(TaskEntity).Name,
                 Name = cmd.Name,
                 RemaningWork = cmd.RemaningWork,
                 TimeStamp = cmd.TimeStamp,
@@ -36,7 +37,8 @@
         {
             var @event = new TaskStatusChanged() 
             { 
-                EntityId = cmd.EntityId, 
+                AggregateId = cmd.AggregateId,
+                AggregateName = typeof(TaskEntity).Name,
                 EntityVersion = state.Version + 1, 
                 NewStatus = cmd.TaskStatus,
                 TimeStamp = cmd.TimeStamp

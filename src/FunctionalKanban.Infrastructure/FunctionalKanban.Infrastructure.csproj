@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <LangVersion>9.0</LangVersion>
@@ -6,11 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FunctionalKanban.Application\FunctionalKanban.Application.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Infrastructure.Abstraction\FunctionalKanban.Infrastructure.Abstraction.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Infrastructure\FunctionalKanban.Infrastructure.csproj" />
   </ItemGroup>
-
 
 </Project>

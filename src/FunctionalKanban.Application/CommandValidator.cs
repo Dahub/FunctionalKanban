@@ -21,11 +21,11 @@
             c.GetErrors().ToValidation(c);
 
         private static Validation<Command> ToValidation(this IEnumerable<Error> errors, Command c) =>
-            errors == null ? Valid(c) : Invalid(errors);
+            errors.Any() ? Invalid(errors) : Valid(c);
 
         private static IEnumerable<Error> GetErrors(this CreateTask c)
         {
-            if (c.EntityId == Guid.Empty)
+            if (c.AggregateId == Guid.Empty)
             {
                 yield return "L'id d'entity doit être défini";
             }
@@ -39,7 +39,10 @@
             {
                 yield return "Le time stamp doit être défini";
             }
+
+            yield break;
         }
+
         private static Validation<T> ValidateCommandObject<T>(T c) where T : Command =>
             c != null ? c : Error("La commande ne peut être null");  
     }

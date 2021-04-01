@@ -17,13 +17,13 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpCreatedWhenPostCreateTaskCommand()
         {
-            var httpClient = BuildNewHttpClient<Startup>();
+            var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
                     "task",
                     new CreateTask()
                     {
-                        EntityId = Guid.NewGuid(),
+                        AggregateId = Guid.NewGuid(),
                         Name = Guid.NewGuid().ToString(),
                         RemaningWork = 10,
                         TimeStamp = DateTime.Now
@@ -33,9 +33,23 @@ namespace FunctionalKanban.Api.Test
         }
 
         [Fact]
+        public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithNull()
+        {
+            var httpClient = BuildNewHttpClient<DoNothingStartup>();
+            var httpResponseMessage = await httpClient
+                .PostAsJsonAsync<object>(
+                    "task", null);
+
+            httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.BadRequest);
+
+            var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+            responseContent.Should().Be("[\"Commande non prise en charge\"]");
+        }
+
+        [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithWrongCommand()
         {
-            var httpClient = BuildNewHttpClient<Startup>();
+            var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
                     "task", Guid.NewGuid());
@@ -49,7 +63,7 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithIncorrectCommand()
         {
-            var httpClient = BuildNewHttpClient<Startup>();
+            var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync("task", new CreateTask());
 

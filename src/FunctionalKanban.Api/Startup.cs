@@ -1,7 +1,12 @@
 namespace FunctionalKanban.Api
 {
+    using System;
     using FunctionalKanban.Application;
+    using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Functional;
+    using FunctionalKanban.Infrastructure;
+    using FunctionalKanban.Infrastructure.Abstraction;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -18,11 +23,14 @@ namespace FunctionalKanban.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IEventStream, InMemoryEventStream>();
+            services.AddTransient<IEventBus, EventBus>();
+
             services.AddRouting();
 
             services.AddTransient(s => new CommandHandler(
-                (id) => None,
-                (evt) => Unit.Create()));
+                GetEntityMethod,
+                PublishEventMethod(null)));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,5 +49,14 @@ namespace FunctionalKanban.Api
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
             });
         }
+
+        protected virtual Func<Guid, Option<State>> GetEntityMethod => (id) => None;
+
+        protected virtual Func<Event, Unit> PublishEventMethod(IServiceCollection services) =>
+            (evt) =>
+            {
+                services.BuildServiceProvider().GetRequiredService<IEventBus>().Publish(evt);
+                return Unit.Create();
+            };
     }    
 }

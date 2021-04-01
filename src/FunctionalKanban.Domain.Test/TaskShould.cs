@@ -30,7 +30,7 @@ namespace FunctionalKanban.Domain.Test
 
             var changeTaskStatus = new ChangeTaskStatus()
             {
-                EntityId = Guid.NewGuid(),
+                AggregateId = Guid.NewGuid(),
                 TaskStatus = expectedTaskStatus,
                 TimeStamp = DateTime.Now
             };
@@ -48,7 +48,7 @@ namespace FunctionalKanban.Domain.Test
         private static CreateTask BuildCreateTaskCommand(string taskName) =>
             new CreateTask()
             {
-                EntityId = Guid.NewGuid(),
+                AggregateId = Guid.NewGuid(),
                 Name = taskName,
                 TimeStamp = DateTime.Now,
                 RemaningWork = 10

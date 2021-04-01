@@ -34,7 +34,7 @@
             Command command,
             Func<Guid, Option<State>> getEntity,
             Func<T, Option<Validation<EventAndState>>> f) where T : State =>
-                getEntity(command.EntityId)
+                getEntity(command.AggregateId)
                     .CastTo<T>()
                     .Bind(f)
                     .Match(
