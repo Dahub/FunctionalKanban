@@ -1,5 +1,6 @@
 ﻿namespace FunctionalKanban.Api
 {
+    using System;
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
@@ -18,13 +19,24 @@
                         .Bind(CommandValidator.Validate)
                         .Bind(c => context.GetCommandHandler().Handle(c))
                         .Match(
-                            async (errors) => { await context.SetResponseBadRequest(errors); },
-                            (_) => { context.SetResponseCreated(); return; });
+                            Invalid: async (errors) => await context.SetResponseBadRequest(errors),
+                            Valid: (v) => {
+                                    v.Match(
+                                        Exception: async (ex) => await context.SetResponseInternalServerError(ex),
+                                        Success: _ => { context.SetResponseCreated(); return; }
+                                    );
+                            });
 
         private static async Task SetResponseBadRequest(this HttpContext context, IEnumerable<Error> errors)
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             await context.Response.WriteAsJsonAsync(errors.Map(e => e.Message));
+        }
+
+        private static async Task SetResponseInternalServerError(this HttpContext context, Exception ex)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            await context.Response.WriteAsJsonAsync(ex.Message);
         }
 
         private static void SetResponseCreated(this HttpContext context) => context.Response.StatusCode = (int)HttpStatusCode.Created;

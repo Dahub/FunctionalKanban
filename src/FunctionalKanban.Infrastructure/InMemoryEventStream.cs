@@ -10,13 +10,15 @@
 
     public class InMemoryEventStream : IEventStream
     {
-        private readonly static IList<EventLine> Lines = new List<EventLine>();
+        public IEnumerable<EventLine> EventLines => _lines.AsReadOnly();
+
+        private readonly static List<EventLine> _lines = new List<EventLine>();
 
         public Exceptional<Unit> Push(Event @event) =>
-            @event.CheckUnicity(Lines).Bind(e => e.AppendToLines(Lines));
+            @event.CheckUnicity(_lines).Bind(e => e.AppendToLines(_lines));
     }
 
-    internal record EventLine(
+    public record EventLine(
         Guid id,
         Guid aggregateId,
         string aggregateName,

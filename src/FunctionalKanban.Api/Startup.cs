@@ -52,11 +52,7 @@ namespace FunctionalKanban.Api
 
         protected virtual Func<Guid, Option<State>> GetEntityMethod => (id) => None;
 
-        protected virtual Func<Event, Unit> PublishEventMethod(IServiceCollection services) =>
-            (evt) =>
-            {
-                services.BuildServiceProvider().GetRequiredService<IEventBus>().Publish(evt);
-                return Unit.Create();
-            };
+        protected virtual Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) =>
+            (evt) => services.BuildServiceProvider().GetRequiredService<IEventBus>().Publish(evt);
     }    
 }

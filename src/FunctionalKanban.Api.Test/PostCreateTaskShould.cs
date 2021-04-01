@@ -11,8 +11,11 @@ namespace FunctionalKanban.Api.Test
     using Microsoft.Extensions.Configuration;
     using Xunit;
     using FluentAssertions;
+    using FunctionalKanban.Infrastructure;
+    using FunctionalKanban.Domain.Task;
+    using System.Linq;
 
-    public class TaskShould
+    public class PostCreateTaskShould
     {
         [Fact]
         public async Task ReturnHttpCreatedWhenPostCreateTaskCommand()
@@ -71,6 +74,67 @@ namespace FunctionalKanban.Api.Test
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
             responseContent.Should().Be("[\"L'id d'entity doit être défini\",\"La tâche dans avoir un nom\",\"Le time stamp doit être défini\"]");
+        }
+
+        [Fact]
+        public async Task ReturnHttpInternalServerErrorWhenPostSameTask()
+        {
+            var eventStream = new InMemoryEventStream();
+            InMemoryStartup.EventStream = eventStream;
+            var httpClient = BuildNewHttpClient<InMemoryStartup>();
+
+            var createTaskCommand = new CreateTask()
+            {
+                AggregateId = Guid.NewGuid(),
+                Name = Guid.NewGuid().ToString(),
+                RemaningWork = 10,
+                TimeStamp = DateTime.Now
+            };
+
+            _ = await httpClient
+                .PostAsJsonAsync(
+                    "task",createTaskCommand);
+
+            var httpResponseMessage = await httpClient
+                .PostAsJsonAsync(
+                    "task", createTaskCommand);
+
+            httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.InternalServerError);
+
+            var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+            responseContent.Should().Be("\"Un événement pour cette version d'aggregat est déjà présent\"");
+        }
+
+        [Fact]
+        public async Task AddTaskeCreatedEvent()
+        {
+            var eventStream = new InMemoryEventStream();
+            InMemoryStartup.EventStream = eventStream;
+            var httpClient = BuildNewHttpClient<InMemoryStartup>();
+
+            var expectedAggregateId = Guid.NewGuid();
+            var expectedTimeStamp = DateTime.Now;
+            var expectedAggregateName = typeof(TaskEntity).Name;
+            var expectedVersion = 1;
+
+            _ = await httpClient
+                .PostAsJsonAsync(
+                    "task",
+                    new CreateTask()
+                    {
+                        AggregateId = expectedAggregateId,
+                        Name = Guid.NewGuid().ToString(),
+                        RemaningWork = 10,
+                        TimeStamp = expectedTimeStamp
+                    });
+
+            eventStream.EventLines.Should().HaveCount(1);
+
+            var eventLine = eventStream.EventLines.Single();
+
+            eventLine.version.Should().Equals(expectedVersion);
+            eventLine.aggregateId.Should().Equals(expectedAggregateId);
+            eventLine.aggregateName.Should().Equals(expectedAggregateName);
         }
 
         private HttpClient BuildNewHttpClient<T>() where T : class
