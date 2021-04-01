@@ -15,15 +15,16 @@
     {
         public static async Task ExecuteCommand<T>(this HttpContext context) where T : Command =>
              (await context.ReadCommandAsync<T>())
+                        .Bind(CommandValidator.Validate)
                         .Bind(c => context.GetCommandHandler().Handle(c))
                         .Match(
-                            (errors) => { context.SetResponseBadRequest(errors); return; },
+                            async (errors) => { await context.SetResponseBadRequest(errors); },
                             (_) => { context.SetResponseCreated(); return; });
 
-        private static void SetResponseBadRequest(this HttpContext context, IEnumerable<Error> errors)
+        private static async Task SetResponseBadRequest(this HttpContext context, IEnumerable<Error> errors)
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            errors.ForEach(async e => await context.Response.WriteAsync(e.Message));
+            await context.Response.WriteAsJsonAsync(errors.Map(e => e.Message));
         }
 
         private static void SetResponseCreated(this HttpContext context) => context.Response.StatusCode = (int)HttpStatusCode.Created;

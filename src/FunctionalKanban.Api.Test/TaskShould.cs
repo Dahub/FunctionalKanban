@@ -33,7 +33,7 @@ namespace FunctionalKanban.Api.Test
         }
 
         [Fact]
-        public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithIncorrectCommand()
+        public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithWrongCommand()
         {
             var httpClient = BuildNewHttpClient<Startup>();
             var httpResponseMessage = await httpClient
@@ -42,9 +42,21 @@ namespace FunctionalKanban.Api.Test
          
             httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.BadRequest);
 
-            var msg = await httpResponseMessage.Content.ReadAsStringAsync();
+            var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+            responseContent.Should().Be("[\"Les données de la requête ne sont pas serialisables en commande CreateTask\"]");
+        }
 
-            msg.Should().Equals("Les données de la requête ne sont pas serialisables en commande CreateTask");
+        [Fact]
+        public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithIncorrectCommand()
+        {
+            var httpClient = BuildNewHttpClient<Startup>();
+            var httpResponseMessage = await httpClient
+                .PostAsJsonAsync("task", new CreateTask());
+
+            httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.BadRequest);
+
+            var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+            responseContent.Should().Be("[\"L'id d'entity doit être défini\",\"La tâche dans avoir un nom\",\"Le time stamp doit être défini\"]");
         }
 
         private HttpClient BuildNewHttpClient<T>() where T : class
