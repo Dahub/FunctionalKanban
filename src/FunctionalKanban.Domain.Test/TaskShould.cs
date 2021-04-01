@@ -31,8 +31,7 @@ namespace FunctionalKanban.Domain.Test
             var changeTaskStatus = new ChangeTaskStatus()
             {
                 AggregateId = Guid.NewGuid(),
-                TaskStatus = expectedTaskStatus,
-                TimeStamp = DateTime.Now
+                TaskStatus = expectedTaskStatus
             };
 
             var eventAndState = BuildNewTask().Bind((x) => ((TaskState)x.state).ChangeStatus(changeTaskStatus));
@@ -50,7 +49,6 @@ namespace FunctionalKanban.Domain.Test
             {
                 AggregateId = Guid.NewGuid(),
                 Name = taskName,
-                TimeStamp = DateTime.Now,
                 RemaningWork = 10
             };
     }

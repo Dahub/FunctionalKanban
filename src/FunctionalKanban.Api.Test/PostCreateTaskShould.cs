@@ -28,8 +28,7 @@ namespace FunctionalKanban.Api.Test
                     {
                         AggregateId = Guid.NewGuid(),
                         Name = Guid.NewGuid().ToString(),
-                        RemaningWork = 10,
-                        TimeStamp = DateTime.Now
+                        RemaningWork = 10
                     });
 
             httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.Created);
@@ -73,7 +72,7 @@ namespace FunctionalKanban.Api.Test
             httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.BadRequest);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
-            responseContent.Should().Be("[\"L'id d'entity doit être défini\",\"La tâche dans avoir un nom\",\"Le time stamp doit être défini\"]");
+            responseContent.Should().Be("[\"L'id d'aggregat doit être défini\",\"La tâche dans avoir un nom\"]");
         }
 
         [Fact]
@@ -87,8 +86,7 @@ namespace FunctionalKanban.Api.Test
             {
                 AggregateId = Guid.NewGuid(),
                 Name = Guid.NewGuid().ToString(),
-                RemaningWork = 10,
-                TimeStamp = DateTime.Now
+                RemaningWork = 10
             };
 
             _ = await httpClient
@@ -113,7 +111,6 @@ namespace FunctionalKanban.Api.Test
             var httpClient = BuildNewHttpClient<InMemoryStartup>();
 
             var expectedAggregateId = Guid.NewGuid();
-            var expectedTimeStamp = DateTime.Now;
             var expectedAggregateName = typeof(TaskEntity).Name;
             var expectedVersion = 1;
 
@@ -124,8 +121,7 @@ namespace FunctionalKanban.Api.Test
                     {
                         AggregateId = expectedAggregateId,
                         Name = Guid.NewGuid().ToString(),
-                        RemaningWork = 10,
-                        TimeStamp = expectedTimeStamp
+                        RemaningWork = 10
                     });
 
             eventStream.EventLines.Should().HaveCount(1);

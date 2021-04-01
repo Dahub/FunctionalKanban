@@ -26,8 +26,7 @@ namespace FunctionalKanban.Application.Test
             {
                 AggregateId = expectedAggregateId,
                 Name = expectedEntityName,
-                RemaningWork = (uint)expectedRemaningWork,
-                TimeStamp = expectedTimeStamp
+                RemaningWork = (uint)expectedRemaningWork
             };
 
             var commandHandler = new CommandHandler(
@@ -50,7 +49,6 @@ namespace FunctionalKanban.Application.Test
         public void PublishTaskStatusChangedWhenHandleChangeTaskStatusCommandOnExistingEntity()
         {            
             var aggregateId = Guid.NewGuid();
-            var expectedTimeStamp = DateTime.Now;
             var expectedTaskStatus = TaskStatus.InProgress;
             var expectedEntityVersion = 2;
 
@@ -59,7 +57,6 @@ namespace FunctionalKanban.Application.Test
             var command = new ChangeTaskStatus()
             {
                 AggregateId = aggregateId,
-                TimeStamp = expectedTimeStamp,
                 TaskStatus = expectedTaskStatus
             };
 
@@ -77,7 +74,6 @@ namespace FunctionalKanban.Application.Test
 
             validationResult.IsValid.Should().BeTrue();
             lastPublishedEvent.Should().NotBeNull();
-            lastPublishedEvent.TimeStamp.Should().Equals(expectedTimeStamp);
             lastPublishedEvent.EntityVersion.Should().Equals(expectedEntityVersion);
             lastPublishedEvent.NewStatus.Should().Equals(expectedTaskStatus);
         }
@@ -88,7 +84,6 @@ namespace FunctionalKanban.Application.Test
             var command = new ChangeTaskStatus()
             {
                 AggregateId = Guid.NewGuid(),
-                TimeStamp = DateTime.Now,
                 TaskStatus = TaskStatus.InProgress
             };
 

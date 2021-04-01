@@ -30,7 +30,7 @@ namespace FunctionalKanban.Api
 
             services.AddTransient(s => new CommandHandler(
                 GetEntityMethod,
-                PublishEventMethod(null)));
+                PublishEventMethod(services)));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,7 +41,6 @@ namespace FunctionalKanban.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>

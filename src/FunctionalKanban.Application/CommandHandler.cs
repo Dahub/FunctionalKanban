@@ -44,7 +44,9 @@
 
     internal static class CommandHandlerExt
     {
-        public static Validation<Exceptional<Unit>> PublishEvent(this Validation<EventAndState> v, Func<Event, Exceptional<Unit>> publishEvent) => 
+        public static Validation<Exceptional<Unit>> PublishEvent(
+                            this Validation<EventAndState> v,
+                            Func<Event, Exceptional<Unit>> publishEvent) => 
             v.Bind<EventAndState, Exceptional<Unit>>((x) => publishEvent(x.@event));
 
         public static Option<T> CastTo<T>(this Option<State> v) where T : State => v.Bind<State, T>((state) => state is T ? (T)state : None);

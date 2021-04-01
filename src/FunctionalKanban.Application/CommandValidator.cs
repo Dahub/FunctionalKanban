@@ -27,7 +27,7 @@
         {
             if (c.AggregateId == Guid.Empty)
             {
-                yield return "L'id d'entity doit être défini";
+                yield return "L'id d'aggregat doit être défini";
             }
 
             if(string.IsNullOrWhiteSpace(c.Name))

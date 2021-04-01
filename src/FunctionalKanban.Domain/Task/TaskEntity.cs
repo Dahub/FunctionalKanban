@@ -30,8 +30,7 @@
             };
 
             return new EventAndState(@event, state);
-        }
-       
+        }       
 
         public static Validation<EventAndState> ChangeStatus(this TaskState state, ChangeTaskStatus cmd)
         {
