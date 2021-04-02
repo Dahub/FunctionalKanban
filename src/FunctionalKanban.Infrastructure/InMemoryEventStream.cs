@@ -2,11 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Infrastructure.Abstraction;
-    using FunctionalKanban.Functional;
-    using Unit = System.ValueTuple;
     using System.Linq;
+    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Functional;
+    using FunctionalKanban.Infrastructure.Abstraction;
+    using Unit = System.ValueTuple;
 
     public class InMemoryEventStream : IEventStream
     {
@@ -38,12 +38,12 @@
         public static Exceptional<Unit> AppendToLines(this Event @event, IList<EventLine> lines)
         {
             lines.Add(new EventLine(
-                  id: Guid.NewGuid(),
-                  aggregateId: @event.AggregateId,
-                  aggregateName: @event.AggregateName,
-                  version: @event.EntityVersion,
-                  timeStamp: @event.TimeStamp,
-                  data: @event));
+                  id:               Guid.NewGuid(),
+                  aggregateId:      @event.AggregateId,
+                  aggregateName:    @event.AggregateName,
+                  version:          @event.EntityVersion,
+                  timeStamp:        @event.TimeStamp,
+                  data:             @event));
 
             return Unit.Create();
         }

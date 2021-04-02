@@ -30,15 +30,15 @@ namespace FunctionalKanban.Domain.Test
 
             var changeTaskStatus = new ChangeTaskStatus()
             {
-                AggregateId = Guid.NewGuid(),
-                TaskStatus = expectedTaskStatus
+                AggregateId =   Guid.NewGuid(),
+                TaskStatus =    expectedTaskStatus
             };
 
             var eventAndState = BuildNewTask().Bind((x) => ((TaskState)x.state).ChangeStatus(changeTaskStatus));
 
             eventAndState.Match(
-                Invalid: (errors) => false,
-                Valid: (x) => ((TaskState)x.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Invalid: (errors)   => false,
+                Valid: (x)          => ((TaskState)x.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
         private static Validation<EventAndState> BuildNewTask(string taskName = "fake task") =>
@@ -47,9 +47,9 @@ namespace FunctionalKanban.Domain.Test
         private static CreateTask BuildCreateTaskCommand(string taskName) =>
             new CreateTask()
             {
-                AggregateId = Guid.NewGuid(),
-                Name = taskName,
-                RemaningWork = 10
+                AggregateId =   Guid.NewGuid(),
+                Name =          taskName,
+                RemaningWork =  10
             };
     }
 }

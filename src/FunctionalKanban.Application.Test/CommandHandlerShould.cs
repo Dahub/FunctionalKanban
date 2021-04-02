@@ -24,9 +24,9 @@ namespace FunctionalKanban.Application.Test
 
             var command = new CreateTask()
             {
-                AggregateId = expectedAggregateId,
-                Name = expectedEntityName,
-                RemaningWork = (uint)expectedRemaningWork
+                AggregateId =   expectedAggregateId,
+                Name =          expectedEntityName,
+                RemaningWork =  (uint)expectedRemaningWork
             };
 
             var commandHandler = new CommandHandler(
@@ -56,17 +56,17 @@ namespace FunctionalKanban.Application.Test
 
             var command = new ChangeTaskStatus()
             {
-                AggregateId = aggregateId,
-                TaskStatus = expectedTaskStatus
+                AggregateId =   aggregateId,
+                TaskStatus =    expectedTaskStatus
             };
 
             var commandHandler = new CommandHandler(
                 (id) => new TaskState()
                 {
-                    Version = 1,
-                    TaskStatus = TaskStatus.Todo,
-                    RemaningWork = 10,
-                    TaskName = Guid.NewGuid().ToString()
+                    Version =       1,
+                    TaskStatus =    TaskStatus.Todo,
+                    RemaningWork =  10,
+                    TaskName =      Guid.NewGuid().ToString()
                 },
                 (evt) => { lastPublishedEvent = evt as TaskStatusChanged; return Unit.Create(); });
 
@@ -83,12 +83,12 @@ namespace FunctionalKanban.Application.Test
         {
             var command = new ChangeTaskStatus()
             {
-                AggregateId = Guid.NewGuid(),
-                TaskStatus = TaskStatus.InProgress
+                AggregateId =   Guid.NewGuid(),
+                TaskStatus =    TaskStatus.InProgress
             };
 
             var commandHandler = new CommandHandler(
-               (id) => None,
+               (id) =>  None,
                (evt) => Unit.Create());
 
             var validationResult = commandHandler.Handle(command);

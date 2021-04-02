@@ -22,8 +22,8 @@
                             Invalid: async (errors) => await context.SetResponseBadRequest(errors),
                             Valid: (v) => {
                                     v.Match(
-                                        Exception: async (ex) => await context.SetResponseInternalServerError(ex),
-                                        Success: _ => { context.SetResponseCreated(); return; }
+                                        Exception: async (ex)   => await context.SetResponseInternalServerError(ex),
+                                        Success: _              => { context.SetResponseCreated(); return; }
                                     );
                             });
 

@@ -18,16 +18,16 @@
             Func<Guid, Option<State>> getEntity,
             Func<Event, Exceptional<Unit>> publishEvent)
         {
-            _getEntity = getEntity;
+            _getEntity =    getEntity;
             _publishEvent = publishEvent;
         }
 
         public Validation<Exceptional<Unit>> Handle(Command command) =>
             (command) switch
             {
-                CreateTask c => TaskEntity.Create(c).PublishEvent(_publishEvent),
-                ChangeTaskStatus c => Handle<TaskState>(c, _getEntity, (e) => e.ChangeStatus(c)),
-                _ => Invalid("Commande non prise en charge")
+                CreateTask c        => TaskEntity.Create(c).PublishEvent(_publishEvent),
+                ChangeTaskStatus c  => Handle<TaskState>(c, _getEntity, (e) => e.ChangeStatus(c)),
+                _                   => Invalid("Commande non prise en charge")
             };
 
         private Validation<Exceptional<Unit>> Handle<T>(
@@ -38,8 +38,8 @@
                     .CastTo<T>()
                     .Bind(f)
                     .Match(
-                        None: () => Invalid("Erreur lors de l'exécution de la commande"),
-                        Some: (x) => x.PublishEvent(_publishEvent));
+                        None: ()    => Invalid("Erreur lors de l'exécution de la commande"),
+                        Some: (x)   => x.PublishEvent(_publishEvent));
     }
 
     internal static class CommandHandlerExt

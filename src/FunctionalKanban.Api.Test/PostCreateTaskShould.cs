@@ -26,9 +26,9 @@ namespace FunctionalKanban.Api.Test
                     "task",
                     new CreateTask()
                     {
-                        AggregateId = Guid.NewGuid(),
-                        Name = Guid.NewGuid().ToString(),
-                        RemaningWork = 10
+                        AggregateId =   Guid.NewGuid(),
+                        Name =          Guid.NewGuid().ToString(),
+                        RemaningWork =  10
                     });
 
             httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.Created);
@@ -84,9 +84,9 @@ namespace FunctionalKanban.Api.Test
 
             var createTaskCommand = new CreateTask()
             {
-                AggregateId = Guid.NewGuid(),
-                Name = Guid.NewGuid().ToString(),
-                RemaningWork = 10
+                AggregateId =   Guid.NewGuid(),
+                Name =          Guid.NewGuid().ToString(),
+                RemaningWork =  10
             };
 
             _ = await httpClient
@@ -119,9 +119,9 @@ namespace FunctionalKanban.Api.Test
                     "task",
                     new CreateTask()
                     {
-                        AggregateId = expectedAggregateId,
-                        Name = Guid.NewGuid().ToString(),
-                        RemaningWork = 10
+                        AggregateId =   expectedAggregateId,
+                        Name =          Guid.NewGuid().ToString(),
+                        RemaningWork =  10
                     });
 
             eventStream.EventLines.Should().HaveCount(1);
