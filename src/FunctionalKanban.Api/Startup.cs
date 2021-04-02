@@ -29,8 +29,8 @@ namespace FunctionalKanban.Api
             services.AddRouting();
 
             services.AddTransient(s => new CommandHandler(
-                GetEntityMethod,
-                PublishEventMethod(services)));
+                getEntity:      GetEntityMethod,
+                publishEvent:   PublishEventMethod(services)));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

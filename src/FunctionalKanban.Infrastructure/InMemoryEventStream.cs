@@ -23,6 +23,7 @@
         Guid aggregateId,
         string aggregateName,
         uint version,
+        string eventName,
         DateTime timeStamp,
         Event data);
 
@@ -42,6 +43,7 @@
                   aggregateId:      @event.AggregateId,
                   aggregateName:    @event.AggregateName,
                   version:          @event.EntityVersion,
+                  eventName:        @event.EventName,
                   timeStamp:        @event.TimeStamp,
                   data:             @event));
 

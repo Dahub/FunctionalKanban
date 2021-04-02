@@ -18,7 +18,7 @@ namespace FunctionalKanban.Application.Test
             var expectedEntityName = Guid.NewGuid().ToString();
             var expectedRemaningWork = 10;
             var expectedTimeStamp = DateTime.Now;
-            var expectedAggregateName = typeof(TaskEntity).Name;
+            var expectedAggregateName = typeof(TaskEntity).FullName;
 
             TaskCreated lastPublishedEvent = null;
 
@@ -30,8 +30,8 @@ namespace FunctionalKanban.Application.Test
             };
 
             var commandHandler = new CommandHandler(
-                (id) => new TaskState(),
-                (evt) => { lastPublishedEvent = evt as TaskCreated; return Unit.Create(); });
+                getEntity:      (id)    => new TaskState(),
+                publishEvent:   (evt)   => { lastPublishedEvent = evt as TaskCreated; return Unit.Create(); });
 
             var validationResult = commandHandler.Handle(command);
 
@@ -61,14 +61,14 @@ namespace FunctionalKanban.Application.Test
             };
 
             var commandHandler = new CommandHandler(
-                (id) => new TaskState()
-                {
-                    Version =       1,
-                    TaskStatus =    TaskStatus.Todo,
-                    RemaningWork =  10,
-                    TaskName =      Guid.NewGuid().ToString()
-                },
-                (evt) => { lastPublishedEvent = evt as TaskStatusChanged; return Unit.Create(); });
+                getEntity:      (id) => new TaskState()
+                                {
+                                    Version =       1,
+                                    TaskStatus =    TaskStatus.Todo,
+                                    RemaningWork =  10,
+                                    TaskName =      Guid.NewGuid().ToString()
+                                },
+                publishEvent:   (evt) => { lastPublishedEvent = evt as TaskStatusChanged; return Unit.Create(); });
 
             var validationResult = commandHandler.Handle(command);
 
@@ -88,8 +88,8 @@ namespace FunctionalKanban.Application.Test
             };
 
             var commandHandler = new CommandHandler(
-               (id) =>  None,
-               (evt) => Unit.Create());
+               getEntity:       (id) =>  None,
+               publishEvent:    (evt) => Unit.Create());
 
             var validationResult = commandHandler.Handle(command);
 

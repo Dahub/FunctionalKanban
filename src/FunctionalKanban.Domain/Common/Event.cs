@@ -11,5 +11,7 @@
         public DateTime TimeStamp { get; init; }
 
         public uint EntityVersion { get; init; }
+
+        public string EventName => this.GetType().FullName;
     }
 }
