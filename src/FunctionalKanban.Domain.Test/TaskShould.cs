@@ -1,16 +1,16 @@
 namespace FunctionalKanban.Domain.Test
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
-    using FunctionalKanban.Functional;
-    using static FunctionalKanban.Functional.F;
-    using Xunit;
     using FunctionalKanban.Domain.Task.Events;
-    using System.Collections.Generic;
+    using FunctionalKanban.Functional;
+    using Xunit;
+    using static FunctionalKanban.Functional.F;
 
     public class TaskShould
     {
@@ -24,7 +24,7 @@ namespace FunctionalKanban.Domain.Test
 
             eventAndTask.Match(
                 Invalid: (errors) => false,
-                Valid: (x) => ((TaskState)x.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Valid: (eas) => ((TaskState)eas.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
         [Fact]
@@ -34,15 +34,15 @@ namespace FunctionalKanban.Domain.Test
 
             var changeTaskStatus = new ChangeTaskStatus()
             {
-                AggregateId =   Guid.NewGuid(),
-                TaskStatus =    expectedTaskStatus
+                AggregateId = Guid.NewGuid(),
+                TaskStatus = expectedTaskStatus
             };
 
             var eventAndState = BuildNewTask().Bind((x) => ((TaskState)x.state).ChangeStatus(changeTaskStatus));
 
             eventAndState.Match(
-                Invalid: (errors)   => false,
-                Valid: (x)          => ((TaskState)x.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Invalid: (errors) => false,
+                Valid: (eas) => ((TaskState)eas.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace FunctionalKanban.Domain.Test
             var lastStatus = TaskStatus.Done;
 
             var events = new List<Event>()
-            {               
+            {
                 new TaskStatusChanged()
                 {
                     AggregateId     = aggregateId,
@@ -89,13 +89,13 @@ namespace FunctionalKanban.Domain.Test
         [Fact]
         public void BeSomeWhenHydrateWithConsecutivesEvents()
         {
-            var aggregateId     = Guid.NewGuid();
-            var aggregateName   = typeof(TaskEntity).FullName;
-            var entityName      = Guid.NewGuid().ToString();
-            var remaningWork    = 10u;
-            var initialStatus   = TaskStatus.Todo;
-            var changedStatus   = TaskStatus.InProgress;
-            var lastStatus      = TaskStatus.Done;
+            var aggregateId = Guid.NewGuid();
+            var aggregateName = typeof(TaskEntity).FullName;
+            var entityName = Guid.NewGuid().ToString();
+            var remaningWork = 10u;
+            var initialStatus = TaskStatus.Todo;
+            var changedStatus = TaskStatus.InProgress;
+            var lastStatus = TaskStatus.Done;
 
             var events = new List<Event>()
             {
@@ -146,7 +146,7 @@ namespace FunctionalKanban.Domain.Test
             var lastStatus = TaskStatus.Done;
 
             var events = new List<Event>()
-            {               
+            {
                 new TaskStatusChanged()
                 {
                     AggregateId     = aggregateId,
@@ -188,9 +188,9 @@ namespace FunctionalKanban.Domain.Test
         private static CreateTask BuildCreateTaskCommand(string taskName) =>
             new CreateTask()
             {
-                AggregateId =   Guid.NewGuid(),
-                Name =          taskName,
-                RemaningWork =  10
+                AggregateId     = Guid.NewGuid(),
+                Name            = taskName,
+                RemaningWork    = 10
             };
     }
 }

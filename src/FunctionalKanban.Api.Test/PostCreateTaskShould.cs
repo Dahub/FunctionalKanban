@@ -1,25 +1,23 @@
 namespace FunctionalKanban.Api.Test
 {
     using System;
+    using System.Linq;
     using System.Net;
-    using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
-    using FunctionalKanban.Domain.Task.Commands;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.TestHost;
-    using Microsoft.Extensions.Configuration;
-    using Xunit;
     using FluentAssertions;
-    using FunctionalKanban.Infrastructure;
+    using FunctionalKanban.Api.Test.Tools;
     using FunctionalKanban.Domain.Task;
-    using System.Linq;
+    using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Infrastructure.InMemory;
+    using Xunit;
 
-    public class PostCreateTaskShould
+    public class PostCreateTaskShould : BaseTestClass
     {
         [Fact]
-        public async Task ReturnHttpCreatedWhenPostCreateTaskCommand()
+        public async Task ReturnHttpOkWhenPostCreateTaskCommand()
         {
+            InMemoryDatabase.Reset();
             var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
@@ -31,18 +29,19 @@ namespace FunctionalKanban.Api.Test
                         RemaningWork =  10
                     });
 
-            httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.Created);
+            httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithNull()
         {
+            InMemoryDatabase.Reset();
             var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync<object>(
                     "task", null);
 
-            httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.BadRequest);
+            httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
             responseContent.Should().Be("[\"Commande non prise en charge\"]");
@@ -51,12 +50,13 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithWrongCommand()
         {
+            InMemoryDatabase.Reset();
             var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
                     "task", Guid.NewGuid());
          
-            httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.BadRequest);
+            httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
             responseContent.Should().Be("[\"Les données de la requête ne sont pas serialisables en commande CreateTask\"]");
@@ -65,11 +65,12 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithIncorrectCommand()
         {
+            InMemoryDatabase.Reset();
             var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync("task", new CreateTask());
 
-            httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.BadRequest);
+            httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
             responseContent.Should().Be("[\"L'id d'aggregat doit être défini\",\"La tâche dans avoir un nom\"]");
@@ -78,6 +79,7 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpInternalServerErrorWhenPostSameTask()
         {
+            InMemoryDatabase.Reset();
             var eventStream = new InMemoryEventStream();
             InMemoryStartup.EventStream = eventStream;
             var httpClient = BuildNewHttpClient<InMemoryStartup>();
@@ -97,15 +99,16 @@ namespace FunctionalKanban.Api.Test
                 .PostAsJsonAsync(
                     "task", createTaskCommand);
 
-            httpResponseMessage.StatusCode.Should().Equals(HttpStatusCode.InternalServerError);
+            httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
             responseContent.Should().Be("\"Un événement pour cette version d'aggregat est déjà présent\"");
         }
 
         [Fact]
-        public async Task AddTaskeCreatedEvent()
+        public async Task AddTaskCreatedEvent()
         {
+            InMemoryDatabase.Reset();
             var eventStream = new InMemoryEventStream();
             InMemoryStartup.EventStream = eventStream;
             var httpClient = BuildNewHttpClient<InMemoryStartup>();
@@ -124,30 +127,13 @@ namespace FunctionalKanban.Api.Test
                         RemaningWork =  10
                     });
 
-            eventStream.EventLines.Should().HaveCount(1);
+            InMemoryDatabase.EventLines.Should().HaveCount(1);
 
-            var eventLine = eventStream.EventLines.Single();
+            var eventLine = InMemoryDatabase.EventLines.Single();
 
             eventLine.version.Should().Equals(expectedVersion);
             eventLine.aggregateId.Should().Equals(expectedAggregateId);
             eventLine.aggregateName.Should().Equals(expectedAggregateName);
-        }
-
-        private HttpClient BuildNewHttpClient<T>() where T : class
-        {
-            var builder = new WebHostBuilder();
-
-            var config = new ConfigurationBuilder()
-                    .Build();
-
-            var server = new TestServer(builder
-                .UseConfiguration(config)
-                .UseStartup<T>()
-                .UseEnvironment("test"));
-
-            var httpWebClient = server.CreateClient();
-
-            return httpWebClient;
         }
     }
 }

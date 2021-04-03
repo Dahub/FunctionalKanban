@@ -23,7 +23,7 @@
                             Valid: (v) => {
                                     v.Match(
                                         Exception: async (ex)   => await context.SetResponseInternalServerError(ex),
-                                        Success: _              => { context.SetResponseCreated(); return; }
+                                        Success: _              => { context.SetResponseOk(); return; }
                                     );
                             });
 
@@ -39,7 +39,7 @@
             await context.Response.WriteAsJsonAsync(ex.Message);
         }
 
-        private static void SetResponseCreated(this HttpContext context) => context.Response.StatusCode = (int)HttpStatusCode.Created;
+        private static void SetResponseOk(this HttpContext context) => context.Response.StatusCode = (int)HttpStatusCode.OK;
 
         private static CommandHandler GetCommandHandler(this HttpContext context) => context.RequestServices.GetService<CommandHandler>();
 

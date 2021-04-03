@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Infrastructure
+﻿namespace FunctionalKanban.Infrastructure.InMemory
 {
     using System;
     using System.Collections.Generic;
@@ -9,13 +9,9 @@
     using Unit = System.ValueTuple;
 
     public class InMemoryEventStream : IEventStream
-    {
-        public IEnumerable<EventLine> EventLines => _lines.AsReadOnly();
-
-        private readonly static List<EventLine> _lines = new List<EventLine>();
-
+    {    
         public Exceptional<Unit> Push(Event @event) =>
-            @event.CheckUnicity(_lines).Bind(e => e.AppendToLines(_lines));
+            @event.CheckUnicity(InMemoryDatabase._lines).Bind(e => e.AppendToLines(InMemoryDatabase._lines));
     }
 
     public record EventLine(

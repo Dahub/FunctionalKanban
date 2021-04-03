@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Api.Test
+﻿namespace FunctionalKanban.Api.Test.Tools
 {
     using System;
     using FunctionalKanban.Domain.Common;
@@ -14,7 +14,7 @@
         {
         }
 
-        protected override Func<Guid, Option<State>> GetEntityMethod => (id) => None;
+        protected override Func<Guid, Option<State>> GetEntityMethod(IServiceCollection services) => (id) => None;
 
         protected override Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) => (evt) => Unit.Create();
     }
