@@ -54,7 +54,88 @@ namespace FunctionalKanban.Domain.Test
         }
 
         [Fact]
+        public void BeNoneWhenHydratedWithoutCreatedEvent()
+        {
+            var aggregateId = Guid.NewGuid();
+            var aggregateName = typeof(TaskEntity).FullName;
+            var changedStatus = TaskStatus.InProgress;
+            var lastStatus = TaskStatus.Done;
+
+            var events = new List<Event>()
+            {               
+                new TaskStatusChanged()
+                {
+                    AggregateId     = aggregateId,
+                    AggregateName   = aggregateName,
+                    EntityVersion   = 1,
+                    NewStatus       = changedStatus,
+                    TimeStamp       = DateTime.Now
+                },
+                new TaskStatusChanged()
+                {
+                    AggregateId     = aggregateId,
+                    AggregateName   = aggregateName,
+                    EntityVersion   = 2,
+                    NewStatus       = lastStatus,
+                    TimeStamp       = DateTime.Now
+                }
+            };
+
+            var optionTask = TaskEntity.From(events);
+
+            optionTask.Should().Equals(None);
+        }
+
+        [Fact]
         public void BeSomeWhenHydrateWithConsecutivesEvents()
+        {
+            var aggregateId     = Guid.NewGuid();
+            var aggregateName   = typeof(TaskEntity).FullName;
+            var entityName      = Guid.NewGuid().ToString();
+            var remaningWork    = 10u;
+            var initialStatus   = TaskStatus.Todo;
+            var changedStatus   = TaskStatus.InProgress;
+            var lastStatus      = TaskStatus.Done;
+
+            var events = new List<Event>()
+            {
+                new TaskCreated()
+                {
+                    AggregateId     = aggregateId,
+                    AggregateName   = aggregateName,
+                    EntityVersion   = 1,
+                    Name            = entityName,
+                    RemaningWork    = remaningWork,
+                    Status          = initialStatus,
+                    TimeStamp       = DateTime.Now
+                },
+                new TaskStatusChanged()
+                {
+                    AggregateId     = aggregateId,
+                    AggregateName   = aggregateName,
+                    EntityVersion   = 2,
+                    NewStatus       = changedStatus,
+                    TimeStamp       = DateTime.Now
+                },
+                new TaskStatusChanged()
+                {
+                    AggregateId     = aggregateId,
+                    AggregateName   = aggregateName,
+                    EntityVersion   = 3,
+                    NewStatus       = lastStatus,
+                    TimeStamp       = DateTime.Now
+                }
+            };
+
+            var optionTask = TaskEntity.From(events);
+
+            optionTask.Match(
+                None: () => false,
+                Some: (_) => true).Should().BeTrue();
+        }
+
+        [Fact]
+        public void BeSomeWhenHydrateWithNonOrderedConsecutivesEvents()
         {
             var aggregateId = Guid.NewGuid();
             var aggregateName = typeof(TaskEntity).FullName;
@@ -62,26 +143,35 @@ namespace FunctionalKanban.Domain.Test
             var remaningWork = 10u;
             var initialStatus = TaskStatus.Todo;
             var changedStatus = TaskStatus.InProgress;
+            var lastStatus = TaskStatus.Done;
 
             var events = new List<Event>()
-            {
-                new TaskCreated()
+            {               
+                new TaskStatusChanged()
                 {
-                    AggregateId = aggregateId,
-                    AggregateName = aggregateName,
-                    EntityVersion = 1,
-                    Name = entityName,
-                    RemaningWork = remaningWork,
-                    Status = initialStatus,
-                    TimeStamp = DateTime.Now
+                    AggregateId     = aggregateId,
+                    AggregateName   = aggregateName,
+                    EntityVersion   = 2,
+                    NewStatus       = changedStatus,
+                    TimeStamp       = DateTime.Now
                 },
                 new TaskStatusChanged()
                 {
-                    AggregateId = aggregateId,
-                    AggregateName = aggregateName,
-                    EntityVersion = 2,
-                    NewStatus = changedStatus,
-                    TimeStamp = DateTime.Now
+                    AggregateId     = aggregateId,
+                    AggregateName   = aggregateName,
+                    EntityVersion   = 3,
+                    NewStatus       = lastStatus,
+                    TimeStamp       = DateTime.Now
+                },
+                new TaskCreated()
+                {
+                    AggregateId     = aggregateId,
+                    AggregateName   = aggregateName,
+                    EntityVersion   = 1,
+                    Name            = entityName,
+                    RemaningWork    = remaningWork,
+                    Status          = initialStatus,
+                    TimeStamp       = DateTime.Now
                 }
             };
 

@@ -35,7 +35,8 @@
                 AggregateName = typeof(TaskEntity).FullName,
                 EntityVersion = state.Version + 1,
                 NewStatus = cmd.TaskStatus,
-                TimeStamp = cmd.TimeStamp
+                TimeStamp = cmd.TimeStamp,
+                RemaningWork = cmd.TaskStatus.Equals(TaskStatus.Done | TaskStatus.Canceled) ? 0 : state.RemaningWork
             };
 
             return state.ApplyEvent(@event).ToEventAndState(@event);
@@ -48,7 +49,7 @@
             @event switch
             {
                 TaskCreated e => state with { Version = e.EntityVersion, RemaningWork = e.RemaningWork, TaskName = e.Name, TaskStatus = e.Status },
-                TaskStatusChanged e => state with { Version = e.EntityVersion, TaskStatus = e.NewStatus },
+                TaskStatusChanged e => state with { Version = e.EntityVersion, TaskStatus = e.NewStatus, RemaningWork = e.RemaningWork },
                 _ => Invalid(Error("Type d'événement non pris en charge"))
             };
     }

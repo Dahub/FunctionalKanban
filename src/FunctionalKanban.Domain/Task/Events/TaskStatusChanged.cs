@@ -3,5 +3,7 @@
     public sealed record TaskStatusChanged : Common.Event
     {
         public TaskStatus NewStatus { get; init; }
+
+        public uint RemaningWork { get; init; }
     }
 }
