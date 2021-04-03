@@ -18,8 +18,8 @@
             Func<Guid, Option<State>> getEntity,
             Func<Event, Exceptional<Unit>> publishEvent)
         {
-            _getEntity =    getEntity;
-            _publishEvent = publishEvent;
+            _getEntity      = getEntity;
+            _publishEvent   = publishEvent;
         }
 
         public Validation<Exceptional<Unit>> Handle(Command command) =>

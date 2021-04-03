@@ -9,9 +9,13 @@
     using Unit = System.ValueTuple;
 
     public class InMemoryEventStream : IEventStream
-    {    
+    {
+        private readonly IInMemoryDatabase _inMemoryDataBase;
+
+        public InMemoryEventStream(IInMemoryDatabase inMemoryDatabase) => _inMemoryDataBase = inMemoryDatabase;
+
         public Exceptional<Unit> Push(Event @event) =>
-            @event.CheckUnicity(InMemoryDatabase._lines).Bind(e => e.AppendToLines(InMemoryDatabase._lines));
+            @event.CheckUnicity(_inMemoryDataBase.EventLines).Bind(e => e.AppendToLines(_inMemoryDataBase));
     }
 
     public record EventLine(
@@ -25,16 +29,16 @@
 
     internal static class InMemoryEventStreamExt
     {
-        public static Exceptional<Event> CheckUnicity(this Event @event, IList<EventLine> lines)
+        public static Exceptional<Event> CheckUnicity(this Event @event, IEnumerable<EventLine> lines)
             => lines.Where(l => l.aggregateId.Equals(@event.AggregateId)
                  && l.aggregateName.Equals(@event.AggregateName)
                  && l.version.Equals(@event.EntityVersion)).Any()
             ?new AggregateException("Un événement pour cette version d'aggregat est déjà présent")
             :@event;
 
-        public static Exceptional<Unit> AppendToLines(this Event @event, IList<EventLine> lines)
+        public static Exceptional<Unit> AppendToLines(this Event @event, IInMemoryDatabase dataBase)
         {
-            lines.Add(new EventLine(
+            dataBase.Add(new EventLine(
                   id:               Guid.NewGuid(),
                   aggregateId:      @event.AggregateId,
                   aggregateName:    @event.AggregateName,

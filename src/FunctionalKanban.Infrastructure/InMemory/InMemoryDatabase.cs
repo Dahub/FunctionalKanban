@@ -2,12 +2,21 @@
 {
     using System.Collections.Generic;
 
-    public static class InMemoryDatabase
+    public class InMemoryDatabase : IInMemoryDatabase
     {
-        public static IEnumerable<EventLine> EventLines => _lines.AsReadOnly();
+        public InMemoryDatabase() => _lines = new List<EventLine>();
 
-        internal readonly static List<EventLine> _lines = new List<EventLine>();
+        public IEnumerable<EventLine> EventLines => _lines.AsReadOnly();
 
-        public static void Reset() => _lines.Clear();
+        private readonly List<EventLine> _lines;
+
+        public void Add(EventLine evtLine) => _lines.Add(evtLine);
+    }
+
+    public interface IInMemoryDatabase
+    {
+        IEnumerable<EventLine> EventLines { get; }
+
+        void Add(EventLine evtLine);
     }
 }

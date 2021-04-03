@@ -9,7 +9,6 @@ namespace FunctionalKanban.Api.Test
     using FunctionalKanban.Api.Test.Tools;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
-    using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 
     public class PostCreateTaskShould : BaseTestClass
@@ -17,7 +16,6 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpOkWhenPostCreateTaskCommand()
         {
-            InMemoryDatabase.Reset();
             var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
@@ -35,7 +33,6 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithNull()
         {
-            InMemoryDatabase.Reset();
             var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync<object>(
@@ -50,7 +47,6 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithWrongCommand()
         {
-            InMemoryDatabase.Reset();
             var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
@@ -65,7 +61,6 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithIncorrectCommand()
         {
-            InMemoryDatabase.Reset();
             var httpClient = BuildNewHttpClient<DoNothingStartup>();
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync("task", new CreateTask());
@@ -79,9 +74,6 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpInternalServerErrorWhenPostSameTask()
         {
-            InMemoryDatabase.Reset();
-            var eventStream = new InMemoryEventStream();
-            InMemoryStartup.EventStream = eventStream;
             var httpClient = BuildNewHttpClient<InMemoryStartup>();
 
             var createTaskCommand = new CreateTask()
@@ -107,10 +99,7 @@ namespace FunctionalKanban.Api.Test
 
         [Fact]
         public async Task AddTaskCreatedEvent()
-        {
-            InMemoryDatabase.Reset();
-            var eventStream = new InMemoryEventStream();
-            InMemoryStartup.EventStream = eventStream;
+        { 
             var httpClient = BuildNewHttpClient<InMemoryStartup>();
 
             var expectedAggregateId = Guid.NewGuid();
@@ -127,9 +116,11 @@ namespace FunctionalKanban.Api.Test
                         RemaningWork =  10
                     });
 
-            InMemoryDatabase.EventLines.Should().HaveCount(1);
+            var eventLines = InMemoryStartup.DataBase.EventLines.Where(e => e.aggregateId.Equals(expectedAggregateId));
 
-            var eventLine = InMemoryDatabase.EventLines.Single();
+            eventLines.Should().HaveCount(1);
+
+            var eventLine = eventLines.Single();
 
             eventLine.version.Should().Equals(expectedVersion);
             eventLine.aggregateId.Should().Equals(expectedAggregateId);

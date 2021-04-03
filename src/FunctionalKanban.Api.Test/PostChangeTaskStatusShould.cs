@@ -16,7 +16,6 @@
         [Fact]
         public async Task ReturnHttpOkWhenPostChangeTaskStatus()
         {
-            InMemoryDatabase.Reset();
             var entityId = Guid.NewGuid();
 
             await InitNewTask(entityId);
@@ -33,8 +32,10 @@
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            InMemoryDatabase.EventLines.Should().HaveCount(2);
-            InMemoryDatabase.EventLines.FirstOrDefault(e => e.version.Equals(2)).Should().NotBeNull();
+            var lines = InMemoryStartup.DataBase.EventLines.Where(e => e.aggregateId.Equals(entityId));
+
+            lines.Should().HaveCount(2);
+            lines.FirstOrDefault(e => e.version.Equals(2)).Should().NotBeNull();
         }
 
         private async Task InitNewTask(Guid entityId)

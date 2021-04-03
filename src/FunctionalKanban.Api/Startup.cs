@@ -23,13 +23,15 @@ namespace FunctionalKanban.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IEntityStateRepository, InMemoryEntityStateRepository>();
-            services.AddTransient<IEventStream, InMemoryEventStream>();
-            services.AddTransient<IEventBus, EventBus>();
+            services.AddSingleton<IInMemoryDatabase>(new InMemoryDatabase());
+
+            services.AddScoped<IEntityStateRepository, InMemoryEntityStateRepository>();
+            services.AddScoped<IEventStream, InMemoryEventStream>();
+            services.AddScoped<IEventBus, EventBus>();
 
             services.AddRouting();
 
-            services.AddTransient(s => new CommandHandler(
+            services.AddScoped(s => new CommandHandler(
                 getEntity: GetEntityMethod(services),
                 publishEvent: PublishEventMethod(services)));
         }
