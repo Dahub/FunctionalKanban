@@ -1,7 +1,5 @@
 ﻿namespace FunctionalKanban.Infrastructure
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -11,33 +9,19 @@
     {
         private readonly IEventStream _eventStream;
 
-        private readonly IList<IViewProjectionHandler> _subscribers = new List<IViewProjectionHandler>();
+        private readonly INotifier _notifier;
 
         public EventBus(
-            IEventStream eventStream) => _eventStream = eventStream;
+            IEventStream eventStream,
+            INotifier notifier)
+        {
+            _eventStream = eventStream;
+            _notifier = notifier;
+        }
 
         public Exceptional<Unit> Publish(Event @event) =>
             _eventStream.Push(@event).Match(
                 Exception: (ex) => ex,
-                Success: (_) => PublishToSubscribers(_subscribers, @event));
-
-        private Exceptional<Unit> PublishToSubscribers(IList<IViewProjectionHandler> subscribers, Event @event)
-        {
-            var errors = subscribers.Map((s) => s.Handle(@event)).Where(e => e.Exception);
-            return errors.Any()
-                ? errors.First()
-                : Unit.Create();
-        }            
-
-        public Unit Subscribe(IViewProjectionHandler viewProjectionHandler) =>
-            _subscribers.Contains(viewProjectionHandler)
-            ? AddSubscriber(viewProjectionHandler)
-            : Unit.Create();
-
-        private Unit AddSubscriber(IViewProjectionHandler subscriber) 
-        { 
-            _subscribers.Add(subscriber);
-            return Unit.Create();
-        }
+                Success: (_) => _notifier.Notity(@event));
     }
 }

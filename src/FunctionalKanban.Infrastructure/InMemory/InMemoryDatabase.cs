@@ -1,6 +1,7 @@
 ﻿namespace FunctionalKanban.Infrastructure.InMemory
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using FunctionalKanban.Domain.Task.ViewProjections;
@@ -9,12 +10,12 @@
     {
         private readonly List<EventLine> _eventLines;
 
-        private readonly IDictionary<Guid, TaskViewProjection> _taskViewProjections;
+        private readonly ConcurrentDictionary<Guid, TaskViewProjection> _taskViewProjections;
 
         public InMemoryDatabase()
         {
             _eventLines = new List<EventLine>();
-            _taskViewProjections = new Dictionary<Guid, TaskViewProjection>();
+            _taskViewProjections = new ConcurrentDictionary<Guid, TaskViewProjection>();
         }
 
         public IEnumerable<EventLine> EventLines => _eventLines.AsReadOnly();
@@ -31,7 +32,7 @@
             }
             else
             {
-                _taskViewProjections.Add(viewProjection.Id, viewProjection);
+                _taskViewProjections.TryAdd(viewProjection.Id, viewProjection);
             }
         }
     }

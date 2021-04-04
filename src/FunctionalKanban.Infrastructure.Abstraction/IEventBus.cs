@@ -7,7 +7,5 @@
     public interface IEventBus
     {
         Exceptional<Unit> Publish(Event @event);
-
-        Unit Subscribe(IViewProjectionHandler handler);
     }
 }

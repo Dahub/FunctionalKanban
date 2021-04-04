@@ -28,6 +28,7 @@ namespace FunctionalKanban.Api
 
             services.AddScoped<IEntityStateRepository, InMemoryEntityStateRepository>();
             services.AddScoped<IEventStream, InMemoryEventStream>();
+            services.AddScoped<INotifier, InMemoryNotifier>();
             services.AddScoped<IEventBus, EventBus>();
 
             services.AddRouting();

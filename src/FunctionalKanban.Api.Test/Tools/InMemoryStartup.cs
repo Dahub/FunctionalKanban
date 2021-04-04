@@ -21,6 +21,8 @@
             (id) => new InMemoryEntityStateRepository(DataBase).GetById(id);
 
         protected override Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) =>
-            (evt) => new EventBus(new InMemoryEventStream(DataBase)).Publish(evt);
+            (evt) => new EventBus(
+                new InMemoryEventStream(DataBase),
+                new InMemoryNotifier(DataBase)).Publish(evt);
     }
 }

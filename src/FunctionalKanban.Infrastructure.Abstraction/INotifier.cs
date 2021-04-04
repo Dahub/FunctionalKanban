@@ -4,8 +4,8 @@
     using FunctionalKanban.Functional;
     using Unit = System.ValueTuple;
 
-    public interface INotifierService
+    public interface INotifier
     {
-        Exceptional<Unit> Notify<T>(IViewProjectionRepository<T> viewProjectionRepository, Event @event) where T : ViewProjection;
+        Exceptional<Unit> Notity(Event @event);
     }
 }
