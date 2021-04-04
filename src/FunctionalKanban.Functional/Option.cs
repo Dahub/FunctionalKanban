@@ -15,11 +15,11 @@
 
     public struct Option<T> : IEquatable<Option.None>, IEquatable<Option<T>>
     {
-        readonly T _value;
+        private readonly T _value;
 
-        readonly bool _isSome;
+        private readonly bool _isSome;
 
-        bool _isNone => !_isSome;
+        private bool _isNone => !_isSome;
 
         private Option(T value)
         {

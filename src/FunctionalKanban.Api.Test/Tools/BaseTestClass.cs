@@ -7,7 +7,7 @@
 
     public abstract class BaseTestClass
     {
-        protected HttpClient BuildNewHttpClient<T>() where T : class
+        protected static HttpClient BuildNewHttpClient<T>() where T : class
         {
             var builder = new WebHostBuilder();
 

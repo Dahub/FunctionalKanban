@@ -26,7 +26,7 @@
             }
 
             Ex = ex;
-            Value = default(T);
+            Value = default;
         }
 
         internal Exceptional(T right)

@@ -41,7 +41,7 @@
         {
             IsValid = false;
             Errors = errors;
-            Value = default(T);
+            Value = default;
         }
 
         internal Validation(T right)

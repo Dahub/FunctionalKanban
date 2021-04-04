@@ -46,7 +46,8 @@
             EntityHelper.From<TaskState, TaskCreated>(
                 history, 
                 () => new TaskState(), 
-                (state, evt) => ApplyEvent(state, evt)).Map(t => (State)t);
+                (state, evt) => ApplyEvent(state, evt))
+            .Map(t => (State)t);
 
         private static Validation<TaskState> ApplyEvent(this TaskState state, Event @event) =>
             @event switch
