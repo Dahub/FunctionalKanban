@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
     using static FunctionalKanban.Functional.F;

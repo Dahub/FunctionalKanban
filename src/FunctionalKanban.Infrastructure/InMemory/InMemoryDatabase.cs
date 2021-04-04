@@ -1,9 +1,9 @@
 ﻿namespace FunctionalKanban.Infrastructure.InMemory
 {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.ViewProjections;
+    using System.Linq;
+    using FunctionalKanban.Domain.Task.ViewProjections;
 
     public class InMemoryDatabase : IInMemoryDatabase
     {
