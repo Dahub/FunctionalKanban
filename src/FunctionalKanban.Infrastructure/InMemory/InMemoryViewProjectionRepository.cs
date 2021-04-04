@@ -15,14 +15,14 @@
 
         public InMemoryViewProjectionRepository(IInMemoryDatabase inMemoryDatabase) => _inMemoryDataBase = inMemoryDatabase;
 
-        public Option<T> GetById(Guid id)
+        public Exceptional<Option<T>> GetById(Guid id)
         {
             if (typeof(T) == typeof(TaskViewProjection))
             {
                 return GetTaskViewProjectionById(id).Map((p) => p as T);
             }
 
-            return None;
+            return Exceptional<Option<T>>(None);
         }
 
         public Exceptional<Unit> Upsert(T viewProjection)

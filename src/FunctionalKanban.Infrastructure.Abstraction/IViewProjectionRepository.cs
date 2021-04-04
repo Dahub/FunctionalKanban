@@ -7,7 +7,7 @@
 
     public interface IViewProjectionRepository<T> where T: ViewProjection
     {
-        Option<T> GetById(Guid id);
+        Exceptional<Option<T>> GetById(Guid id);
 
         Exceptional<Unit> Upsert(T viewProjection);
     }
