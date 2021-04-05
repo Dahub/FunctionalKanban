@@ -4,6 +4,7 @@ namespace FunctionalKanban.Api
     using FunctionalKanban.Application;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -31,6 +32,8 @@ namespace FunctionalKanban.Api
             services.AddScoped<INotifier, InMemoryNotifier>();
             services.AddScoped<IEventBus, EventBus>();
 
+            services.AddScoped<IViewProjectionRepository<TaskViewProjection>, InMemoryViewProjectionRepository<TaskViewProjection>>();
+
             services.AddRouting();
 
             services.AddScoped(s => new CommandHandler(
@@ -51,6 +54,9 @@ namespace FunctionalKanban.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => await context.Response.WriteAsync("Hello world !"));
+
+                endpoints.MapGet("/task", async context => await context.ExecuteQuery<TaskViewProjection>());
+
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
                 endpoints.MapPost("/task/changeStatus", async context => await context.ExecuteCommand<ChangeTaskStatus>());
             });

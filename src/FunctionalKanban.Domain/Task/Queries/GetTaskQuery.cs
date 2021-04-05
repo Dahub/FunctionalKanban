@@ -5,7 +5,7 @@
     using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
 
-    public record GetTaskQuery : Query<TaskViewProjection>
+    public record GetTaskQuery : Query
     {
         public Option<uint> MinRemaningWork { get; init; }
 
@@ -19,10 +19,10 @@
 
         public GetTaskQuery WithTaskStatus(TaskStatus taskStatus) => this with { TaskStatus = taskStatus };
 
-        public override Func<TaskViewProjection, bool> BuildPredicate()
-            => (p) =>
-            MoreOrEqualThanValue(p.RemaningWork, MinRemaningWork)
-            && StrictlyLessThanValue(p.RemaningWork, MaxRemaningWork)
-            && EqualToValue(p.Status, TaskStatus);
+        public override Func<ViewProjection, bool> BuildPredicate()
+            => (p) => 
+            MoreOrEqualThanValue(((TaskViewProjection)p).RemaningWork, MinRemaningWork)
+            && StrictlyLessThanValue(((TaskViewProjection) p).RemaningWork, MaxRemaningWork)
+            && EqualToValue(((TaskViewProjection)p).Status, TaskStatus);
     }
 }

@@ -16,7 +16,7 @@
 
         public InMemoryViewProjectionRepository(IInMemoryDatabase inMemoryDatabase) => _inMemoryDataBase = inMemoryDatabase;
 
-        public Exceptional<IEnumerable<T>> Get(Func<T, bool> predicate)
+        public Exceptional<IEnumerable<ViewProjection>> Get(Func<ViewProjection, bool> predicate)
         {
             if (typeof(T) == typeof(TaskViewProjection))
             {
@@ -47,7 +47,8 @@
 
             return new Exception($"Impossible d'insérer le type de projection {typeof(T)}");
         }
-        private Exceptional<IEnumerable<T>> GetByPredicate(Func<T, bool> predicate, IEnumerable<T> projections) =>
+
+        private Exceptional<IEnumerable<ViewProjection>> GetByPredicate(Func<ViewProjection, bool> predicate, IEnumerable<T> projections) =>
             Exceptional(projections.Where(predicate));
 
         private Option<TaskViewProjection> GetTaskViewProjectionById(Guid id)
