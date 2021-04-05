@@ -31,7 +31,6 @@
             var startup = (ITestStartup)Activator.CreateInstance(typeof(T), new object[] { context.Configuration });
             startup.DataBase = dataBase;
             return startup;
-
         }
     }
 }

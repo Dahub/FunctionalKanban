@@ -26,19 +26,19 @@ namespace FunctionalKanban.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IInMemoryDatabase>(BuildDataBase());
+            services.AddScoped<IEventStream, InMemoryEventStream>();
 
             services.AddScoped<IEntityStateRepository, InMemoryEntityStateRepository>();
-            services.AddScoped<IEventStream, InMemoryEventStream>();
-            services.AddScoped<INotifier, Notifier>();
-            services.AddScoped<IEventBus, EventBus>();
-
             services.AddScoped<IViewProjectionRepository<TaskViewProjection>, InMemoryViewProjectionRepository<TaskViewProjection>>();
 
-            services.AddRouting();
-
+            services.AddScoped<INotifier, Notifier>();
+            services.AddScoped<IEventBus, EventBus>();
+            
             services.AddScoped(s => new CommandHandler(
                 getEntity: GetEntityMethod(services),
                 publishEvent: PublishEventMethod(services)));
+
+            services.AddRouting();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

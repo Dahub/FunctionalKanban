@@ -6,19 +6,23 @@
     using FunctionalKanban.Domain.Task.Queries;
     using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
+    using static FunctionalKanban.Functional.F;
 
     public static class QueryBuilder
     {
-        public static Exceptional<Query> BuildQuery<T>(IDictionary<string, string> parameters) where T : ViewProjection
+        public static Try<Query> BuildQuery<T>(IDictionary<string, string> parameters) where T : ViewProjection
         {
-            if (typeof(T) == typeof(TaskViewProjection))
+            return Try<Query>(() =>
             {
-                return BuildGetTaskQuery(parameters);
-            }
-            else
-            {
-                return new Exception("Type de projection non pris en charge");
-            }
+                if (typeof(T) == typeof(TaskViewProjection))
+                {
+                    return BuildGetTaskQuery(parameters);
+                }
+                else
+                {
+                    throw new Exception("Type de projection non pris en charge");
+                }
+            });
         }
 
         private static GetTaskQuery BuildGetTaskQuery(IDictionary<string, string> parameters)

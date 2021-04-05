@@ -37,15 +37,16 @@
                 .Bind(BuildQuery<T>)
                 .Bind(BuildRepository<T>(context))
                 .Bind(LaunchQuery<T>())
+                .Run()
                 .Match(
                     Exception: (ex)     => context.SetResponseInternalServerError(ex),
                     Success: (v)        => context.SetResponseOk(v.Map(p => (T)p)));
 
-        private static Func<(Query, IViewProjectionRepository<T>), Exceptional<IEnumerable<ViewProjection>>> LaunchQuery<T>() where T : ViewProjection =>
+        private static Func<(Query, IViewProjectionRepository<T>), Try<IEnumerable<ViewProjection>>> LaunchQuery<T>() where T : ViewProjection =>
             tuple => tuple.Item2.Get(tuple.Item1.BuildPredicate());
         
-        private static Func<Query, Exceptional<(Query, IViewProjectionRepository<T>)>> BuildRepository<T>(HttpContext context) where T : ViewProjection =>
-            query => (query, context.RequestServices.GetService<IViewProjectionRepository<T>>());
+        private static Func<Query, Try<(Query, IViewProjectionRepository<T>)>> BuildRepository<T>(HttpContext context) where T : ViewProjection =>
+            query => Try(() => (query, context.RequestServices.GetService<IViewProjectionRepository<T>>()));
 
         private static Func<Command, Validation<Exceptional<ValueTuple>>> HandleWithCommandHandler(HttpContext context) =>
             c => context.RequestServices.GetService<CommandHandler>().Handle(c);
@@ -62,24 +63,16 @@
             }
         }
 
-        private static Exceptional<IDictionary<string, string>> ExtractParameters(this HttpContext context)
+        private static Try<Dictionary<string, string>> ExtractParameters(this HttpContext context)
         {
-            try
+            return Try(() => context.Request.Query.Keys.ToDictionary((k) => k, (k) => GetValue(k, context.Request.Query)));
+            string GetValue(string key, IQueryCollection parameters)
             {
-                return context.Request.Query.Keys.ToDictionary((k) => k, (k) => GetValue(k, context.Request.Query));
-
-                string GetValue(string key, IQueryCollection parameters)
+                if (parameters.TryGetValue(key, out var value))
                 {
-                    if (parameters.TryGetValue(key, out var value))
-                    {
-                        return value;
-                    }
-                    throw new Exception($"Impossible de lire le paramètre {key}");
+                    return value;
                 }
-            }
-            catch (Exception ex)
-            {
-                return ex;
+                throw new Exception($"Impossible de lire le paramètre {key}");
             }
         }
 
