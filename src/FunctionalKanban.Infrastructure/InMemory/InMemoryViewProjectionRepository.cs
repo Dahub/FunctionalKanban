@@ -1,6 +1,7 @@
 ﻿namespace FunctionalKanban.Infrastructure.InMemory
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.ViewProjections;
@@ -15,6 +16,16 @@
 
         public InMemoryViewProjectionRepository(IInMemoryDatabase inMemoryDatabase) => _inMemoryDataBase = inMemoryDatabase;
 
+        public Exceptional<IEnumerable<T>> Get(Func<T, bool> predicate)
+        {
+            if (typeof(T) == typeof(TaskViewProjection))
+            {
+                return GetByPredicate(predicate, _inMemoryDataBase.TaskViewProjections.Map(p => p as T));
+            }
+
+            return new Exception($"projection de type {typeof(T)} non prise en charge");
+        }
+        
         public Exceptional<Option<T>> GetById(Guid id)
         {
             if (typeof(T) == typeof(TaskViewProjection))
@@ -34,8 +45,10 @@
                 return Unit.Create();
             }
 
-            return new Exception("Impossible d'insérer ce type de projection");
+            return new Exception($"Impossible d'insérer le type de projection {typeof(T)}");
         }
+        private Exceptional<IEnumerable<T>> GetByPredicate(Func<T, bool> predicate, IEnumerable<T> projections) =>
+            Exceptional(projections.Where(predicate));
 
         private Option<TaskViewProjection> GetTaskViewProjectionById(Guid id)
         {

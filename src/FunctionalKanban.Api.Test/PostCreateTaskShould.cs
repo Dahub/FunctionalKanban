@@ -103,7 +103,7 @@ namespace FunctionalKanban.Api.Test
             var httpClient = BuildNewHttpClient<InMemoryStartup>();
 
             var expectedAggregateId = Guid.NewGuid();
-            var expectedAggregateName = typeof(TaskEntity).Name;
+            var expectedAggregateName = typeof(TaskEntity).FullName;
             var expectedVersion = 1;
 
             _ = await httpClient
@@ -112,7 +112,7 @@ namespace FunctionalKanban.Api.Test
                     new CreateTask()
                     {
                         AggregateId =   expectedAggregateId,
-                        Name =          Guid.NewGuid().ToString(),
+                        Name = Guid.NewGuid().ToString(),
                         RemaningWork =  10
                     });
 
@@ -124,7 +124,38 @@ namespace FunctionalKanban.Api.Test
 
             eventLine.version.Should().Equals(expectedVersion);
             eventLine.aggregateId.Should().Equals(expectedAggregateId);
-            eventLine.aggregateName.Should().Equals(expectedAggregateName);
+            eventLine.aggregateName.Should().Be(expectedAggregateName);
+        }
+
+        [Fact]
+        public async Task PopulateTaskViewProjection()
+        {
+            var httpClient = BuildNewHttpClient<InMemoryStartup>();
+
+            var expectedAggregateId = Guid.NewGuid();
+            var expectedName = Guid.NewGuid().ToString();
+            var expectedStatus = Domain.Task.TaskStatus.Todo;
+            var expectedRemaningWork = 10u;
+
+            _ = await httpClient
+                .PostAsJsonAsync(
+                    "task",
+                    new CreateTask()
+                    {
+                        AggregateId = expectedAggregateId,
+                        Name = expectedName,
+                        RemaningWork = expectedRemaningWork
+                    });
+
+            var taskViewProjections = InMemoryStartup.DataBase.TaskViewProjections.Where(p => p.Id.Equals(expectedAggregateId));
+
+            taskViewProjections.Should().HaveCount(1);
+
+            var taskViewProjection = taskViewProjections.Single();
+
+            taskViewProjection.Name.Should().Be(expectedName);
+            taskViewProjection.Status.Should().Be(expectedStatus);
+            taskViewProjection.RemaningWork.Should().Be(expectedRemaningWork);
         }
     }
 }

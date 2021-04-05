@@ -1,6 +1,7 @@
 ﻿namespace FunctionalKanban.Infrastructure.Abstraction
 {
     using System;
+    using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Functional;
     using Unit = System.ValueTuple;
@@ -10,5 +11,7 @@
         Exceptional<Option<T>> GetById(Guid id);
 
         Exceptional<Unit> Upsert(T viewProjection);
+
+        Exceptional<IEnumerable<T>> Get(Func<T, bool> predicate);
     }
 }
