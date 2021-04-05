@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Net;
+    using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using FluentAssertions;
@@ -17,10 +18,12 @@
         public async Task ReturnHttpOkWhenPostChangeTaskStatus()
         {
             var entityId = Guid.NewGuid();
+            var dataBase = new InMemoryDatabase();
 
-            await InitNewTask(entityId);
+            var httpClient = BuildNewHttpClient<InMemoryStartup>(dataBase);
 
-            var httpClient = BuildNewHttpClient<InMemoryStartup>();
+            await InitNewTask(httpClient, entityId);
+            
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
                     "task/changeStatus",
@@ -32,15 +35,13 @@
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var lines = InMemoryStartup.DataBase.EventLines.Where(e => e.aggregateId.Equals(entityId));
+            var lines = dataBase.EventLines.Where(e => e.aggregateId.Equals(entityId));
 
             lines.Should().HaveCount(2);
             lines.FirstOrDefault(e => e.version.Equals(2)).Should().NotBeNull();
         }
 
-        private async Task InitNewTask(Guid entityId)
-        {
-            var httpClient = BuildNewHttpClient<InMemoryStartup>();
+        private async Task InitNewTask(HttpClient httpClient, Guid entityId) => 
             _ = await httpClient
                 .PostAsJsonAsync(
                     "task",
@@ -50,6 +51,5 @@
                         Name = Guid.NewGuid().ToString(),
                         RemaningWork = 10
                     });
-        }
     }
 }

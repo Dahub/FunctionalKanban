@@ -11,14 +11,14 @@
     {
         public static Exceptional<Query> BuildQuery<T>(IDictionary<string, string> parameters) where T : ViewProjection
         {
-            Query query = null;
-
             if (typeof(T) == typeof(TaskViewProjection))
             {
-                query = BuildGetTaskQuery(parameters);
+                return BuildGetTaskQuery(parameters);
             }
-
-            return query;
+            else
+            {
+                return new Exception("Type de projection non pris en charge");
+            }
         }
 
         private static GetTaskQuery BuildGetTaskQuery(IDictionary<string, string> parameters)

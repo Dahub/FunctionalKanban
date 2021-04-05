@@ -25,11 +25,11 @@ namespace FunctionalKanban.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IInMemoryDatabase>(new InMemoryDatabase());
+            services.AddSingleton<IInMemoryDatabase>(BuildDataBase());
 
             services.AddScoped<IEntityStateRepository, InMemoryEntityStateRepository>();
             services.AddScoped<IEventStream, InMemoryEventStream>();
-            services.AddScoped<INotifier, InMemoryNotifier>();
+            services.AddScoped<INotifier, Notifier>();
             services.AddScoped<IEventBus, EventBus>();
 
             services.AddScoped<IViewProjectionRepository<TaskViewProjection>, InMemoryViewProjectionRepository<TaskViewProjection>>();
@@ -54,7 +54,6 @@ namespace FunctionalKanban.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => await context.Response.WriteAsync("Hello world !"));
-
                 endpoints.MapGet("/task", async context => await context.ExecuteQuery<TaskViewProjection>());
 
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
@@ -67,5 +66,7 @@ namespace FunctionalKanban.Api
 
         protected virtual Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) =>
             (evt) => services.BuildServiceProvider().GetRequiredService<IEventBus>().Publish(evt);
+
+        protected virtual InMemoryDatabase BuildDataBase() => new InMemoryDatabase();
     }
 }

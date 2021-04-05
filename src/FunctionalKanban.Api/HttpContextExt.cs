@@ -13,40 +13,39 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using static FunctionalKanban.Functional.F;
+    using static FunctionalKanban.Application.CommandValidator;
+    using static FunctionalKanban.Application.QueryBuilder;
 
     internal static class HttpContextExt
     {
         public static async Task ExecuteCommand<T>(this HttpContext context) where T : Command =>
             (await context.ReadCommandAsync<T>())
-                       .Bind(CommandValidator.Validate)
+                       .Bind(Validate)
                        .Bind(HandleWithCommandHandler(context))
                        .Match(
-                           Invalid: async (errors) => await context.SetResponseBadRequest(errors),
-                           Valid: (v) =>
+                           Invalid: async (errors)  => await context.SetResponseBadRequest(errors),
+                           Valid:   (v)             =>
                            {
                                v.Match(
-                                    Exception: async (ex) => await context.SetResponseInternalServerError(ex),
-                                    Success: _ => { context.SetResponseOk(); return; }
+                                    Exception:  async (ex)  => await context.SetResponseInternalServerError(ex),
+                                    Success:    _           => { context.SetResponseOk(); return; }
                                 );
                            });
 
         public static async Task ExecuteQuery<T>(this HttpContext context) where T : ViewProjection =>
             await context.ExtractParameters()
-                .Bind(BuildQuery<T>())
+                .Bind(BuildQuery<T>)
                 .Bind(BuildRepository<T>(context))
                 .Bind(LaunchQuery<T>())
                 .Match(
-                    Exception: (ex) => context.Response.WriteAsJsonAsync(ex.ToString()),
-                    Success: (v) => context.Response.WriteAsJsonAsync(v.Map(p => (T)p)));
+                    Exception: (ex)     => context.SetResponseInternalServerError(ex),
+                    Success: (v)        => context.SetResponseOk(v.Map(p => (T)p)));
 
         private static Func<(Query, IViewProjectionRepository<T>), Exceptional<IEnumerable<ViewProjection>>> LaunchQuery<T>() where T : ViewProjection =>
             tuple => tuple.Item2.Get(tuple.Item1.BuildPredicate());
         
         private static Func<Query, Exceptional<(Query, IViewProjectionRepository<T>)>> BuildRepository<T>(HttpContext context) where T : ViewProjection =>
             query => (query, context.RequestServices.GetService<IViewProjectionRepository<T>>());
-
-        private static Func<IDictionary<string, string>, Exceptional<Query>> BuildQuery<T>() where T : ViewProjection =>
-            parameters => QueryBuilder.BuildQuery<T>(parameters);
 
         private static Func<Command, Validation<Exceptional<ValueTuple>>> HandleWithCommandHandler(HttpContext context) =>
             c => context.RequestServices.GetService<CommandHandler>().Handle(c);
@@ -75,7 +74,7 @@
                     {
                         return value;
                     }
-                    return string.Empty;
+                    throw new Exception($"Impossible de lire le paramètre {key}");
                 }
             }
             catch (Exception ex)
@@ -97,5 +96,11 @@
         }
 
         private static void SetResponseOk(this HttpContext context) => context.Response.StatusCode = (int)HttpStatusCode.OK;
+
+        private static async Task SetResponseOk<TValue>(this HttpContext context, TValue value)
+        {
+            context.SetResponseOk();
+            await context.Response.WriteAsJsonAsync(value);
+        }
     }
 }
