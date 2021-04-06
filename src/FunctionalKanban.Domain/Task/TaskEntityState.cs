@@ -14,12 +14,9 @@
 
         public uint RemaningWork { get; init; }
 
-        public override Option<State> From(IEnumerable<Event> history) =>
-            EntityStateHelper.From<TaskCreated>(
-                history,
-                () => new TaskEntityState(),
-                (state, evt) => ApplyEvent(evt));
-
+        public override Option<State> From(IEnumerable<Event> history) => 
+            From<TaskCreated>(history, () => new TaskEntityState());
+       
         public override Validation<State> ApplyEvent(Event @event) =>
             @event switch
             {

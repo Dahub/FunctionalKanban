@@ -20,7 +20,7 @@
                 EntityVersion   = 1
             };
 
-            return new TaskEntityState().ApplyEvent(@event).ToEventAndState(@event);
+            return new TaskEntityState().Mutate(@event);
         }
 
         public static Validation<EventAndState> ChangeStatus(
@@ -37,7 +37,7 @@
                 RemaningWork    = cmd.TaskStatus.Equals(TaskStatus.Done | TaskStatus.Canceled) ? 0 : state.RemaningWork
             };
 
-            return state.ApplyEvent(@event).ToEventAndState(@event);
+            return state.Mutate(@event);
         }
     }
 }
