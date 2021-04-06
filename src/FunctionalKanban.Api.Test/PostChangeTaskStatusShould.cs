@@ -31,7 +31,7 @@
                     {
                         AggregateId = entityId,
                         TaskStatus = Domain.Task.TaskStatus.InProgress
-                    });
+                    }); 
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -41,7 +41,7 @@
             lines.FirstOrDefault(e => e.Version.Equals(2)).Should().NotBeNull();
         }
 
-        private async Task InitNewTask(HttpClient httpClient, Guid entityId) => 
+        private static async Task InitNewTask(HttpClient httpClient, Guid entityId) => 
             _ = await httpClient
                 .PostAsJsonAsync(
                     "task",

@@ -19,7 +19,7 @@ namespace FunctionalKanban.Application.Test
             var expectedEntityName = Guid.NewGuid().ToString();
             var expectedRemaningWork = 10;
             var expectedTimeStamp = DateTime.Now;
-            var expectedAggregateName = typeof(TaskEntity).FullName;
+            var expectedAggregateName = typeof(TaskEntityState).FullName;
 
             TaskCreated lastPublishedEvent = null;
 
@@ -31,7 +31,7 @@ namespace FunctionalKanban.Application.Test
             };
 
             var commandHandler = new CommandHandler(
-                getEntity:      (id)    => Some((State)new TaskState()),
+                getEntity:      (id)    => Some((State)new TaskEntityState()),
                 publishEvent:   (evt)   => { lastPublishedEvent = evt as TaskCreated; return Unit.Create(); });
 
             var validationResult = commandHandler.Handle(command);
@@ -62,7 +62,7 @@ namespace FunctionalKanban.Application.Test
             };
 
             var commandHandler = new CommandHandler(
-                getEntity:      (id) => Some((State)new TaskState()
+                getEntity:      (id) => Some((State)new TaskEntityState()
                                 {
                                     Version =       1,
                                     TaskStatus =    TaskStatus.Todo,

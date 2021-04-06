@@ -18,34 +18,35 @@
         public Exceptional<Option<State>> GetById(Guid id) =>
             GetEventLinesById(_inMemoryDataBase.EventLines, id)
                 .Bind(WithEntityType)
-                .Bind(WithFromMethod)
+                .Bind(WithStateInstance)
+                // .Bind(WithFromMethod)
                 .Bind(WithEvents)
-                .Bind(WithMethodInvocation).Run();
+                .Bind(WithFromExecution).Run();
 
-        private static Try<Option<State>> WithMethodInvocation(Option<(MethodInfo method, IEnumerable<Event> events)> tuple) =>
+        private static Try<Option<(State, IEnumerable<EventLine>)>> WithStateInstance(Option<(Type entityType, IEnumerable<EventLine> lines)> tuple) =>
+           Try(() =>
+           {
+               return tuple.Match(
+                   None: () => None,
+                   Some: (tuple) =>
+                   {
+                       var state = (State)Activator.CreateInstance(tuple.entityType);
+                       return Some((state, tuple.lines));
+                   });
+           });
+
+        private static Try<Option<State>> WithFromExecution(Option<(State state, IEnumerable<Event> events)> tuple) =>
             Try(() => tuple.Match(
                     None: () => None,
-                    Some: (tuple) => (Option<State>)tuple.method.Invoke(null, new object[] { tuple.events })
+                    Some: (tuple) => (Option<State>)tuple.state.From(tuple.events)
                 ));
 
-        private static Try<Option<(MethodInfo method, IEnumerable<Event> lines)>> WithEvents(Option<(MethodInfo method, IEnumerable<EventLine> lines)> tuple) =>
+        private static Try<Option<(State state, IEnumerable<Event> lines)>> WithEvents(Option<(State state, IEnumerable<EventLine> lines)> tuple) =>
             Try(() =>
             {
                 return tuple.Match(
                     None: () => None,
-                    Some: (tuple) => Some((tuple.method, tuple.lines.Select(el => el.Data))));
-            });
-
-        private static Try<Option<(MethodInfo, IEnumerable<EventLine>)>> WithFromMethod(Option<(Type entityType, IEnumerable<EventLine> lines)> tuple) =>
-            Try(() =>
-            {
-                return tuple.Match(
-                    None: () => None,
-                    Some: (tuple) =>
-                    {
-                        var fromMethod = tuple.entityType.GetMethod("From");
-                        return fromMethod == null ? None : Some((fromMethod, tuple.lines));
-                    });
+                    Some: (tuple) => Some((tuple.state, tuple.lines.Select(el => el.Data))));
             });
 
         private static Try<Option<(Type, IEnumerable<EventLine>)>> WithEntityType(Option<IEnumerable<EventLine>> lines) =>

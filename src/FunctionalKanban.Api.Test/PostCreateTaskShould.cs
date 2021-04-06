@@ -110,7 +110,7 @@ namespace FunctionalKanban.Api.Test
             var httpClient = BuildNewHttpClient<InMemoryStartup>(dataBase);
 
             var expectedAggregateId = Guid.NewGuid();
-            var expectedAggregateName = typeof(TaskEntity).FullName;
+            var expectedAggregateName = typeof(TaskEntityState).FullName;
             var expectedVersion = 1;
 
             _ = await httpClient

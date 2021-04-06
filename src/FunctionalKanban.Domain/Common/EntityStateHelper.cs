@@ -6,30 +6,28 @@
     using FunctionalKanban.Functional;
     using static FunctionalKanban.Functional.F;
 
-    internal static class EntityHelper
+    internal static class EntityStateHelper
     {
-        public static Validation<EventAndState> ToEventAndState<T>(this Validation<T> state, Event @event) where T : State =>
-            state.Bind<T, EventAndState>((s) => new EventAndState(@event, s));
+        public static Validation<EventAndState> ToEventAndState(this Validation<State> state, Event @event) =>
+            state.Bind<State, EventAndState>((s) => new EventAndState(@event, s));
 
-        public static Option<TState> From<TState, TCreatedEvent>(
+        public static Option<State> From<TCreatedEvent>(
              IEnumerable<Event> history,
-             Func<TState> createState,
-             Func<TState, Event, Validation<TState>> applyEvent)
-                  where TState : State
+             Func<State> createState,
+             Func<State, Event, Validation<State>> applyEvent)
                   where TCreatedEvent : Event =>
-            FromOrdered<TState, TCreatedEvent>(
+            FromOrdered<TCreatedEvent>(
                 history.OrderBy(h => h.EntityVersion), 
                 createState, 
                 applyEvent);
 
-        private static Option<TState> FromOrdered<TState, TCreatedEvent>(
+        private static Option<State> FromOrdered<TCreatedEvent>(
              IEnumerable<Event> history,
-             Func<TState> createState,
-             Func<TState, Event, Validation<TState>> applyEvent)
-                  where TState : State
+             Func<State> createState,
+             Func<State, Event, Validation<State>> applyEvent)
                   where TCreatedEvent : Event =>
             history.IsValid<TCreatedEvent>()
-                ? Hydrate<TState, TCreatedEvent>(history, createState, applyEvent).ToOption()
+                ? Hydrate<TCreatedEvent>(history, createState, applyEvent).ToOption()
                 : None;
 
         private static bool IsValid<TCreatedEvent>(this IEnumerable<Event> events) =>
@@ -46,17 +44,16 @@
         private static bool AreConsecutives(this IEnumerable<Event> events) =>
             !events.Select(e => e.EntityVersion).Select((i, j) => i - j).Distinct().Skip(1).Any();
 
-        private static Validation<TState> Hydrate<TState, TCreatedEvent>(
+        private static Validation<State> Hydrate<TCreatedEvent>(
             this IEnumerable<Event> orderedEvents,
-            Func<TState> createState,
-            Func<TState, Event, Validation<TState>> applyEvent)
-                    where TState : State
+            Func<State> createState,
+            Func<State, Event, Validation<State>> applyEvent)
                     where TCreatedEvent : Event =>
                 orderedEvents.Skip(1).Aggregate(
                     seed: applyEvent(createState(), orderedEvents.First()),
                     func: (state, evt) => state.Bind(s => applyEvent(s, evt)));
 
-        private static Option<TState> ToOption<TState>(this Validation<TState> validation) =>
+        private static Option<State> ToOption(this Validation<State> validation) =>
             validation.Match(
                 Invalid: (_) => None,
                 Valid: (state) => Some(state));

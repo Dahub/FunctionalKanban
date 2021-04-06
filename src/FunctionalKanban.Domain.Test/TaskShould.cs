@@ -24,7 +24,7 @@ namespace FunctionalKanban.Domain.Test
 
             eventAndTask.Match(
                 Invalid: (errors) => false,
-                Valid: (eas) => ((TaskState)eas.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Valid: (eas) => ((TaskEntityState)eas.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
         [Fact]
@@ -38,17 +38,17 @@ namespace FunctionalKanban.Domain.Test
                 TaskStatus = expectedTaskStatus
             };
 
-            var eventAndState = BuildNewTask().Bind((x) => ((TaskState)x.state).ChangeStatus(changeTaskStatus));
+            var eventAndState = BuildNewTask().Bind((x) => ((TaskEntityState)x.state).ChangeStatus(changeTaskStatus));
 
             eventAndState.Match(
                 Invalid: (errors) => false,
-                Valid: (eas) => ((TaskState)eas.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Valid: (eas) => ((TaskEntityState)eas.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
         [Fact]
         public void BeNoneWhenHydrateWithoutEvents()
         {
-            var optionTask = TaskEntity.From(Enumerable.Empty<Event>());
+            var optionTask = new TaskEntityState().From(Enumerable.Empty<Event>());
 
             optionTask.Should().Equals(None);
         }
@@ -57,7 +57,7 @@ namespace FunctionalKanban.Domain.Test
         public void BeNoneWhenHydratedWithoutCreatedEvent()
         {
             var aggregateId = Guid.NewGuid();
-            var aggregateName = typeof(TaskEntity).FullName;
+            var aggregateName = typeof(TaskEntityState).FullName;
             var changedStatus = TaskStatus.InProgress;
             var lastStatus = TaskStatus.Done;
 
@@ -81,7 +81,7 @@ namespace FunctionalKanban.Domain.Test
                 }
             };
 
-            var optionTask = TaskEntity.From(events);
+            var optionTask = new TaskEntityState().From(events);
 
             optionTask.Should().Equals(None);
         }
@@ -90,7 +90,7 @@ namespace FunctionalKanban.Domain.Test
         public void BeSomeWhenHydrateWithConsecutivesEvents()
         {
             var aggregateId = Guid.NewGuid();
-            var aggregateName = typeof(TaskEntity).FullName;
+            var aggregateName = typeof(TaskEntityState).FullName;
             var entityName = Guid.NewGuid().ToString();
             var remaningWork = 10u;
             var initialStatus = TaskStatus.Todo;
@@ -127,7 +127,7 @@ namespace FunctionalKanban.Domain.Test
                 }
             };
 
-            var optionTask = TaskEntity.From(events);
+            var optionTask = new TaskEntityState().From(events);
 
             optionTask.Match(
                 None: () => false,
@@ -138,7 +138,7 @@ namespace FunctionalKanban.Domain.Test
         public void BeSomeWhenHydrateWithNonOrderedConsecutivesEvents()
         {
             var aggregateId = Guid.NewGuid();
-            var aggregateName = typeof(TaskEntity).FullName;
+            var aggregateName = typeof(TaskEntityState).FullName;
             var entityName = Guid.NewGuid().ToString();
             var remaningWork = 10u;
             var initialStatus = TaskStatus.Todo;
@@ -175,7 +175,7 @@ namespace FunctionalKanban.Domain.Test
                 }
             };
 
-            var optionTask = TaskEntity.From(events);
+            var optionTask = new TaskEntityState().From(events);
 
             optionTask.Match(
                 None: () => false,

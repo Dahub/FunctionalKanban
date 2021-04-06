@@ -26,7 +26,7 @@
             (command) switch
             {
                 CreateTask c        => TaskEntity.Create(c).PublishEvent(_publishEvent),
-                ChangeTaskStatus c  => Handle<TaskState>(c, _getEntity, (e) => e.ChangeStatus(c)),
+                ChangeTaskStatus c  => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeStatus(c)),
                 _                   => Invalid("Commande non prise en charge")
             };
 
