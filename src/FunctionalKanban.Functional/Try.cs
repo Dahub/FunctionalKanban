@@ -1,8 +1,11 @@
 ﻿namespace FunctionalKanban.Functional
 {
     using System;
+    using System.Threading.Tasks;
 
     public delegate Exceptional<T> Try<T>();
+
+    public delegate Exceptional<T> TryAsync<T>();
 
     public static partial class F
     {

@@ -20,21 +20,21 @@
     }
 
     public record EventLine(
-        Guid id,
-        Guid aggregateId,
-        string aggregateName,
-        uint version,
-        string eventName,
-        DateTime timeStamp,
-        Event data);
+        Guid Id,
+        Guid AggregateId,
+        string AggregateName,
+        uint Version,
+        string EventName,
+        DateTime TimeStamp,
+        Event Data);
 
     internal static class InMemoryEventStreamExt
     {
         public static Try<Event> CheckUnicity(this Event @event, IEnumerable<EventLine> lines) =>
             Try(() => 
-                lines.Where(l => l.aggregateId.Equals(@event.AggregateId)
-                     && l.aggregateName.Equals(@event.AggregateName)
-                     && l.version.Equals(@event.EntityVersion)).Any()
+                lines.Where(l => l.AggregateId.Equals(@event.AggregateId)
+                     && l.AggregateName.Equals(@event.AggregateName)
+                     && l.Version.Equals(@event.EntityVersion)).Any()
                 ?throw new AggregateException("Un événement pour cette version d'aggregat est déjà présent")
                 :@event);
 
@@ -42,13 +42,13 @@
             Try(() =>
             {
                 dataBase.Add(new EventLine(
-                      id: Guid.NewGuid(),
-                      aggregateId: @event.AggregateId,
-                      aggregateName: @event.AggregateName,
-                      version: @event.EntityVersion,
-                      eventName: @event.EventName,
-                      timeStamp: @event.TimeStamp,
-                      data: @event));
+                      Id: Guid.NewGuid(),
+                      AggregateId: @event.AggregateId,
+                      AggregateName: @event.AggregateName,
+                      Version: @event.EntityVersion,
+                      EventName: @event.EventName,
+                      TimeStamp: @event.TimeStamp,
+                      Data: @event));
 
                 return Unit.Create();
             });

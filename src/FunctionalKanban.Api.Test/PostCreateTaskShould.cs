@@ -123,15 +123,15 @@ namespace FunctionalKanban.Api.Test
                         RemaningWork =  10
                     });
 
-            var eventLines = dataBase.EventLines.Where(e => e.aggregateId.Equals(expectedAggregateId));
+            var eventLines = dataBase.EventLines.Where(e => e.AggregateId.Equals(expectedAggregateId));
 
             eventLines.Should().HaveCount(1);
 
             var eventLine = eventLines.Single();
 
-            eventLine.version.Should().Equals(expectedVersion);
-            eventLine.aggregateId.Should().Equals(expectedAggregateId);
-            eventLine.aggregateName.Should().Be(expectedAggregateName);
+            eventLine.Version.Should().Equals(expectedVersion);
+            eventLine.AggregateId.Should().Equals(expectedAggregateId);
+            eventLine.AggregateName.Should().Be(expectedAggregateName);
         }
 
         [Fact]

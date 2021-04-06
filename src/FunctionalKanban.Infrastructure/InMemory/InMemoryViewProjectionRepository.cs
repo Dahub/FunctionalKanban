@@ -51,7 +51,7 @@
                 throw new Exception($"Impossible d'insérer le type de projection {typeof(T)}");
             }).Run();
 
-        private IEnumerable<ViewProjection> GetByPredicate(Func<ViewProjection, bool> predicate, IEnumerable<T> projections) =>
+        private static IEnumerable<ViewProjection> GetByPredicate(Func<ViewProjection, bool> predicate, IEnumerable<T> projections) =>
             projections.Where(predicate);
 
         private Option<TaskViewProjection> GetTaskViewProjectionById(Guid id)

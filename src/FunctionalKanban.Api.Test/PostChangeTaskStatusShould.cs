@@ -35,10 +35,10 @@
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var lines = dataBase.EventLines.Where(e => e.aggregateId.Equals(entityId));
+            var lines = dataBase.EventLines.Where(e => e.AggregateId.Equals(entityId));
 
             lines.Should().HaveCount(2);
-            lines.FirstOrDefault(e => e.version.Equals(2)).Should().NotBeNull();
+            lines.FirstOrDefault(e => e.Version.Equals(2)).Should().NotBeNull();
         }
 
         private async Task InitNewTask(HttpClient httpClient, Guid entityId) => 

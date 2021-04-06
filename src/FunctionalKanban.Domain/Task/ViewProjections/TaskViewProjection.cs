@@ -20,9 +20,9 @@
         public static TaskViewProjection With(this TaskViewProjection view, Event @event) =>
             @event switch
             {
-                TaskCreated e => view with { Id = e.AggregateId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status },
+                TaskCreated e       => view with { Id = e.AggregateId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status },
                 TaskStatusChanged e => view with { RemaningWork = e.RemaningWork, Status = e.NewStatus },
-                _ => view with { }
+                _                   => view with { }
             };
     }
 }

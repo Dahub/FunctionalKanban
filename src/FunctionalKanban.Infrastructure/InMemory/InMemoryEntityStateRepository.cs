@@ -33,7 +33,7 @@
             {
                 return tuple.Match(
                     None: () => None,
-                    Some: (tuple) => Some((tuple.method, tuple.lines.Select(el => el.data))));
+                    Some: (tuple) => Some((tuple.method, tuple.lines.Select(el => el.Data))));
             });
 
         private static Try<Option<(MethodInfo, IEnumerable<EventLine>)>> WithFromMethod(Option<(Type entityType, IEnumerable<EventLine> lines)> tuple) =>
@@ -55,7 +55,7 @@
                     None: () => None,
                     Some: (l) =>
                     {
-                        var entityName = l.First().aggregateName;
+                        var entityName = l.First().AggregateName;
                         var entityType = Assembly.GetAssembly(typeof(State)).GetType(entityName);
                         return entityType == null ? None : Some((entityType, l));
                     });
@@ -64,7 +64,7 @@
         private static Try<Option<IEnumerable<EventLine>>> GetEventLinesById(IEnumerable<EventLine> allLines, Guid id) =>
             Try(() =>
             {
-                var lines = allLines.Where(e => e.aggregateId.Equals(id));
+                var lines = allLines.Where(e => e.AggregateId.Equals(id));
                 return lines.Any()
                     ? Some(lines)
                     : None;

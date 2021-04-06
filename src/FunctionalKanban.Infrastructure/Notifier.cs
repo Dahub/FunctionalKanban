@@ -19,14 +19,14 @@
         public Exceptional<Unit> Notity(Event @event) =>
             NotifyTaskViewProjection(_taskViewProjectionRepository, @event); // bind others notify
 
-        private Exceptional<Unit> NotifyTaskViewProjection(
+        private static Exceptional<Unit> NotifyTaskViewProjection(
                     IViewProjectionRepository<TaskViewProjection> repository,
                     Event @event) =>
             TaskViewProjection.CanHandle(@event)
             ? HandleEvent(repository, @event, () => new TaskViewProjection(), (p) => p.With(@event))
             : Unit.Create();
 
-        private Exceptional<Unit> HandleEvent<T>(
+        private static Exceptional<Unit> HandleEvent<T>(
                     IViewProjectionRepository<T> repository,
                     Event @event,
                     Func<Exceptional<T>> create,
@@ -34,7 +34,7 @@
             GetProjection(repository, @event.AggregateId, create)
             .Bind((p) => repository.Upsert(update(p)));
 
-        private Exceptional<T> GetProjection<T>(
+        private static Exceptional<T> GetProjection<T>(
                     IViewProjectionRepository<T> repository,
                     Guid id,
                     Func<Exceptional<T>> buildNewViewProjection) where T : ViewProjection => 
