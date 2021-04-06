@@ -19,12 +19,11 @@
                     .Bind(HistoryIsValid<T>())
                     .Match(
                         None: () => None,
-                        Some: (evts) => ConvertToOption( Hydrate(evts, createState, (state, evt) => ApplyEvent(evt))));
+                        Some: (evts) => Some(Hydrate(evts, createState, (state, evt) => With(evt))));
 
-        public abstract Validation<State> ApplyEvent(Event @event);
+        protected abstract State With(Event @event);
 
-        public Validation<EventAndState> Mutate(Event @event) =>
-            ApplyEvent(@event).Bind<State, EventAndState>((s) => new EventAndState(@event, s));
+        public Validation<EventAndState> ApplyEvent(Event @event) => new EventAndState(@event, With(@event));
 
         private static Option<IEnumerable<Event>> OrderEvents(IEnumerable<Event> events) =>
             Some(events.OrderBy(e => e.EntityVersion).AsEnumerable());
@@ -37,17 +36,12 @@
         private static bool AreConsecutives(IEnumerable<Event> events) =>
             !events.Select(e => e.EntityVersion).Select((i, j) => i - j).Distinct().Skip(1).Any();
 
-        private static Validation<State> Hydrate(
+        private static State Hydrate(
             IEnumerable<Event> orderedEvents,
             Func<State> createState,
-            Func<State, Event, Validation<State>> applyEvent) =>
+            Func<State, Event, State> applyEvent) =>
                 orderedEvents.Skip(1).Aggregate(
                     seed: applyEvent(createState(), orderedEvents.First()),
-                    func: (state, evt) => state.Bind(s => applyEvent(s, evt)));
-
-        private static Option<State> ConvertToOption(Validation<State> validation) =>
-           validation.Match(
-               Invalid: (_) => None,
-               Valid: (state) => Some(state));
+                    func: (state, evt) => applyEvent(state, evt));
     }
 }

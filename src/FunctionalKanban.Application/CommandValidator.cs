@@ -19,7 +19,9 @@
             };
 
         private static Validation<T> ValidateCommandObject<T>(T c) where T : Command =>
+#pragma warning disable IDE0029 // coalesce cannot be use with T or Error
             c != null ? c : Error("La commande ne peut être null");
+#pragma warning restore IDE0029
 
         private static Validation<Command> ValidateCreateTask(CreateTask c) => 
             c.GetErrorsCommand().Union(c.GetErrorsCreateTask()).ToValidation(c);
