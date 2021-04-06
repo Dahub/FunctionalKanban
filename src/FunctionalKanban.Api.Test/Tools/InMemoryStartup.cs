@@ -18,7 +18,7 @@
         {
         }
 
-        protected override Func<Guid, Option<State>> GetEntityMethod(IServiceCollection services) =>
+        protected override Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) =>
             (id) => new InMemoryEntityStateRepository(DataBase).GetById(id);
 
         protected override Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) =>

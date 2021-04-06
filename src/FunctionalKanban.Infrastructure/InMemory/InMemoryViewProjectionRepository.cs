@@ -16,7 +16,7 @@
 
         public InMemoryViewProjectionRepository(IInMemoryDatabase inMemoryDatabase) => _inMemoryDataBase = inMemoryDatabase;
 
-        public Try<IEnumerable<ViewProjection>> Get(Func<ViewProjection, bool> predicate) => 
+        public Exceptional<IEnumerable<ViewProjection>> Get(Func<ViewProjection, bool> predicate) =>
             Try(() =>
             {
                 if (typeof(T) == typeof(TaskViewProjection))
@@ -25,29 +25,31 @@
                 }
 
                 throw new Exception($"projection de type {typeof(T)} non prise en charge");
-            });
+            }).Run();
 
-        public Exceptional<Option<T>> GetById(Guid id)
-        {
-            if (typeof(T) == typeof(TaskViewProjection))
+        public Exceptional<Option<T>> GetById(Guid id) =>
+            Try(() =>
             {
-                return GetTaskViewProjectionById(id).Map((p) => p as T);
-            }
+                if (typeof(T) == typeof(TaskViewProjection))
+                {
+                    return GetTaskViewProjectionById(id).Map((p) => p as T);
+                }
 
-            return Exceptional<Option<T>>(None);
-        }
+                return None;
+            }).Run();
 
-        public Exceptional<Unit> Upsert(T viewProjection)
-        {
-            if (typeof(T) == typeof(TaskViewProjection))
+        public Exceptional<Unit> Upsert(T viewProjection) =>
+            Try(() =>
             {
-                _inMemoryDataBase.Upsert(viewProjection as TaskViewProjection);
+                if (typeof(T) == typeof(TaskViewProjection))
+                {
+                    _inMemoryDataBase.Upsert(viewProjection as TaskViewProjection);
 
-                return Unit.Create();
-            }
+                    return Unit.Create();
+                }
 
-            return new Exception($"Impossible d'insérer le type de projection {typeof(T)}");
-        }
+                throw new Exception($"Impossible d'insérer le type de projection {typeof(T)}");
+            }).Run();
 
         private IEnumerable<ViewProjection> GetByPredicate(Func<ViewProjection, bool> predicate, IEnumerable<T> projections) =>
             projections.Where(predicate);

@@ -10,7 +10,7 @@
 
     public static class QueryBuilder
     {
-        public static Try<Query> BuildQuery<T>(IDictionary<string, string> parameters) where T : ViewProjection
+        public static Exceptional<Query> BuildQuery<T>(IDictionary<string, string> parameters) where T : ViewProjection
         {
             return Try<Query>(() =>
             {
@@ -22,7 +22,7 @@
                 {
                     throw new Exception("Type de projection non pris en charge");
                 }
-            });
+            }).Run();
         }
 
         private static GetTaskQuery BuildGetTaskQuery(IDictionary<string, string> parameters)

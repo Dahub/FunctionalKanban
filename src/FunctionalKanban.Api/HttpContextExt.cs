@@ -37,16 +37,15 @@
                 .Bind(BuildQuery<T>)
                 .Bind(BuildRepository<T>(context))
                 .Bind(LaunchQuery<T>())
-                .Run()
                 .Match(
                     Exception: (ex)     => context.SetResponseInternalServerError(ex),
                     Success: (v)        => context.SetResponseOk(v.Map(p => (T)p)));
 
-        private static Func<(Query, IViewProjectionRepository<T>), Try<IEnumerable<ViewProjection>>> LaunchQuery<T>() where T : ViewProjection =>
+        private static Func<(Query, IViewProjectionRepository<T>), Exceptional<IEnumerable<ViewProjection>>> LaunchQuery<T>() where T : ViewProjection =>
             tuple => tuple.Item2.Get(tuple.Item1.BuildPredicate());
         
-        private static Func<Query, Try<(Query, IViewProjectionRepository<T>)>> BuildRepository<T>(HttpContext context) where T : ViewProjection =>
-            query => Try(() => (query, context.RequestServices.GetService<IViewProjectionRepository<T>>()));
+        private static Func<Query, Exceptional<(Query, IViewProjectionRepository<T>)>> BuildRepository<T>(HttpContext context) where T : ViewProjection =>
+            query => (query, context.RequestServices.GetService<IViewProjectionRepository<T>>());
 
         private static Func<Command, Validation<Exceptional<ValueTuple>>> HandleWithCommandHandler(HttpContext context) =>
             c => context.RequestServices.GetService<CommandHandler>().Handle(c);
@@ -63,9 +62,9 @@
             }
         }
 
-        private static Try<Dictionary<string, string>> ExtractParameters(this HttpContext context)
+        private static Exceptional<Dictionary<string, string>> ExtractParameters(this HttpContext context)
         {
-            return Try(() => context.Request.Query.Keys.ToDictionary((k) => k, (k) => GetValue(k, context.Request.Query)));
+            return Try(() => context.Request.Query.Keys.ToDictionary((k) => k, (k) => GetValue(k, context.Request.Query))).Run();
             string GetValue(string key, IQueryCollection parameters)
             {
                 if (parameters.TryGetValue(key, out var value))

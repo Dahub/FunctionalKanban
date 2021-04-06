@@ -2,6 +2,7 @@ namespace FunctionalKanban.Application.Test
 {
     using System;
     using FluentAssertions;
+    using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
@@ -30,7 +31,7 @@ namespace FunctionalKanban.Application.Test
             };
 
             var commandHandler = new CommandHandler(
-                getEntity:      (id)    => new TaskState(),
+                getEntity:      (id)    => Some((State)new TaskState()),
                 publishEvent:   (evt)   => { lastPublishedEvent = evt as TaskCreated; return Unit.Create(); });
 
             var validationResult = commandHandler.Handle(command);
@@ -61,13 +62,13 @@ namespace FunctionalKanban.Application.Test
             };
 
             var commandHandler = new CommandHandler(
-                getEntity:      (id) => new TaskState()
+                getEntity:      (id) => Some((State)new TaskState()
                                 {
                                     Version =       1,
                                     TaskStatus =    TaskStatus.Todo,
                                     RemaningWork =  10,
                                     TaskName =      Guid.NewGuid().ToString()
-                                },
+                                }),
                 publishEvent:   (evt) => { lastPublishedEvent = evt as TaskStatusChanged; return Unit.Create(); });
 
             var validationResult = commandHandler.Handle(command);
@@ -88,7 +89,7 @@ namespace FunctionalKanban.Application.Test
             };
 
             var commandHandler = new CommandHandler(
-               getEntity:       (id) =>  None,
+               getEntity:       (id) =>  new Exception(),
                publishEvent:    (evt) => Unit.Create());
 
             var validationResult = commandHandler.Handle(command);

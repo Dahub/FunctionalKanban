@@ -17,7 +17,7 @@
         {
         }
 
-        protected override Func<Guid, Option<State>> GetEntityMethod(IServiceCollection services) => (id) => None;
+        protected override Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) => (id) => (Option<State>)None;
 
         protected override Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) => (evt) => Unit.Create();
     }

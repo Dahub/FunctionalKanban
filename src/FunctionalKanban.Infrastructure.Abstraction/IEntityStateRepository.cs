@@ -6,6 +6,6 @@
 
     public interface IEntityStateRepository
     {
-        Option<State> GetById(Guid id);
+        Exceptional<Option<State>> GetById(Guid id);
     }
 }

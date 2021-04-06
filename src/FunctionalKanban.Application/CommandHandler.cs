@@ -10,12 +10,12 @@
 
     public class CommandHandler
     {
-        private readonly Func<Guid, Option<State>> _getEntity;
+        private readonly Func<Guid, Exceptional<Option<State>>> _getEntity;
 
         private readonly Func<Event, Exceptional<Unit>> _publishEvent;
 
         public CommandHandler(
-            Func<Guid, Option<State>> getEntity,
+            Func<Guid, Exceptional<Option<State>>> getEntity,
             Func<Event, Exceptional<Unit>> publishEvent)
         {
             _getEntity      = getEntity;
@@ -32,7 +32,7 @@
 
         private Validation<Exceptional<Unit>> Handle<T>(
             Command command,
-            Func<Guid, Option<State>> getEntity,
+            Func<Guid, Exceptional<Option<State>>> getEntity,
             Func<T, Option<Validation<EventAndState>>> f) where T : State =>
                 getEntity(command.AggregateId)
                     .CastTo<T>()
@@ -49,7 +49,9 @@
                             Func<Event, Exceptional<Unit>> publishEvent) => 
             v.Bind<EventAndState, Exceptional<Unit>>((x) => publishEvent(x.@event));
 
-        public static Option<T> CastTo<T>(this Option<State> v) where T : State => 
-            v.Bind<State, T>((state) => state is T ? (T)state : None);
+        public static Option<T> CastTo<T>(this Exceptional<Option<State>> value) where T : State =>
+            value.Match(
+                Exception:  (ex)    => None,
+                Success:    (v)     => v.Bind<State, T>((state) => state is T ? (T)state : None));
     }
 }

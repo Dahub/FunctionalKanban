@@ -61,7 +61,7 @@ namespace FunctionalKanban.Api
             });
         }
 
-        protected virtual Func<Guid, Option<State>> GetEntityMethod(IServiceCollection services) =>
+        protected virtual Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) =>
             (id) => services.BuildServiceProvider().GetRequiredService<IEntityStateRepository>().GetById(id);
 
         protected virtual Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) =>
