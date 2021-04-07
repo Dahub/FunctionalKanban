@@ -12,15 +12,13 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using static FunctionalKanban.Functional.F;
-    using static FunctionalKanban.Application.CommandValidator;
     using static FunctionalKanban.Application.QueryBuilder;
+    using static FunctionalKanban.Functional.F;
 
     internal static class HttpContextExt
     {
         public static async Task ExecuteCommand<T>(this HttpContext context) where T : Command =>
             (await context.ReadCommandAsync<T>())
-                .Bind(Validate)
                 .Bind(HandleWithCommandHandler(context))
                 .Match(
                     Invalid:    async (errors)  => await context.SetResponseBadRequest(errors),

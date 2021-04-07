@@ -23,12 +23,13 @@
         }
 
         public Validation<Exceptional<Unit>> Handle(Command command) =>
+            command.Validate().Bind(command => 
             (command) switch
             {
                 CreateTask c        => TaskEntity.Create(c).PublishEvent(_publishEvent),
                 ChangeTaskStatus c  => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeStatus(c)),
                 _                   => Invalid("Commande non prise en charge")
-            };
+            });
 
         private Validation<Exceptional<Unit>> Handle<T>(
             Command command,
