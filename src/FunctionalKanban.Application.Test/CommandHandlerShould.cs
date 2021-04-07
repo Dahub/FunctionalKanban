@@ -6,6 +6,7 @@ namespace FunctionalKanban.Application.Test
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
+    using FunctionalKanban.Functional;
     using Xunit;
     using static FunctionalKanban.Functional.F;
     using Unit = System.ValueTuple;
@@ -84,6 +85,24 @@ namespace FunctionalKanban.Application.Test
         {
             var command = new ChangeTaskStatus()
             {
+                AggregateId = Guid.NewGuid(),
+                TaskStatus = TaskStatus.InProgress
+            };
+
+            var commandHandler = new CommandHandler(
+               getEntity:       (id)    => (Option<State>)None,
+               publishEvent:    (evt)   => Unit.Create());
+
+            var validationResult = commandHandler.Handle(command);
+
+            validationResult.IsValid.Should().BeFalse();
+        }
+
+        [Fact]
+        public void ReturnExceptionalWhenHandleChangeTaskStatusCommandWithException()
+        {
+            var command = new ChangeTaskStatus()
+            {
                 AggregateId =   Guid.NewGuid(),
                 TaskStatus =    TaskStatus.InProgress
             };
@@ -94,7 +113,13 @@ namespace FunctionalKanban.Application.Test
 
             var validationResult = commandHandler.Handle(command);
 
-            validationResult.IsValid.Should().BeFalse();
+            validationResult
+                .Match(
+                    Valid:      (v) => v.Match(
+                        Exception:  (_) => true,
+                        Success:    (_) => false),
+                    Invalid:    (_) => false)
+                .Should().BeTrue();
         }
     }
 }

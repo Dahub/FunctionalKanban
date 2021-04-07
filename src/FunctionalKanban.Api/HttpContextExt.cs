@@ -14,6 +14,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using static FunctionalKanban.Application.QueryBuilder;
     using static FunctionalKanban.Functional.F;
+    using Unit = System.ValueTuple;
 
     internal static class HttpContextExt
     {
@@ -45,7 +46,7 @@
         private static Func<Query, Exceptional<(Query, IViewProjectionRepository<T>)>> BuildRepository<T>(HttpContext context) where T : ViewProjection =>
             query => (query, context.RequestServices.GetService<IViewProjectionRepository<T>>());
 
-        private static Func<Command, Validation<Exceptional<ValueTuple>>> HandleWithCommandHandler(HttpContext context) =>
+        private static Func<Command, Validation<Exceptional<Unit>>> HandleWithCommandHandler(HttpContext context) =>
             c => context.RequestServices.GetService<CommandHandler>().Handle(c);
 
         private static async Task<Validation<T>> ReadCommandAsync<T>(this HttpContext context) where T : Command =>

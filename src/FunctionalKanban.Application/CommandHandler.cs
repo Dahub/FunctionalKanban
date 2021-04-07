@@ -37,12 +37,12 @@
             Func<T, Option<Validation<EventAndState>>> f) where T : State =>
                 getEntity(command.AggregateId).Match
                 (
-                    Exception:  (ex)        => Invalid(ex.Message),
+                    Exception:  (ex)        => (Exceptional<Unit>)ex,
                     Success:    (entity)    => entity
                         .CastTo<T>()
                         .Bind(f)
                         .Match(
-                            None: ()    => Invalid("Erreur lors de l'exécution de la commande"),
+                            None: ()    => Invalid($"Entité d'id {command.AggregateId} introuvable"),
                             Some: (x)   => x.PublishEvent(_publishEvent))
                 );
     }
