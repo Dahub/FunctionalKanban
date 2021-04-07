@@ -23,12 +23,12 @@
                 .Bind(Validate)
                 .Bind(HandleWithCommandHandler(context))
                 .Match(
-                    Invalid: async (errors) => await context.SetResponseBadRequest(errors),
-                    Valid: (v) =>
+                    Invalid:    async (errors)  => await context.SetResponseBadRequest(errors),
+                    Valid:      (v)             =>
                     {
                         v.Match(
-                            Exception: async (ex) => await context.SetResponseInternalServerError(ex),
-                            Success: _ => { context.SetResponseOk(); return; }
+                            Exception:  async (ex)  => await context.SetResponseInternalServerError(ex),
+                            Success:    _           => { context.SetResponseOk(); return; }
                         );
                     });
 
@@ -38,8 +38,8 @@
                 .Bind(BuildRepository<T>(context))
                 .Bind(LaunchQuery<T>())
                 .Match(
-                    Exception: (ex) => context.SetResponseInternalServerError(ex),
-                    Success: (v) => context.SetResponseOk(v.Map(p => (T)p)));
+                    Exception:  (ex)    => context.SetResponseInternalServerError(ex),
+                    Success:    (v)     => context.SetResponseOk(v.Map(p => (T)p)));
 
         private static Func<(Query, IViewProjectionRepository<T>), Exceptional<IEnumerable<ViewProjection>>> LaunchQuery<T>() where T : ViewProjection =>
             tuple => tuple.Item2.Get(tuple.Item1.BuildPredicate());
@@ -52,8 +52,8 @@
 
         private static async Task<Validation<T>> ReadCommandAsync<T>(this HttpContext context) where T : Command =>
             (await RunAsync(() => context.Request.ReadFromJsonAsync<T>())).Match(
-                    Exception: (ex) => Invalid(Error($"Les données de la requête ne sont pas serialisables en commande {typeof(T).Name}")),
-                    Success: (value) => Valid(value));
+                    Exception:  (ex)    => Invalid($"Les données de la requête ne sont pas serialisables en commande {typeof(T).Name}"),
+                    Success:    (value) => Valid(value));
 
         private static async Task<Exceptional<T>> RunAsync<T>(Func<ValueTask<T>> asyncMethod) where T : Command
         {

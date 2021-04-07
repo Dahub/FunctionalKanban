@@ -49,7 +49,6 @@
 
         private static IEnumerable<Error> GetErrorsCreateTask(this CreateTask c)
         {
-
             if(string.IsNullOrWhiteSpace(c.Name))
             {
                 yield return "La tâche dans avoir un nom";

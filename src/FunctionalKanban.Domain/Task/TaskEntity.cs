@@ -7,12 +7,14 @@
 
     public static class TaskEntity
     {
+        private static string _aggregateName = typeof(TaskEntityState).FullName;
+
         public static Validation<EventAndState> Create(CreateTask cmd)
         {
             var @event = new TaskCreated()
             {
                 AggregateId     = cmd.AggregateId,
-                AggregateName   = typeof(TaskEntityState).FullName,
+                AggregateName   = _aggregateName,
                 Name            = cmd.Name,
                 RemaningWork    = cmd.RemaningWork,
                 TimeStamp       = cmd.TimeStamp,
@@ -30,7 +32,7 @@
             var @event = new TaskStatusChanged()
             {
                 AggregateId     = cmd.AggregateId,
-                AggregateName   = typeof(TaskEntityState).FullName,
+                AggregateName   = _aggregateName,
                 EntityVersion   = state.Version + 1,
                 NewStatus       = cmd.TaskStatus,
                 TimeStamp       = cmd.TimeStamp,

@@ -36,13 +36,13 @@
             Func<T, Option<Validation<EventAndState>>> f) where T : State =>
                 getEntity(command.AggregateId).Match
                 (
-                    Exception: (ex) => Invalid(ex.Message),
-                    Success: (entity) => entity
+                    Exception:  (ex)        => Invalid(ex.Message),
+                    Success:    (entity)    => entity
                         .CastTo<T>()
                         .Bind(f)
                         .Match(
-                            None: () => Invalid("Erreur lors de l'exécution de la commande"),
-                            Some: (x) => x.PublishEvent(_publishEvent))
+                            None: ()    => Invalid("Erreur lors de l'exécution de la commande"),
+                            Some: (x)   => x.PublishEvent(_publishEvent))
                 );
     }
 
