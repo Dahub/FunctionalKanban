@@ -31,9 +31,11 @@
                         );
                     });
 
-        public static async Task ExecuteQuery<T>(this HttpContext context) where T : ViewProjection =>
+        public static async Task ExecuteQuery<Q, T>(this HttpContext context) 
+                where T : ViewProjection
+                where Q : Query, new() =>
             await context.ExtractParameters()
-                .Bind(BuildQuery<T>)
+                .Bind(BuildQuery<Q>)
                 .Bind(BuildRepository<T>(context))
                 .Bind(LaunchQuery<T>())
                 .Match(

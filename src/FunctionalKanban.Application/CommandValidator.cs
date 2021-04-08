@@ -8,7 +8,7 @@
     using FunctionalKanban.Functional;
     using static FunctionalKanban.Functional.F;
 
-    internal static class CommandValidator
+    public static class CommandValidator
     {
         private static IEnumerable<IValidator> _validators = new List<IValidator>()
         {
