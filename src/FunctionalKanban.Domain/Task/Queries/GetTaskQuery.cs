@@ -7,11 +7,11 @@
 
     public record GetTaskQuery : Query
     {
-        public Option<uint> MinRemaningWork { get; init; }
+        public Option<uint> MinRemaningWork { get; private set; }
 
-        public Option<uint> MaxRemaningWork { get; init; }
+        public Option<uint> MaxRemaningWork { get; private set; }
 
-        public Option<TaskStatus> TaskStatus { get; init; }
+        public Option<TaskStatus> TaskStatus { get; private set; }
 
         public GetTaskQuery WithMinRemaningWork(uint minRemaningWork) => this with { MinRemaningWork = minRemaningWork };
 

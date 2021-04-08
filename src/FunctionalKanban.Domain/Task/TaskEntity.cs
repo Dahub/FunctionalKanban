@@ -7,7 +7,7 @@
 
     public static class TaskEntity
     {
-        private static string _aggregateName = typeof(TaskEntityState).FullName;
+        private static readonly string _aggregateName = typeof(TaskEntityState).FullName;
 
         public static Validation<EventAndState> Create(CreateTask cmd)
         {

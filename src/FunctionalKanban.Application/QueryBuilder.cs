@@ -12,8 +12,9 @@
         public static Exceptional<Query> BuildQuery<TQuery>(IDictionary<string, string> parameters) where TQuery : Query, new() => 
             new TQuery() switch
             {
-                GetTaskQuery q  => GetTaskQueryBuilder.Build(q, parameters),
-                _               => new Exception("Type de requête non pris en charge")
+                GetTaskQuery q      => GetTaskQueryBuilder.Build(q, parameters),
+                GetTaskByIdQuery q  => GetTaskByIdQueryBuilder.Build(q, parameters),
+                _                   => new Exception("Type de requête non pris en charge")
             };
     }
 }

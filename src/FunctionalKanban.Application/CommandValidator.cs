@@ -10,7 +10,7 @@
 
     public static class CommandValidator
     {
-        private static IEnumerable<IValidator> _validators = new List<IValidator>()
+        private static readonly IEnumerable<IValidator> _validators = new List<IValidator>()
         {
             new AllCommandValidator(),
             new CreateTaskValidator()

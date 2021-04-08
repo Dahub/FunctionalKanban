@@ -56,7 +56,7 @@
             responseContent.Should().Be(expectedResult);
         }
 
-        private async Task InitNewTask(
+        private static async Task InitNewTask(
             HttpClient httpClient, 
             Guid entityId,
             string entityName = "test task",

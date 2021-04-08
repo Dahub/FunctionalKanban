@@ -62,13 +62,12 @@
             catch(Exception ex) { return ex; }
         }
 
-        private static Exceptional<Dictionary<string, string>> ExtractParameters(this HttpContext context) => 
-            Try(() => context.Request.Query.Keys.ToDictionary((k) => k, (k) => context.Request.Query.TryGetValueOrException(k))).Run();
-
-        private static string TryGetValueOrException(this IQueryCollection parameters, string key) =>
-            parameters.TryGetValue(key, out var value)
-            ? (string)value
-            : throw new Exception($"Impossible de lire le paramètre {key}");
+        private static Exceptional<Dictionary<string, string>> ExtractParameters(this HttpContext context) =>
+            Try(() =>
+                context.Request.Query.Select(v => KeyValuePair.Create(v.Key, (string)v.Value))
+                .Union(context.Request.RouteValues.Select(v => KeyValuePair.Create(v.Key, (string)v.Value)))
+                .ToDictionary((kv) => kv.Key, (kv) => kv.Value))
+                .Run();
 
         private static async Task SetResponseBadRequest(this HttpContext context, IEnumerable<Error> errors)
         {

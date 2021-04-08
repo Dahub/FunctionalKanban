@@ -56,6 +56,7 @@ namespace FunctionalKanban.Api
             {
                 endpoints.MapGet("/", async context => await context.Response.WriteAsync("Hello world !"));
                 endpoints.MapGet("/task", async context => await context.ExecuteQuery<GetTaskQuery, TaskViewProjection>());
+                endpoints.MapGet("/task/{id:guid}", async context => await context.ExecuteQuery<GetTaskByIdQuery, TaskViewProjection>());
 
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
                 endpoints.MapPost("/task/changeStatus", async context => await context.ExecuteCommand<ChangeTaskStatus>());
