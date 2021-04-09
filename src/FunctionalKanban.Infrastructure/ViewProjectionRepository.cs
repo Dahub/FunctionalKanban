@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Infrastructure.InMemory
+﻿namespace FunctionalKanban.Infrastructure
 {
     using System;
     using System.Collections.Generic;
@@ -7,21 +7,22 @@
     using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
+    using FunctionalKanban.Infrastructure.InMemory;
     using static FunctionalKanban.Functional.F;
     using Unit = System.ValueTuple;
 
-    public class InMemoryViewProjectionRepository<T> : IViewProjectionRepository<T> where T : ViewProjection
+    public class ViewProjectionRepository<T> : IViewProjectionRepository<T> where T : ViewProjection
     {
-        private readonly IInMemoryDatabase _inMemoryDataBase;
+        private readonly IViewProjectionDataBase _dataBase;
 
-        public InMemoryViewProjectionRepository(IInMemoryDatabase inMemoryDatabase) => _inMemoryDataBase = inMemoryDatabase;
+        public ViewProjectionRepository(IViewProjectionDataBase dataBase) => _dataBase = dataBase;
 
         public Exceptional<IEnumerable<ViewProjection>> Get(Func<ViewProjection, bool> predicate) =>
             Try(() =>
             {
                 if (typeof(T) == typeof(TaskViewProjection))
                 {
-                    return GetByPredicate(predicate, _inMemoryDataBase.TaskViewProjections.Map(p => p as T));
+                    return GetByPredicate(predicate, _dataBase.TaskViewProjections.Map(p => p as T));
                 }
 
                 throw new Exception($"projection de type {typeof(T)} non prise en charge");
@@ -43,7 +44,7 @@
             {
                 if (typeof(T) == typeof(TaskViewProjection))
                 {
-                    _inMemoryDataBase.Upsert(viewProjection as TaskViewProjection);
+                    _dataBase.Upsert(viewProjection as TaskViewProjection);
 
                     return Unit.Create();
                 }
@@ -56,7 +57,7 @@
 
         private Option<TaskViewProjection> GetTaskViewProjectionById(Guid id)
         {
-            var projection = _inMemoryDataBase.TaskViewProjections.FirstOrDefault(p => p.Id.Equals(id));
+            var projection = _dataBase.TaskViewProjections.FirstOrDefault(p => p.Id.Equals(id));
             return projection == null ? None : Some(projection);
         }
     }

@@ -18,9 +18,9 @@
         public async Task ReturnHttpOkWhenPostChangeTaskStatus()
         {
             var entityId = Guid.NewGuid();
-            var dataBase = new InMemoryDatabase();
+            var eventDataBase = new InMemoryDatabase();
 
-            var httpClient = BuildNewHttpClient<InMemoryStartup>(dataBase);
+            var httpClient = BuildNewHttpClient<InMemoryStartup>(eventDataBase, new InMemoryDatabase());
 
             await InitNewTask(httpClient, entityId);
             
@@ -35,10 +35,10 @@
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var lines = dataBase.EventLines.Where(e => e.AggregateId.Equals(entityId));
+            var lines = eventDataBase.Events.Where(e => e.AggregateId.Equals(entityId));
 
             lines.Should().HaveCount(2);
-            lines.FirstOrDefault(e => e.Version.Equals(2)).Should().NotBeNull();
+            lines.FirstOrDefault(e => e.EntityVersion.Equals(2)).Should().NotBeNull();
         }
 
         private static async Task InitNewTask(HttpClient httpClient, Guid entityId) => 

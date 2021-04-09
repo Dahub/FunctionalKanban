@@ -11,7 +11,9 @@
 
     internal class DoNothingStartup : Startup, ITestStartup
     {
-        public InMemoryDatabase DataBase { get; set; }
+        public InMemoryDatabase ViewProjectionDataBase { get; set; }
+
+        public InMemoryDatabase EventDataBase { get; set; }
 
         public DoNothingStartup(IConfiguration configuration) : base(configuration)
         {

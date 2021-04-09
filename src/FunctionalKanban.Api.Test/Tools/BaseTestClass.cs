@@ -9,7 +9,9 @@
 
     public abstract class BaseTestClass
     {
-        protected static HttpClient BuildNewHttpClient<T>(InMemoryDatabase dataBase) where T : class, ITestStartup
+        protected static HttpClient BuildNewHttpClient<T>(
+            InMemoryDatabase eventDataBase,
+            InMemoryDatabase viewProjectionDataBase) where T : class, ITestStartup
         {
             var builder = new WebHostBuilder();
 
@@ -18,7 +20,7 @@
 
             var server = new TestServer(builder
                 .UseConfiguration(config)
-                .UseStartup((w) => BuildTestStartup<T>(dataBase, w))
+                .UseStartup((w) => BuildTestStartup<T>(eventDataBase, viewProjectionDataBase, w))
                 .UseEnvironment("test"));
 
             var httpWebClient = server.CreateClient();
@@ -26,10 +28,14 @@
             return httpWebClient;
         }
 
-        private static ITestStartup BuildTestStartup<T>(InMemoryDatabase dataBase, WebHostBuilderContext context)
+        private static ITestStartup BuildTestStartup<T>(
+            InMemoryDatabase eventDataBase,
+            InMemoryDatabase viewProjectionDataBase,
+            WebHostBuilderContext context)
         {
             var startup = (ITestStartup)Activator.CreateInstance(typeof(T), new object[] { context.Configuration });
-            startup.DataBase = dataBase;
+            startup.EventDataBase = eventDataBase;
+            startup.ViewProjectionDataBase = viewProjectionDataBase;
             return startup;
         }
     }

@@ -26,11 +26,12 @@ namespace FunctionalKanban.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IInMemoryDatabase>(BuildDataBase());
-            services.AddScoped<IEventStream, InMemoryEventStream>();
+            services.AddSingleton(BuildViewProjectionDataBase());
+            services.AddSingleton(BuildEventDataBase());
+            services.AddScoped<IEventStream, EventStream>();
 
-            services.AddScoped<IEntityStateRepository, InMemoryEntityStateRepository>();
-            services.AddScoped<IViewProjectionRepository<TaskViewProjection>, InMemoryViewProjectionRepository<TaskViewProjection>>();
+            services.AddScoped<IEntityStateRepository, EntityStateRepository>();
+            services.AddScoped<IViewProjectionRepository<TaskViewProjection>, ViewProjectionRepository<TaskViewProjection>>();
 
             services.AddScoped<INotifier, Notifier>();
             services.AddScoped<IEventBus, EventBus>();
@@ -69,6 +70,8 @@ namespace FunctionalKanban.Api
         protected virtual Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) =>
             (evt) => services.BuildServiceProvider().GetRequiredService<IEventBus>().Publish(evt);
 
-        protected virtual InMemoryDatabase BuildDataBase() => new InMemoryDatabase();
+        protected virtual IViewProjectionDataBase BuildViewProjectionDataBase() => new InMemoryDatabase();
+
+        protected virtual IEventDataBase BuildEventDataBase() => new InMemoryDatabase();
     }
 }

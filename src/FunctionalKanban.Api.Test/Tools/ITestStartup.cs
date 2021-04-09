@@ -4,6 +4,8 @@
 
     public interface ITestStartup
     {
-        InMemoryDatabase DataBase { get; set; }
+        InMemoryDatabase ViewProjectionDataBase { get; set; }
+
+        InMemoryDatabase EventDataBase { get; set; }
     }
 }

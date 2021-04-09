@@ -5,6 +5,7 @@
     using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure;
+    using FunctionalKanban.Infrastructure.Abstraction;
     using FunctionalKanban.Infrastructure.InMemory;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -12,21 +13,25 @@
 
     internal class InMemoryStartup : Startup, ITestStartup
     {
-        public InMemoryDatabase DataBase { get; set; }
+        public InMemoryDatabase ViewProjectionDataBase { get; set; }
+
+        public InMemoryDatabase EventDataBase { get; set; }
 
         public InMemoryStartup(IConfiguration configuration) : base(configuration)
         {
         }
 
         protected override Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) =>
-            (id) => new InMemoryEntityStateRepository(DataBase).GetById(id);
+            (id) => new EntityStateRepository(EventDataBase).GetById(id);
 
         protected override Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) =>
             (evt) => new EventBus(
-                new InMemoryEventStream(DataBase),
-                new Notifier(new InMemoryViewProjectionRepository<TaskViewProjection>(DataBase))
+                new EventStream(EventDataBase),
+                new Notifier(new ViewProjectionRepository<TaskViewProjection>(ViewProjectionDataBase))
                 ).Publish(evt);
 
-        protected override InMemoryDatabase BuildDataBase() => DataBase;
+        protected override IViewProjectionDataBase BuildViewProjectionDataBase() => ViewProjectionDataBase;
+
+        protected override IEventDataBase BuildEventDataBase() => EventDataBase;
     }
 }

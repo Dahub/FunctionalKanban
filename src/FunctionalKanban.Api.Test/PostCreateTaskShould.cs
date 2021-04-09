@@ -17,8 +17,9 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpOkWhenPostCreateTaskCommand()
         {
-            var dataBase = new InMemoryDatabase();
-            var httpClient = BuildNewHttpClient<DoNothingStartup>(dataBase);
+            var httpClient = BuildNewHttpClient<DoNothingStartup>(
+                new InMemoryDatabase(), new InMemoryDatabase());
+
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
                     "task",
@@ -35,8 +36,9 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithNull()
         {
-            var dataBase = new InMemoryDatabase();
-            var httpClient = BuildNewHttpClient<DoNothingStartup>(dataBase);
+            var httpClient = BuildNewHttpClient<DoNothingStartup>(
+                new InMemoryDatabase(), new InMemoryDatabase());
+
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync<object>(
                     "task", null);
@@ -50,8 +52,8 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithWrongCommand()
         {
-            var dataBase = new InMemoryDatabase();
-            var httpClient = BuildNewHttpClient<DoNothingStartup>(dataBase);
+            var httpClient = BuildNewHttpClient<DoNothingStartup>(
+                new InMemoryDatabase(), new InMemoryDatabase());
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
                     "task", Guid.NewGuid());
@@ -65,8 +67,8 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithIncorrectCommand()
         {
-            var dataBase = new InMemoryDatabase();
-            var httpClient = BuildNewHttpClient<DoNothingStartup>(dataBase);
+            var httpClient = BuildNewHttpClient<DoNothingStartup>
+                (new InMemoryDatabase(), new InMemoryDatabase());
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync("task", new CreateTask());
 
@@ -79,8 +81,8 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task ReturnHttpInternalServerErrorWhenPostSameTask()
         {
-            var dataBase = new InMemoryDatabase();
-            var httpClient = BuildNewHttpClient<InMemoryStartup>(dataBase);
+            var httpClient = BuildNewHttpClient<InMemoryStartup>(
+                new InMemoryDatabase(), new InMemoryDatabase());
 
             var createTaskCommand = new CreateTask()
             {
@@ -106,8 +108,8 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task AddTaskCreatedEvent()
         {
-            var dataBase = new InMemoryDatabase();
-            var httpClient = BuildNewHttpClient<InMemoryStartup>(dataBase);
+            var eventDataBase = new InMemoryDatabase();
+            var httpClient = BuildNewHttpClient<InMemoryStartup>(eventDataBase, new InMemoryDatabase());
 
             var expectedAggregateId = Guid.NewGuid();
             var expectedAggregateName = typeof(TaskEntityState).FullName;
@@ -123,13 +125,13 @@ namespace FunctionalKanban.Api.Test
                         RemaningWork =  10
                     });
 
-            var eventLines = dataBase.EventLines.Where(e => e.AggregateId.Equals(expectedAggregateId));
+            var events = eventDataBase.Events.Where(e => e.AggregateId.Equals(expectedAggregateId));
 
-            eventLines.Should().HaveCount(1);
+            events.Should().HaveCount(1);
 
-            var eventLine = eventLines.Single();
+            var eventLine = events.Single();
 
-            eventLine.Version.Should().Equals(expectedVersion);
+            eventLine.EntityVersion.Should().Equals(expectedVersion);
             eventLine.AggregateId.Should().Equals(expectedAggregateId);
             eventLine.AggregateName.Should().Be(expectedAggregateName);
         }
@@ -137,8 +139,9 @@ namespace FunctionalKanban.Api.Test
         [Fact]
         public async Task PopulateTaskViewProjection()
         {
-            var dataBase = new InMemoryDatabase();
-            var httpClient = BuildNewHttpClient<InMemoryStartup>(dataBase);
+            var viewProjectionDataBase = new InMemoryDatabase();
+            var httpClient = BuildNewHttpClient<InMemoryStartup>(
+                new InMemoryDatabase(), viewProjectionDataBase);
 
             var expectedAggregateId = Guid.NewGuid();
             var expectedName = Guid.NewGuid().ToString();
@@ -155,7 +158,7 @@ namespace FunctionalKanban.Api.Test
                         RemaningWork = expectedRemaningWork
                     });
 
-            var taskViewProjections = dataBase.TaskViewProjections.Where(p => p.Id.Equals(expectedAggregateId));
+            var taskViewProjections = viewProjectionDataBase.TaskViewProjections.Where(p => p.Id.Equals(expectedAggregateId));
 
             taskViewProjections.Should().HaveCount(1);
 
