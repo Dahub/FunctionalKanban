@@ -28,6 +28,16 @@
 
         public IEnumerable<TaskViewProjection> TaskViewProjections => _taskViewProjections.Values.ToList().AsReadOnly();
 
+        public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection
+        {
+            if(typeof(T) == typeof(TaskViewProjection))
+            {
+                return Exceptional((IEnumerable<T>)_taskViewProjections.Values);
+            }
+
+            return new Exception($"projection de type {typeof(T)} non prise en charge");
+        }
+
         public Exceptional<Unit> Add(
             Guid aggregateId, 
             string aggregateName,
@@ -36,19 +46,28 @@
             Event @event) =>
                 @event.CheckUnicity(_eventLines).Bind(AddEventToLines);
 
-        public void Upsert(TaskViewProjection viewProjection)
-        {
-            if(_taskViewProjections.ContainsKey(viewProjection.Id))
+        public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection =>
+            viewProjection switch
             {
-                _taskViewProjections[viewProjection.Id] = viewProjection;
+                TaskViewProjection p => Try(() => UpsertTaskViewProjection(p)).Run(),
+                _ =>  new Exception($"Impossible d'insérer le type de projection {typeof(T)}")
+            };
+
+        private Unit UpsertTaskViewProjection(TaskViewProjection p)
+        {
+            if(_taskViewProjections.ContainsKey(p.Id))
+            {
+                _taskViewProjections[p.Id] = p;
             }
             else
             {
-                _taskViewProjections.TryAdd(viewProjection.Id, viewProjection);
+                _taskViewProjections.TryAdd(p.Id, p);
             }
+
+            return Unit.Create();
         }
 
-        private Func<(Event, List<EventLine>), Exceptional<Unit>> AddEventToLines = (tuple) =>
+        private readonly Func<(Event, List<EventLine>), Exceptional<Unit>> AddEventToLines = (tuple) =>
             Try(() =>
             {
                 tuple.Item2.Add(tuple.Item1.ToEventLine());

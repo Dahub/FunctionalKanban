@@ -42,7 +42,7 @@
                     Exception:  (ex)    => context.SetResponseInternalServerError(ex),
                     Success:    (v)     => context.SetResponseOk(v.Map(p => (T)p)));
 
-        private static Func<(Query, IViewProjectionRepository<T>), Exceptional<IEnumerable<ViewProjection>>> LaunchQuery<T>() where T : ViewProjection =>
+        private static Func<(Query, IViewProjectionRepository<T>), Exceptional<IEnumerable<T>>> LaunchQuery<T>() where T : ViewProjection =>
             tuple => tuple.Item2.Get(tuple.Item1.BuildPredicate());
 
         private static Func<Query, Exceptional<(Query, IViewProjectionRepository<T>)>> BuildRepository<T>(HttpContext context) where T : ViewProjection =>

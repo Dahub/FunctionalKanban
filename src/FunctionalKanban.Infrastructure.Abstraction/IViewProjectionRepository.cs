@@ -12,6 +12,6 @@
 
         Exceptional<Unit> Upsert(T viewProjection);
 
-        Exceptional<IEnumerable<ViewProjection>> Get(Func<ViewProjection, bool> predicate);
+        Exceptional<IEnumerable<T>> Get(Func<T, bool> predicate);
     }
 }

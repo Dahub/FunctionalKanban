@@ -18,7 +18,6 @@
         {
             var expectedResult = "[{\"name\":\"test task\",\"remaningWork\":0,\"status\":0,\"id\":\"6eb4c342-8ed3-4ad3-9d91-119539ce6a6b\"},{\"name\":\"test task\",\"remaningWork\":0,\"status\":0,\"id\":\"716b6d2a-a19b-4840-92de-6699ac96d65c\"}]";
 
-            var database = new InMemoryDatabase();
             var httpClient = BuildNewHttpClient<InMemoryStartup>(
                 new InMemoryDatabase(), new InMemoryDatabase());
 

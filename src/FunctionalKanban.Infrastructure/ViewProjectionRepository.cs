@@ -7,7 +7,6 @@
     using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
-    using FunctionalKanban.Infrastructure.InMemory;
     using static FunctionalKanban.Functional.F;
     using Unit = System.ValueTuple;
 
@@ -17,17 +16,10 @@
 
         public ViewProjectionRepository(IViewProjectionDataBase dataBase) => _dataBase = dataBase;
 
-        public Exceptional<IEnumerable<ViewProjection>> Get(Func<ViewProjection, bool> predicate) =>
-            Try(() =>
-            {
-                if (typeof(T) == typeof(TaskViewProjection))
-                {
-                    return GetByPredicate(predicate, _dataBase.TaskViewProjections.Map(p => p as T));
-                }
-
-                throw new Exception($"projection de type {typeof(T)} non prise en charge");
-            }).Run();
-
+        public Exceptional<IEnumerable<T>> Get(Func<T, bool> predicate) =>
+            _dataBase.Projections<T>()
+            .Bind(ps => GetByPredicate(predicate, ps));
+        
         public Exceptional<Option<T>> GetById(Guid id) =>
             Try(() =>
             {
@@ -39,21 +31,10 @@
                 return None;
             }).Run();
 
-        public Exceptional<Unit> Upsert(T viewProjection) =>
-            Try(() =>
-            {
-                if (typeof(T) == typeof(TaskViewProjection))
-                {
-                    _dataBase.Upsert(viewProjection as TaskViewProjection);
+        public Exceptional<Unit> Upsert(T viewProjection) => _dataBase.Upsert(viewProjection);
 
-                    return Unit.Create();
-                }
-
-                throw new Exception($"Impossible d'insérer le type de projection {typeof(T)}");
-            }).Run();
-
-        private static IEnumerable<ViewProjection> GetByPredicate(Func<ViewProjection, bool> predicate, IEnumerable<T> projections) =>
-            projections.Where(predicate);
+        private static Exceptional<IEnumerable<T>> GetByPredicate(Func<T, bool> predicate, IEnumerable<T> ps) =>
+            Try(() => ps.Map(p => (T)p).Where(predicate)).Run();
 
         private Option<TaskViewProjection> GetTaskViewProjectionById(Guid id)
         {
