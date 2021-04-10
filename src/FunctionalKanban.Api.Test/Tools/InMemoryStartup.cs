@@ -21,15 +21,6 @@
         {
         }
 
-        protected override Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) =>
-            (id) => new EntityStateRepository(EventDataBase).GetById(id);
-
-        protected override Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) =>
-            (evt) => new EventBus(
-                new EventStream(EventDataBase),
-                new Notifier(new ViewProjectionRepository<TaskViewProjection>(ViewProjectionDataBase))
-                ).Publish(evt);
-
         protected override IViewProjectionDataBase BuildViewProjectionDataBase() => ViewProjectionDataBase;
 
         protected override IEventDataBase BuildEventDataBase() => EventDataBase;

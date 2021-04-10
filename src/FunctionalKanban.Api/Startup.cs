@@ -34,8 +34,10 @@ namespace FunctionalKanban.Api
             services.AddScoped<IViewProjectionRepository<TaskViewProjection>, ViewProjectionRepository<TaskViewProjection>>();
 
             services.AddScoped<INotifier, Notifier>();
-            services.AddScoped<IEventBus, EventBus>();
-            
+            services.AddScoped<IEventBus>(e => new EventBus(
+                streamEvent: StreamEventMethod(services),
+                notifySubscribers: NotitySubscribersMethod(services)));
+
             services.AddScoped(s => new CommandHandler(
                 getEntity: GetEntityMethod(services),
                 publishEvent: PublishEventMethod(services)));
@@ -65,13 +67,21 @@ namespace FunctionalKanban.Api
         }
 
         protected virtual Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) =>
-            (id) => services.BuildServiceProvider().GetRequiredService<IEntityStateRepository>().GetById(id);
+            (id) => GetService<IEntityStateRepository>(services).GetById(id);
 
         protected virtual Func<Event, Exceptional<Unit>> PublishEventMethod(IServiceCollection services) =>
-            (evt) => services.BuildServiceProvider().GetRequiredService<IEventBus>().Publish(evt);
+            (evt) => GetService<IEventBus>(services).Publish(evt);
+
+        protected virtual Func<Event, Exceptional<Unit>> NotitySubscribersMethod(IServiceCollection services) =>
+            (evt) => GetService<INotifier>(services).Notity(evt);
+
+        protected virtual Func<Event, Exceptional<Unit>> StreamEventMethod(IServiceCollection services) =>
+            (evt) => GetService<IEventStream>(services).Push(evt);
 
         protected virtual IViewProjectionDataBase BuildViewProjectionDataBase() => new InMemoryDatabase();
 
         protected virtual IEventDataBase BuildEventDataBase() => new InMemoryDatabase();
+
+        private static T GetService<T>(IServiceCollection services) => services.BuildServiceProvider().GetRequiredService<T>();
     }
 }

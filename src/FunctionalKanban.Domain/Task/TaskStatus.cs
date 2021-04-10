@@ -5,6 +5,7 @@
         Todo,
         InProgress,
         Done,
-        Canceled
+        Canceled,
+        Archived
     }
 }

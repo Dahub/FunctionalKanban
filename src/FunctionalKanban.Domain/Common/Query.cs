@@ -18,6 +18,10 @@
                        None: ()     => true,
                        Some: (v)    => valueToCompare.Equals(v));
 
+        protected bool NotEqualToValue<T>(T valueToCompare, Option<T> value) => value.Match(
+                       None: ()     => true,
+                       Some: (v)    => !valueToCompare.Equals(v));
+
         public abstract Func<ViewProjection, bool> BuildPredicate();
     }
 }

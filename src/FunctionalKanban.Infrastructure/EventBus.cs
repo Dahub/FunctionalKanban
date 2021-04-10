@@ -1,5 +1,6 @@
 ﻿namespace FunctionalKanban.Infrastructure
 {
+    using System;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -7,20 +8,19 @@
 
     public class EventBus : IEventBus
     {
-        private readonly IEventStream _eventStream;
+        private readonly Func<Event, Exceptional<Unit>> _streamEvent;
 
-        private readonly INotifier _notifier;
+        private readonly Func<Event, Exceptional<Unit>> _notifySubscribers;
 
         public EventBus(
-            IEventStream eventStream,
-            INotifier notifier)
+            Func<Event, Exceptional<Unit>> streamEvent,
+            Func<Event, Exceptional<Unit>> notifySubscribers)
         {
-            _eventStream = eventStream;
-            _notifier = notifier;
+            _streamEvent = streamEvent;
+            _notifySubscribers = notifySubscribers;
         }
 
         public Exceptional<Unit> Publish(Event @event) =>
-            _eventStream.Push(@event).
-                Bind((_) => _notifier.Notity(@event));
+            _streamEvent(@event).Bind((_) => _notifySubscribers(@event));
     }
 }

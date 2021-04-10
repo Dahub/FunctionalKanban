@@ -19,9 +19,10 @@
 
         public GetTaskQuery WithTaskStatus(TaskStatus taskStatus) => this with { TaskStatus = taskStatus };
 
-        public override Func<ViewProjection, bool> BuildPredicate() => (p) => 
+        public override Func<ViewProjection, bool> BuildPredicate() => (p) =>
             MoreOrEqualThanValue(((TaskViewProjection)p).RemaningWork, MinRemaningWork)
-            && StrictlyLessThanValue(((TaskViewProjection) p).RemaningWork, MaxRemaningWork)
-            && EqualToValue(((TaskViewProjection)p).Status, TaskStatus);
+            && StrictlyLessThanValue(((TaskViewProjection)p).RemaningWork, MaxRemaningWork)
+            && EqualToValue(((TaskViewProjection)p).Status, TaskStatus)
+            && NotEqualToValue(((TaskViewProjection)p).Status, Task.TaskStatus.Archived);
     }
 }

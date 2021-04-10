@@ -36,7 +36,10 @@
                 EntityVersion   = state.Version + 1,
                 NewStatus       = cmd.TaskStatus,
                 TimeStamp       = cmd.TimeStamp,
-                RemaningWork    = cmd.TaskStatus.Equals(TaskStatus.Done | TaskStatus.Canceled) ? 0 : state.RemaningWork
+                RemaningWork    = cmd.TaskStatus.Equals(
+                                    TaskStatus.Done | 
+                                    TaskStatus.Canceled |
+                                    TaskStatus.Archived) ? 0 : state.RemaningWork
             };
 
             return state.ApplyEvent(@event);
