@@ -38,10 +38,10 @@
                 getEntity(command.AggregateId).Match
                 (
                     Exception:  (ex)        => (Exceptional<Unit>)ex,
-                    Success:    (entity)    => entity
-                        .CastTo<T>()
-                        .Bind(f)
-                        .Match(
+                    Success:    (entity)    => entity.
+                        CastTo<T>().
+                        Bind(f).
+                        Match(
                             None: ()    => Invalid($"Entité d'id {command.AggregateId} introuvable"),
                             Some: (x)   => x.PublishEvent(_publishEvent))
                 );
@@ -52,7 +52,7 @@
         public static Validation<Exceptional<Unit>> PublishEvent(
                             this Validation<EventAndState> v,
                             Func<Event, Exceptional<Unit>> publishEvent) => 
-            v.Bind<EventAndState, Exceptional<Unit>>((x) => publishEvent(x.@event));
+            v.Bind<EventAndState, Exceptional<Unit>>((x) => publishEvent(x.Event));
 
         public static Option<T> CastTo<T>(this Option<State> value) where T : State =>
             value.Bind<State, T>((state) => state is T t ? t : None);

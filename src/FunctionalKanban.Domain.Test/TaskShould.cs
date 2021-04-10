@@ -24,7 +24,7 @@ namespace FunctionalKanban.Domain.Test
 
             eventAndTask.Match(
                 Invalid: (errors) => false,
-                Valid: (eas) => ((TaskEntityState)eas.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Valid: (eas) => ((TaskEntityState)eas.State).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
         [Fact]
@@ -38,11 +38,11 @@ namespace FunctionalKanban.Domain.Test
                 TaskStatus = expectedTaskStatus
             };
 
-            var eventAndState = BuildNewTask().Bind((x) => ((TaskEntityState)x.state).ChangeStatus(changeTaskStatus));
+            var eventAndState = BuildNewTask().Bind((x) => ((TaskEntityState)x.State).ChangeStatus(changeTaskStatus));
 
             eventAndState.Match(
                 Invalid: (errors) => false,
-                Valid: (eas) => ((TaskEntityState)eas.state).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Valid: (eas) => ((TaskEntityState)eas.State).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
         [Fact]

@@ -12,6 +12,6 @@
 
         public uint EntityVersion { get; init; }
 
-        public string EventName => this.GetType().FullName;
+        public string EventName => GetType().FullName;
     }
 }

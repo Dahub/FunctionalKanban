@@ -1,4 +1,4 @@
 ﻿namespace FunctionalKanban.Domain.Common
 {
-    public record EventAndState(Event @event, State state);
+    public record EventAndState(Event Event, State State);
 }

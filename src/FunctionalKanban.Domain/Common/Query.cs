@@ -6,19 +6,19 @@
     public abstract record Query
     {
 
-        protected bool MoreOrEqualThanValue(uint valueToCompare, Option<uint> value) => value.Match(
+        protected static bool MoreOrEqualThanValue(uint valueToCompare, Option<uint> value) => value.Match(
                         None: ()    => true,
                         Some: (v)   => valueToCompare >= v);
 
-        protected bool StrictlyLessThanValue(uint valueToCompare, Option<uint> value) => value.Match(
+        protected static bool StrictlyLessThanValue(uint valueToCompare, Option<uint> value) => value.Match(
                        None: ()     => true,
                        Some: (v)    => valueToCompare < v);
 
-        protected bool EqualToValue<T>(T valueToCompare, Option<T> value) => value.Match(
+        protected static bool EqualToValue<T>(T valueToCompare, Option<T> value) => value.Match(
                        None: ()     => true,
                        Some: (v)    => valueToCompare.Equals(v));
 
-        protected bool NotEqualToValue<T>(T valueToCompare, Option<T> value) => value.Match(
+        protected static bool NotEqualToValue<T>(T valueToCompare, Option<T> value) => value.Match(
                        None: ()     => true,
                        Some: (v)    => !valueToCompare.Equals(v));
 

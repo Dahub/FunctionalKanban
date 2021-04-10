@@ -20,12 +20,7 @@
 
         internal Exceptional(Exception ex)
         {
-            if (ex == null)
-            {
-                throw new ArgumentNullException(nameof(ex));
-            }
-
-            Ex = ex;
+            Ex = ex ?? throw new ArgumentNullException(nameof(ex));
             Value = default;
         }
 
