@@ -20,7 +20,7 @@
         }
 
         public Exceptional<Unit> Publish(Event @event) =>
-            _eventStream.Push(@event)
-                .Bind((_) => _notifier.Notity(@event));
+            _eventStream.Push(@event).
+                Bind((_) => _notifier.Notity(@event));
     }
 }

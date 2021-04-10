@@ -20,10 +20,11 @@
 
         private static Func<IEnumerable<IValidator>, Command, Validation<Command>> HarvestErrors => (validators, command) =>
         {
-            var errors = validators
-                .Where(v => v.CanValidate(command))
-                .Map(v => v.Validate(command))
-                .Bind(v => v.Match(
+            var errors = 
+                validators.
+                Where(v => v.CanValidate(command)).
+                Map(v => v.Validate(command)).
+                Bind(v => v.Match(
                     Invalid:    (errors)    => Some(errors),
                     Valid:      (_)         => None));
 

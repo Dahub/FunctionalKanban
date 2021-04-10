@@ -9,7 +9,8 @@
     public static class GetTaskByIdQueryBuilder
     {
         public static Exceptional<Query> Build(GetTaskByIdQuery query, IDictionary<string, string> parameters) =>
-               query.WithParameterValue<GetTaskByIdQuery, Guid>(parameters, "id", query.WithId)
-                   .ToExceptional();
+            query.
+            WithParameterValue<GetTaskByIdQuery, Guid>(parameters, "id", query.WithId).
+            ToExceptional();
     }
 }

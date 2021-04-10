@@ -16,11 +16,11 @@
         public EntityStateRepository(IEventDataBase database) => _database = database;
 
         public Exceptional<Option<State>> GetById(Guid id) =>
-            GetEventsById(_database.Events, id)
-                .Bind(WithEntityType)
-                .Bind(WithStateInstance)
-                .Bind(WithEvents)
-                .Bind(WithFromExecution).Run();
+            GetEventsById(_database.Events, id).
+                Bind(WithEntityType).
+                Bind(WithStateInstance).
+                Bind(WithEvents).
+                Bind(WithFromExecution).Run();
 
         private static Try<Option<(State, IEnumerable<Event>)>> WithStateInstance(Option<(Type entityType, IEnumerable<Event> events)> tuple) =>
            Try(() =>
@@ -44,8 +44,8 @@
             Try(() =>
             {
                 return tuple.Match(
-                    None: () => None,
-                    Some: (tuple) => Some((tuple.state, tuple.events)));
+                    None: ()        => None,
+                    Some: (tuple)   => Some((tuple.state, tuple.events)));
             });
 
         private static Try<Option<(Type, IEnumerable<Event>)>> WithEntityType(Option<IEnumerable<Event>> events) =>

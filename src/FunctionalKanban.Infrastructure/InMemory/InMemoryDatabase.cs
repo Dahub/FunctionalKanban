@@ -49,8 +49,8 @@
         public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection =>
             viewProjection switch
             {
-                TaskViewProjection p => Try(() => UpsertTaskViewProjection(p)).Run(),
-                _ =>  new Exception($"Impossible d'insérer le type de projection {typeof(T)}")
+                TaskViewProjection p    => Try(() => UpsertTaskViewProjection(p)).Run(),
+                _                       =>  new Exception($"Impossible d'insérer le type de projection {typeof(T)}")
             };
 
         private Unit UpsertTaskViewProjection(TaskViewProjection p)

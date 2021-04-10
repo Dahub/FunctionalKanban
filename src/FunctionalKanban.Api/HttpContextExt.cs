@@ -19,9 +19,9 @@
     internal static class HttpContextExt
     {
         public static async Task ExecuteCommand<T>(this HttpContext context) where T : Command =>
-            (await context.ReadCommandAsync<T>())
-                .Bind(HandleWithCommandHandler(context))
-                .Match(
+            (await context.ReadCommandAsync<T>()).
+                Bind(HandleWithCommandHandler(context)).
+                Match(
                     Invalid:    async (errors)  => await context.SetResponseBadRequest(errors),
                     Valid:      (v)             =>
                     {
@@ -34,13 +34,13 @@
         public static async Task ExecuteQuery<Q, T>(this HttpContext context) 
                 where T : ViewProjection
                 where Q : Query, new() =>
-            await context.ExtractParameters()
-                .Bind(BuildQuery<Q>)
-                .Bind(BuildRepository<T>(context))
-                .Bind(LaunchQuery<T>())
-                .Match(
+            await context.ExtractParameters().
+                Bind(BuildQuery<Q>).
+                Bind(BuildRepository<T>(context)).
+                Bind(LaunchQuery<T>()).
+                Match(
                     Exception:  (ex)    => context.SetResponseInternalServerError(ex),
-                    Success:    (v)     => context.SetResponseOk(v.Map(p => (T)p)));
+                    Success:    (v)     => context.SetResponseOk(v));
 
         private static Func<(Query, IViewProjectionRepository<T>), Exceptional<IEnumerable<T>>> LaunchQuery<T>() where T : ViewProjection =>
             tuple => tuple.Item2.Get(tuple.Item1.BuildPredicate());
@@ -52,7 +52,8 @@
             c => context.RequestServices.GetService<CommandHandler>().Handle(c);
 
         private static async Task<Validation<T>> ReadCommandAsync<T>(this HttpContext context) where T : Command =>
-            (await RunAsync(() => context.Request.ReadFromJsonAsync<T>())).Match(
+            (await RunAsync(() => context.Request.ReadFromJsonAsync<T>())).
+                Match(
                     Exception:  (ex)    => Invalid($"Les données de la requête ne sont pas serialisables en commande {typeof(T).Name}"),
                     Success:    (value) => Valid(value));
 
@@ -64,10 +65,10 @@
 
         private static Exceptional<Dictionary<string, string>> ExtractParameters(this HttpContext context) =>
             Try(() =>
-                context.Request.Query.Select(v => KeyValuePair.Create(v.Key, (string)v.Value))
-                .Union(context.Request.RouteValues.Select(v => KeyValuePair.Create(v.Key, (string)v.Value)))
-                .ToDictionary((kv) => kv.Key, (kv) => kv.Value))
-                .Run();
+                context.Request.Query.Select(v => KeyValuePair.Create(v.Key, (string)v.Value)).
+                Union(context.Request.RouteValues.Select(v => KeyValuePair.Create(v.Key, (string)v.Value))).
+                ToDictionary((kv) => kv.Key, (kv) => kv.Value)).
+            Run();
 
         private static async Task SetResponseBadRequest(this HttpContext context, IEnumerable<Error> errors)
         {
@@ -81,7 +82,8 @@
             await context.Response.WriteAsJsonAsync(ex.Message);
         }
 
-        private static void SetResponseOk(this HttpContext context) => context.Response.StatusCode = (int)HttpStatusCode.OK;
+        private static void SetResponseOk(this HttpContext context) => 
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
 
         private static async Task SetResponseOk<TValue>(this HttpContext context, TValue value)
         {

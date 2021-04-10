@@ -31,8 +31,8 @@
                     Event @event,
                     Func<Exceptional<T>> create,
                     Func<T, T> update) where T : ViewProjection =>
-            GetProjection(repository, @event.AggregateId, create)
-            .Bind((p) => repository.Upsert(update(p)));
+            GetProjection(repository, @event.AggregateId, create).
+            Bind((p) => repository.Upsert(update(p)));
 
         private static Exceptional<T> GetProjection<T>(
                     IViewProjectionRepository<T> repository,

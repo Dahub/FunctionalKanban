@@ -19,11 +19,11 @@
         protected Option<State> From<T>(
             IEnumerable<Event> history,
             Func<State> createState) where T : Event =>
-                OrderEvents(history)
-                    .Bind(HistoryIsValid<T>())
-                    .Match(
-                        None: () => None,
-                        Some: (evts) => Some(Hydrate(evts, createState(), (state, evt) => With(evt))));
+                OrderEvents(history).
+                    Bind(HistoryIsValid<T>()).
+                    Match(
+                        None: ()        => None,
+                        Some: (evts)    => Some(Hydrate(evts, createState(), (state, evt) => With(evt))));
 
         private static Option<IEnumerable<Event>> OrderEvents(IEnumerable<Event> events) =>
             Some(events.OrderBy(e => e.EntityVersion).AsEnumerable());
@@ -34,12 +34,12 @@
                 : None;
 
         private static bool AreConsecutives(IEnumerable<Event> events) =>
-            !events
-                .Map(e => e.EntityVersion)
-                .Select((i, j) => i - j) 
-                .Distinct()
-                .Skip(1)
-                .Any();
+            !events.
+            Map(e => e.EntityVersion).
+            Select((i, j) => i - j).
+            Distinct().
+            Skip(1).
+            Any();
 
         private static State Hydrate(
             IEnumerable<Event> orderedEvents,
