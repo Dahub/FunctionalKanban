@@ -12,7 +12,10 @@
 
         public TaskStatus Status { get; init; }
 
-        public static bool CanHandle(Event @event) => @event is TaskCreated or TaskStatusChanged;
+        public bool IsDeleted { get; init; }
+
+        public static bool CanHandle(Event @event) => 
+            @event is TaskCreated or TaskStatusChanged or TaskDeleted;
     }
 
     public static class TaskViewProjectionExt
@@ -20,8 +23,9 @@
         public static TaskViewProjection With(this TaskViewProjection view, Event @event) =>
             @event switch
             {
-                TaskCreated e       => view with { Id = e.AggregateId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status },
+                TaskCreated e       => view with { Id = e.AggregateId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status, IsDeleted = e.IsDeleted },
                 TaskStatusChanged e => view with { RemaningWork = e.RemaningWork, Status = e.NewStatus },
+                TaskDeleted e       => view with { IsDeleted = e.IsDeleted },
                 _                   => view with { }
             };
     }

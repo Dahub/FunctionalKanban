@@ -2,6 +2,9 @@
 {
     using System;
     using System.Net.Http;
+    using System.Net.Http.Json;
+    using System.Threading.Tasks;
+    using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Infrastructure.InMemory;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.TestHost;
@@ -38,5 +41,15 @@
             startup.ViewProjectionDataBase = viewProjectionDataBase;
             return startup;
         }
+        protected static async Task InitNewTask(HttpClient httpClient, Guid entityId) =>
+            _ = await httpClient
+                .PostAsJsonAsync(
+                    "task",
+                    new CreateTask()
+                    {
+                        AggregateId = entityId,
+                        Name = Guid.NewGuid().ToString(),
+                        RemaningWork = 10
+                    });
     }
 }

@@ -16,7 +16,7 @@
         [Fact]
         public async Task ReturnAllTaskWhenGetWithoutParameters()
         {
-            var expectedResult = "[{\"name\":\"test task\",\"remaningWork\":0,\"status\":0,\"id\":\"6eb4c342-8ed3-4ad3-9d91-119539ce6a6b\"},{\"name\":\"test task\",\"remaningWork\":0,\"status\":0,\"id\":\"716b6d2a-a19b-4840-92de-6699ac96d65c\"}]";
+            var expectedResult = "[{\"name\":\"test task\",\"remaningWork\":0,\"status\":0,\"isDeleted\":false,\"id\":\"6eb4c342-8ed3-4ad3-9d91-119539ce6a6b\"},{\"name\":\"test task\",\"remaningWork\":0,\"status\":0,\"isDeleted\":false,\"id\":\"716b6d2a-a19b-4840-92de-6699ac96d65c\"}]";
 
             var httpClient = BuildNewHttpClient<InMemoryStartup>(
                 new InMemoryDatabase(), new InMemoryDatabase());
@@ -37,7 +37,7 @@
         [Fact]
         public async Task ReturnFilteredTaskWhenGetWithParameter()
         {
-            var expectedResult = "[{\"name\":\"test 2\",\"remaningWork\":10,\"status\":0,\"id\":\"716b6d2a-a19b-4840-92de-6699ac96d65c\"}]";
+            var expectedResult = "[{\"name\":\"test 2\",\"remaningWork\":10,\"status\":0,\"isDeleted\":false,\"id\":\"716b6d2a-a19b-4840-92de-6699ac96d65c\"}]";
 
             var httpClient = BuildNewHttpClient<InMemoryStartup>(
                 new InMemoryDatabase(), new InMemoryDatabase());

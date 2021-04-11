@@ -28,6 +28,7 @@
             {
                 CreateTask c        => TaskEntity.Create(c).PublishEvent(_publishEvent),
                 ChangeTaskStatus c  => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeStatus(c)),
+                DeleteTask c        => Handle<TaskEntityState>(c, _getEntity, (e) => e.Delete(c)),
                 _                   => Invalid("Commande non prise en charge")
             });
 

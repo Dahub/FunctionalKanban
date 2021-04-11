@@ -1,11 +1,15 @@
 ﻿namespace FunctionalKanban.Domain.Task.Events
 {
-    public sealed record TaskCreated : Common.Event
+    using FunctionalKanban.Domain.Common;
+
+    public sealed record TaskCreated : Event
     {
         public string Name { get; init; }
 
         public TaskStatus Status { get; init; }
 
         public uint RemaningWork { get; init; }
+
+        public bool IsDeleted { get; init; }
     }
 }

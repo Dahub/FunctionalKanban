@@ -19,30 +19,78 @@ namespace FunctionalKanban.Domain.Test
         {
             var expectedTaskName = Guid.NewGuid().ToString();
             var expectedTaskStatus = TaskStatus.Todo;
+            var aggregateId = Guid.NewGuid();
 
-            var eventAndTask = BuildNewTask(expectedTaskName);
+            var eventAndTask = BuildNewTask(aggregateId, expectedTaskName);
+
+            bool CheckEquality(TaskEntityState s) =>
+                s.TaskName.Equals(expectedTaskName)
+                && s.TaskStatus.Equals(expectedTaskStatus)
+                && s.IsDeleted.Equals(false);                
 
             eventAndTask.Match(
                 Invalid: (errors) => false,
-                Valid: (eas) => ((TaskEntityState)eas.State).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Valid: (eas) => CheckEquality((TaskEntityState)eas.State)).Should().BeTrue();
         }
 
         [Fact]
         public void ChangeTaskStateStatusWhenStatusChange()
         {
             var expectedTaskStatus = TaskStatus.InProgress;
+            var aggregateId = Guid.NewGuid();
+            var changeTaskStatus = new ChangeTaskStatus()
+            {
+                AggregateId = aggregateId,
+                TaskStatus = expectedTaskStatus
+            };
+
+            var eventAndState = BuildNewTask(aggregateId).Bind((x) => ((TaskEntityState)x.State).ChangeStatus(changeTaskStatus));
+
+            eventAndState.Match(
+                Invalid:    (errors)    => false,
+                Valid:      (eas)       => ((TaskEntityState)eas.State).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+        }
+
+        [Fact]
+        public void SetIsDeleltedToTruWhenDeleted()
+        {
+            var expectedIsDeletedValue = true;
+            var aggregateId = Guid.NewGuid();
+
+            var deleteTask = new DeleteTask()
+            {
+                AggregateId =  aggregateId
+            };
+
+            var eventAndState = BuildNewTask(aggregateId).Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
+
+            eventAndState.Match(
+                Invalid:    (errors)    => false,
+                Valid:      (eas)       => ((TaskEntityState)eas.State).IsDeleted.Equals(expectedIsDeletedValue)).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ReturnInvalidWhenChangeStatusOfDeletedTask()
+        {
+            var taskState = new TaskEntityState()
+            {
+                IsDeleted = true,
+                RemaningWork = 5,
+                TaskName = "test task",
+                TaskStatus = TaskStatus.Archived,
+                Version = 5
+            };
 
             var changeTaskStatus = new ChangeTaskStatus()
             {
                 AggregateId = Guid.NewGuid(),
-                TaskStatus = expectedTaskStatus
+                TaskStatus = TaskStatus.Canceled
             };
 
-            var eventAndState = BuildNewTask().Bind((x) => ((TaskEntityState)x.State).ChangeStatus(changeTaskStatus));
-
-            eventAndState.Match(
-                Invalid: (errors) => false,
-                Valid: (eas) => ((TaskEntityState)eas.State).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+            TaskEntity.ChangeStatus(taskState, changeTaskStatus)
+                .Match(
+                    Invalid:    (_) => true,
+                    Valid:      (_) => false).Should().BeTrue();
         }
 
         [Fact]
@@ -182,13 +230,13 @@ namespace FunctionalKanban.Domain.Test
                 Some: (_) => true).Should().BeTrue();
         }
 
-        private static Validation<EventAndState> BuildNewTask(string taskName = "fake task") =>
-            TaskEntity.Create(BuildCreateTaskCommand(taskName));
+        private static Validation<EventAndState> BuildNewTask(Guid aggregateId, string taskName = "fake task") =>
+            TaskEntity.Create(BuildCreateTaskCommand(aggregateId, taskName));
 
-        private static CreateTask BuildCreateTaskCommand(string taskName) =>
+        private static CreateTask BuildCreateTaskCommand(Guid aggregateId, string taskName) =>
             new CreateTask()
             {
-                AggregateId     = Guid.NewGuid(),
+                AggregateId     = aggregateId,
                 Name            = taskName,
                 RemaningWork    = 10
             };
