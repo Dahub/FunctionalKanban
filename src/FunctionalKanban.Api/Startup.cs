@@ -64,8 +64,8 @@ namespace FunctionalKanban.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => await context.Response.WriteAsync("Hello world !"));
-                endpoints.MapGet("/task", async context => await context.ExecuteQuery<GetTaskQuery, TaskViewProjection, TaskDto>());
-                endpoints.MapGet("/task/{id:guid}", async context => await context.ExecuteQuery<GetTaskByIdQuery, TaskViewProjection, TaskDto>());
+                endpoints.MapGet("/task", async context => await context.ExecuteQuery<GetTaskQuery, TaskDto>());
+                endpoints.MapGet("/task/{id:guid}", async context => await context.ExecuteQuery<GetTaskByIdQuery, TaskDto>());
 
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
                 endpoints.MapPost("/task/changeStatus", async context => await context.ExecuteCommand<ChangeTaskStatus>());
@@ -86,7 +86,7 @@ namespace FunctionalKanban.Api
             (evt) => GetService<IEventStream>(services).Push(evt);
 
         protected virtual Func<Type, Func<ViewProjection, bool>, Exceptional<IEnumerable<ViewProjection>>> GetFindProjectionsMethod(IServiceCollection services) =>
-             GetService<IViewProjectionRepository>(services).GetWithType;
+             GetService<IViewProjectionRepository>(services).Get;
 
         protected virtual IViewProjectionDataBase BuildViewProjectionDataBase() => new InMemoryDatabase();
 

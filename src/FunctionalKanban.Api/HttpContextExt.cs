@@ -31,12 +31,11 @@
                         );
                     });
 
-        public static async Task ExecuteQuery<Q, P, D>(this HttpContext context) 
-                where P : ViewProjection
-                where Q : Query, new()
-                where D : Dto =>
+        public static async Task ExecuteQuery<TQuery, TDto>(this HttpContext context) 
+                where TQuery : Query, new()
+                where TDto : Dto =>
             await context.ExtractParameters().
-                Bind(HandleWithQueryHandler<Q, D>(context)).
+                Bind(HandleWithQueryHandler<TQuery, TDto>(context)).
                 Match(
                     Exception:  (ex)    => context.SetResponseInternalServerError(ex),
                     Success:    (v)     => context.SetResponseOk(v));

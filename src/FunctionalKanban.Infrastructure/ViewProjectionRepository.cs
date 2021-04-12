@@ -15,11 +15,8 @@
 
         public ViewProjectionRepository(IViewProjectionDataBase dataBase) => _dataBase = dataBase;
 
-        public Exceptional<IEnumerable<T>> Get<T>(Func<T, bool> predicate) where T : ViewProjection =>
-            _dataBase.Projections<T>().Bind(ps => GetByPredicate(predicate, ps));
-
-        public Exceptional<IEnumerable<ViewProjection>> GetWithType(Type type, Func<ViewProjection, bool> predicate) =>
-            _dataBase.Projections(type).Bind(ps => GetByPredicate(predicate, ps));
+        public Exceptional<IEnumerable<ViewProjection>> Get(Type projectionType, Func<ViewProjection, bool> predicate) =>
+            _dataBase.Projections(projectionType).Bind(ps => GetByPredicate(predicate, ps));
 
         public Exceptional<Option<T>> GetById<T>(Guid id) where T : ViewProjection =>
             Try(() => 

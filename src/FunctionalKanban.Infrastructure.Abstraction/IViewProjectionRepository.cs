@@ -12,8 +12,6 @@
 
         Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection;
 
-        Exceptional<IEnumerable<T>> Get<T>(Func<T, bool> predicate) where T : ViewProjection;
-
-        Exceptional<IEnumerable<ViewProjection>> GetWithType(Type type, Func<ViewProjection, bool> predicate);
+        Exceptional<IEnumerable<ViewProjection>> Get(Type projectionType, Func<ViewProjection, bool> predicate);
     }
 }
