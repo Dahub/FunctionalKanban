@@ -7,13 +7,12 @@
     using System.Threading.Tasks;
     using FunctionalKanban.Application.Commands;
     using FunctionalKanban.Application.Dtos;
+    using FunctionalKanban.Application.Queries;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Functional;
-    using FunctionalKanban.Infrastructure.Abstraction;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using static FunctionalKanban.Application.Queries.QueryBuilder;
     using static FunctionalKanban.Functional.F;
     using Unit = System.ValueTuple;
 
@@ -32,29 +31,25 @@
                         );
                     });
 
-        public static async Task ExecuteQuery<Q, T, D>(this HttpContext context) 
-                where T : ViewProjection
+        public static async Task ExecuteQuery<Q, P, D>(this HttpContext context) 
+                where P : ViewProjection
                 where Q : Query, new()
                 where D : Dto =>
             await context.ExtractParameters().
-                Bind(BuildQuery<Q>).
-                Bind(BuildRepository<T>(context)).
-                Bind(LaunchQuery<T>()).
-                Bind(results => results.ToDto<T, D>()).
+                Bind(HandleWithQueryHandler<Q, D>(context)).
                 Match(
                     Exception:  (ex)    => context.SetResponseInternalServerError(ex),
                     Success:    (v)     => context.SetResponseOk(v));
 
-        private static Func<(Query, IViewProjectionRepository<T>), Exceptional<IEnumerable<T>>> LaunchQuery<T>() where T : ViewProjection =>
-            ((Query query, IViewProjectionRepository<T> repository) tuple) => tuple.repository.Get(tuple.query.BuildPredicate());
-
-        private static Func<Query, Exceptional<(Query, IViewProjectionRepository<T>)>> BuildRepository<T>(HttpContext context) where T : ViewProjection =>
-            query =>
+        private static Func<Dictionary<string, string>, Exceptional<IEnumerable<TDto>>> HandleWithQueryHandler<TQuery, TDto>(HttpContext context)
+                where TQuery : Query, new()
+                where TDto : Dto =>
+            parameters =>
             {
-                var repository = context.RequestServices.GetService<IViewProjectionRepository<T>>();
-                return repository == null
-                    ? new Exception($"IViewProjectionRepository<{typeof(T).Name}> introuvable")
-                    : (query, repository);
+                var service = context.RequestServices.GetService<QueryHandler>();
+                return service == null
+                    ? new Exception("Impossible de charger le queryHandler")
+                    : service.Handle<TQuery, TDto>(parameters);
             };
 
         private static Func<Command, Validation<Exceptional<Unit>>> HandleWithCommandHandler(HttpContext context) =>

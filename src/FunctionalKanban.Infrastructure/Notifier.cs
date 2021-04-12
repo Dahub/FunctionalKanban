@@ -9,25 +9,23 @@
 
     public class Notifier : INotifier
     {
-        private readonly IViewProjectionRepository<TaskViewProjection> _taskViewProjectionRepository;
+        private readonly IViewProjectionRepository _viewProjectionRepository;
 
-        public Notifier(IViewProjectionRepository<TaskViewProjection> taskViewProjectionRepository)
-        {
-            _taskViewProjectionRepository = taskViewProjectionRepository;
-        }
+        public Notifier(IViewProjectionRepository viewProjectionRepository) => 
+            _viewProjectionRepository = viewProjectionRepository;
 
         public Exceptional<Unit> Notity(Event @event) =>
-            NotifyTaskViewProjection(_taskViewProjectionRepository, @event); // bind others notify
+            NotifyTaskViewProjection(_viewProjectionRepository, @event); // bind others notify
 
         private static Exceptional<Unit> NotifyTaskViewProjection(
-                    IViewProjectionRepository<TaskViewProjection> repository,
+                    IViewProjectionRepository repository,
                     Event @event) =>
             TaskViewProjection.CanHandle(@event)
-            ? HandleEvent(repository, @event, () => new TaskViewProjection(), (p) => p.With(@event))
+            ? HandleEvent<TaskViewProjection>(repository, @event, () => new TaskViewProjection(), (p) => p.With(@event))
             : Unit.Create();
 
         private static Exceptional<Unit> HandleEvent<T>(
-                    IViewProjectionRepository<T> repository,
+                    IViewProjectionRepository repository,
                     Event @event,
                     Func<Exceptional<T>> create,
                     Func<T, T> update) where T : ViewProjection =>
@@ -35,13 +33,13 @@
             Bind((p) => repository.Upsert(update(p)));
 
         private static Exceptional<T> GetProjection<T>(
-                    IViewProjectionRepository<T> repository,
+                    IViewProjectionRepository repository,
                     Guid id,
-                    Func<Exceptional<T>> buildNewViewProjection) where T : ViewProjection => 
-            repository.GetById(id).Match(
+                    Func<Exceptional<T>> buildNewViewProjection) where T : ViewProjection =>
+            repository.GetById<T>(id).Match(
                 Exception: (ex) => Exceptional.Of<T>(ex),
-                Success: (p)    => p.Match(
-                        None: ()    => buildNewViewProjection(),
-                        Some: (p)   => Exceptional.Of(p)));
+                Success: (p) => p.Match(
+                        None: () => buildNewViewProjection(),
+                        Some: (p) => Exceptional.Of(p)));
     }
 }

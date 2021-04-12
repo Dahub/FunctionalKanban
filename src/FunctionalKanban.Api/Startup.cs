@@ -1,8 +1,10 @@
 namespace FunctionalKanban.Api
 {
     using System;
+    using System.Collections.Generic;
     using FunctionalKanban.Application.Commands;
     using FunctionalKanban.Application.Dtos;
+    using FunctionalKanban.Application.Queries;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Queries;
@@ -32,7 +34,7 @@ namespace FunctionalKanban.Api
             services.AddScoped<IEventStream, EventStream>();
 
             services.AddScoped<IEntityStateRepository, EntityStateRepository>();
-            services.AddScoped<IViewProjectionRepository<TaskViewProjection>, ViewProjectionRepository<TaskViewProjection>>();
+            services.AddScoped<IViewProjectionRepository, ViewProjectionRepository>();
 
             services.AddScoped<INotifier, Notifier>();
             services.AddScoped<IEventBus>(e => new EventBus(
@@ -42,6 +44,9 @@ namespace FunctionalKanban.Api
             services.AddScoped(s => new CommandHandler(
                 getEntity: GetEntityMethod(services),
                 publishEvent: PublishEventMethod(services)));
+
+            services.AddScoped(s => new QueryHandler(
+                findProjections: GetFindProjectionsMethod(services)));
 
             services.AddRouting();
         }
@@ -61,7 +66,7 @@ namespace FunctionalKanban.Api
                 endpoints.MapGet("/", async context => await context.Response.WriteAsync("Hello world !"));
                 endpoints.MapGet("/task", async context => await context.ExecuteQuery<GetTaskQuery, TaskViewProjection, TaskDto>());
                 endpoints.MapGet("/task/{id:guid}", async context => await context.ExecuteQuery<GetTaskByIdQuery, TaskViewProjection, TaskDto>());
-                
+
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
                 endpoints.MapPost("/task/changeStatus", async context => await context.ExecuteCommand<ChangeTaskStatus>());
                 endpoints.MapPost("/task/delete", async context => await context.ExecuteCommand<DeleteTask>());
@@ -79,6 +84,9 @@ namespace FunctionalKanban.Api
 
         protected virtual Func<Event, Exceptional<Unit>> StreamEventMethod(IServiceCollection services) =>
             (evt) => GetService<IEventStream>(services).Push(evt);
+
+        protected virtual Func<Type, Func<ViewProjection, bool>, Exceptional<IEnumerable<ViewProjection>>> GetFindProjectionsMethod(IServiceCollection services) =>
+             GetService<IViewProjectionRepository>(services).GetWithType;
 
         protected virtual IViewProjectionDataBase BuildViewProjectionDataBase() => new InMemoryDatabase();
 

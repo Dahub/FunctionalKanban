@@ -1,5 +1,6 @@
 ﻿namespace FunctionalKanban.Infrastructure.Abstraction
 {
+    using System;
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.ViewProjections;
@@ -11,6 +12,8 @@
         IEnumerable<TaskViewProjection> TaskViewProjections { get; }
 
         Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection;
+
+        Exceptional<IEnumerable<ViewProjection>> Projections(Type type);
 
         Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection;
     }
