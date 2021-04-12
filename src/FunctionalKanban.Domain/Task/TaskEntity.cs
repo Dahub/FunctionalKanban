@@ -8,7 +8,7 @@
 
     public static class TaskEntity
     {
-        private static readonly string _aggregateName = typeof(TaskEntityState).FullName;
+        private static readonly string _aggregateName = typeof(TaskEntityState).FullName??string.Empty;
 
         public static Validation<EventAndState> Create(CreateTask cmd)
         {
@@ -21,7 +21,8 @@
                 IsDeleted       = false,
                 TimeStamp       = cmd.TimeStamp,
                 Status          = TaskStatus.Todo,
-                EntityVersion   = 1
+                EntityVersion   = 1,
+                ProjectId       = cmd.ProjectId.HasValue?Some(cmd.ProjectId.Value):None
             };
 
             return new TaskEntityState().ApplyEvent(@event);
@@ -59,7 +60,8 @@
                 AggregateName = _aggregateName,
                 EntityVersion = state.Version + 1,
                 TimeStamp = cmd.TimeStamp,
-                IsDeleted = true
+                IsDeleted = true,
+                ProjectId = None
             };
 
             return state.ApplyEvent(@event);

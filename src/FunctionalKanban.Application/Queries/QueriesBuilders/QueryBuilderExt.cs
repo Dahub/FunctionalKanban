@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Application.QueriesBuilders
+﻿namespace FunctionalKanban.Application.Queries.QueriesBuilders
 {
     using System;
     using System.Collections.Generic;
@@ -18,7 +18,9 @@
                 this TQuery query,
                 IDictionary<string, string> parameters,
                 string key,
-                Func<TParam, TQuery> f) where TQuery : Query =>
+                Func<TParam, TQuery> f) 
+                    where TQuery : Query
+                    where TParam : notnull, new() =>
             parameters != null && parameters.ContainsKey(key)
             ? ParseParameterAndExecute(parameters, key, f)
             : Valid(query);
@@ -26,12 +28,15 @@
         private static Validation<TQuery> ParseParameterAndExecute<TQuery, TParam>(
                 IDictionary<string, string> parameters, 
                 string key, 
-                Func<TParam, TQuery> f) where TQuery : Query => 
+                Func<TParam, TQuery> f) 
+                    where TQuery : Query
+                    where TParam : notnull, new() => 
             parameters[key].TryParse<TParam>(out var value)
             ? Valid(f(value))
             : Invalid($"Paramètre incorrect {key} : type attendu {typeof(TParam).Name}");
 
-        private static bool TryParse<T>(this string input, out T value)
+        private static bool TryParse<T>(this string input, out T value) 
+            where T : notnull, new()
         {
             var converter = TypeDescriptor.GetConverter(typeof(T));
 
@@ -41,7 +46,7 @@
                 return true;
             }
 
-            value = default;
+            value = new T();
             return false;
         }
     }

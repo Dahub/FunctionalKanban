@@ -5,14 +5,15 @@
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    using FunctionalKanban.Application;
+    using FunctionalKanban.Application.Commands;
+    using FunctionalKanban.Application.Dtos;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using static FunctionalKanban.Application.QueryBuilder;
+    using static FunctionalKanban.Application.Queries.QueryBuilder;
     using static FunctionalKanban.Functional.F;
     using Unit = System.ValueTuple;
 
@@ -31,33 +32,49 @@
                         );
                     });
 
-        public static async Task ExecuteQuery<Q, T>(this HttpContext context) 
+        public static async Task ExecuteQuery<Q, T, D>(this HttpContext context) 
                 where T : ViewProjection
-                where Q : Query, new() =>
+                where Q : Query, new()
+                where D : Dto =>
             await context.ExtractParameters().
                 Bind(BuildQuery<Q>).
                 Bind(BuildRepository<T>(context)).
                 Bind(LaunchQuery<T>()).
+                Bind(results => results.ToDto<T, D>()).
                 Match(
                     Exception:  (ex)    => context.SetResponseInternalServerError(ex),
                     Success:    (v)     => context.SetResponseOk(v));
 
         private static Func<(Query, IViewProjectionRepository<T>), Exceptional<IEnumerable<T>>> LaunchQuery<T>() where T : ViewProjection =>
-            tuple => tuple.Item2.Get(tuple.Item1.BuildPredicate());
+            ((Query query, IViewProjectionRepository<T> repository) tuple) => tuple.repository.Get(tuple.query.BuildPredicate());
 
         private static Func<Query, Exceptional<(Query, IViewProjectionRepository<T>)>> BuildRepository<T>(HttpContext context) where T : ViewProjection =>
-            query => (query, context.RequestServices.GetService<IViewProjectionRepository<T>>());
+            query =>
+            {
+                var repository = context.RequestServices.GetService<IViewProjectionRepository<T>>();
+                return repository == null
+                    ? new Exception($"IViewProjectionRepository<{typeof(T).Name}> introuvable")
+                    : (query, repository);
+            };
 
         private static Func<Command, Validation<Exceptional<Unit>>> HandleWithCommandHandler(HttpContext context) =>
-            c => context.RequestServices.GetService<CommandHandler>().Handle(c);
+            c =>
+            {
+                var service = context.RequestServices.GetService<CommandHandler>();
+                return service == null
+                    ? Invalid("Impossible de charger le commandHandler")
+                    : service.Handle(c);
+            };
 
         private static async Task<Validation<T>> ReadCommandAsync<T>(this HttpContext context) where T : Command =>
             (await RunAsync(() => context.Request.ReadFromJsonAsync<T>())).
                 Match(
                     Exception:  (ex)    => Invalid($"Les données de la requête ne sont pas serialisables en commande {typeof(T).Name}"),
-                    Success:    (value) => Valid(value));
+                    Success:    (value) => value == null
+                                            ? Invalid("Données incomplètes")
+                                            : Valid(value));
 
-        private static async Task<Exceptional<T>> RunAsync<T>(Func<ValueTask<T>> asyncMethod) where T : Command
+        private static async Task<Exceptional<T?>> RunAsync<T>(Func<ValueTask<T?>> asyncMethod) where T : Command
         {
             try { return await asyncMethod(); }
             catch(Exception ex) { return ex; }

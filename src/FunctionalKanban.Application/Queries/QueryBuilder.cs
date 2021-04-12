@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Application
+﻿namespace FunctionalKanban.Application.Queries
 {
     using System;
     using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Application.Validators
+﻿namespace FunctionalKanban.Application.Commands.Validators
 {
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Task.Commands;

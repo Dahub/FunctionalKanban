@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>nullable</WarningsAsErrors>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
@@ -11,6 +13,5 @@
     <ProjectReference Include="..\FunctionalKanban.Infrastructure.Abstraction\FunctionalKanban.Infrastructure.Abstraction.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Infrastructure\FunctionalKanban.Infrastructure.csproj" />
   </ItemGroup>
-
 
 </Project>

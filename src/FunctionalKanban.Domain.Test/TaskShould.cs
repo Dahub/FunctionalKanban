@@ -52,7 +52,7 @@ namespace FunctionalKanban.Domain.Test
         }
 
         [Fact]
-        public void SetIsDeleltedToTruWhenDeleted()
+        public void SetIsDeletedToTrueWhenDeleted()
         {
             var expectedIsDeletedValue = true;
             var aggregateId = Guid.NewGuid();
@@ -67,6 +67,23 @@ namespace FunctionalKanban.Domain.Test
             eventAndState.Match(
                 Invalid:    (errors)    => false,
                 Valid:      (eas)       => ((TaskEntityState)eas.State).IsDeleted.Equals(expectedIsDeletedValue)).Should().BeTrue();
+        }
+
+        [Fact]
+        public void SetProjectIdToNonWhenDeleted()
+        {
+            var aggregateId = Guid.NewGuid();
+
+            var deleteTask = new DeleteTask()
+            {
+                AggregateId = aggregateId
+            };
+
+            var eventAndState = BuildNewTask(aggregateId).Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
+
+            eventAndState.Match(
+                Invalid: (errors) => false,
+                Valid: (eas) => ((TaskEntityState)eas.State).ProjectId.Equals(None)).Should().BeTrue();
         }
 
         [Fact]
@@ -238,7 +255,8 @@ namespace FunctionalKanban.Domain.Test
             {
                 AggregateId     = aggregateId,
                 Name            = taskName,
-                RemaningWork    = 10
+                RemaningWork    = 10,
+                ProjectId       = Guid.NewGuid()
             };
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace FunctionalKanban.Application
+﻿namespace FunctionalKanban.Application.Commands
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using FunctionalKanban.Application.Validators;
+    using FunctionalKanban.Application.Commands.Validators;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Functional;
     using static FunctionalKanban.Functional.F;

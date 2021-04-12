@@ -29,8 +29,8 @@
                    None: () => None,
                    Some: (tuple) =>
                    {
-                       var state = (State)Activator.CreateInstance(tuple.entityType);
-                       return Some((state, tuple.events));
+                       var state = Activator.CreateInstance(tuple.entityType);
+                       return state == null?None:Some(((State)state, tuple.events));
                    });
            });
 
@@ -56,7 +56,7 @@
                     Some: (e) =>
                     {
                         var entityName = e.First().AggregateName;
-                        var entityType = Assembly.GetAssembly(typeof(State)).GetType(entityName);
+                        var entityType = Assembly.GetAssembly(typeof(State))?.GetType(entityName);
                         return entityType == null ? None : Some((entityType, e));
                     });
             });

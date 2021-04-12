@@ -9,6 +9,7 @@ namespace FunctionalKanban.Api.Test
     using FunctionalKanban.Api.Test.Tools;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Domain.Task.Events;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 
@@ -46,8 +47,8 @@ namespace FunctionalKanban.Api.Test
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
-            responseContent.Should().Be("[\"Commande non prise en charge\"]");
-        }
+            responseContent.Should().Be("[\"Données incomplètes\"]");
+        } 
 
         [Fact]
         public async Task ReturnHttpBadRequestWhenPostCreateTaskCommandWithWrongCommand()
@@ -114,6 +115,7 @@ namespace FunctionalKanban.Api.Test
             var expectedAggregateId = Guid.NewGuid();
             var expectedAggregateName = typeof(TaskEntityState).FullName;
             var expectedVersion = 1;
+            var expectedProjectId = Guid.NewGuid();
 
             _ = await httpClient
                 .PostAsJsonAsync(
@@ -122,7 +124,8 @@ namespace FunctionalKanban.Api.Test
                     {
                         AggregateId =   expectedAggregateId,
                         Name = Guid.NewGuid().ToString(),
-                        RemaningWork =  10
+                        RemaningWork =  10,
+                        ProjectId = expectedProjectId
                     });
 
             var events = eventDataBase.Events.Where(e => e.AggregateId.Equals(expectedAggregateId));
@@ -134,6 +137,10 @@ namespace FunctionalKanban.Api.Test
             eventLine.EntityVersion.Should().Equals(expectedVersion);
             eventLine.AggregateId.Should().Equals(expectedAggregateId);
             eventLine.AggregateName.Should().Be(expectedAggregateName);
+
+            eventLine.Should().BeOfType<TaskCreated>();
+
+            ((TaskCreated)eventLine).ProjectId.Should().Equals(expectedProjectId);
         }
 
         [Fact]

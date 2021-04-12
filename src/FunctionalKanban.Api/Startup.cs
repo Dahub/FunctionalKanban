@@ -1,7 +1,8 @@
 namespace FunctionalKanban.Api
 {
     using System;
-    using FunctionalKanban.Application;
+    using FunctionalKanban.Application.Commands;
+    using FunctionalKanban.Application.Dtos;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Queries;
@@ -58,8 +59,8 @@ namespace FunctionalKanban.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => await context.Response.WriteAsync("Hello world !"));
-                endpoints.MapGet("/task", async context => await context.ExecuteQuery<GetTaskQuery, TaskViewProjection>());
-                endpoints.MapGet("/task/{id:guid}", async context => await context.ExecuteQuery<GetTaskByIdQuery, TaskViewProjection>());
+                endpoints.MapGet("/task", async context => await context.ExecuteQuery<GetTaskQuery, TaskViewProjection, TaskDto>());
+                endpoints.MapGet("/task/{id:guid}", async context => await context.ExecuteQuery<GetTaskByIdQuery, TaskViewProjection, TaskDto>());
                 
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
                 endpoints.MapPost("/task/changeStatus", async context => await context.ExecuteCommand<ChangeTaskStatus>());
@@ -83,6 +84,6 @@ namespace FunctionalKanban.Api
 
         protected virtual IEventDataBase BuildEventDataBase() => new InMemoryDatabase();
 
-        private static T GetService<T>(IServiceCollection services) => services.BuildServiceProvider().GetRequiredService<T>();
+        private static T GetService<T>(IServiceCollection services) where T : notnull => services.BuildServiceProvider().GetRequiredService<T>();
     }
 }

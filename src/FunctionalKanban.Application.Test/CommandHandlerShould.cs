@@ -2,6 +2,7 @@ namespace FunctionalKanban.Application.Test
 {
     using System;
     using FluentAssertions;
+    using FunctionalKanban.Application.Commands;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;

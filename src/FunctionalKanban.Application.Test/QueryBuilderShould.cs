@@ -2,6 +2,7 @@
 {
     using System;
     using FluentAssertions;
+    using FunctionalKanban.Application.Queries;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Queries;
     using Xunit;
