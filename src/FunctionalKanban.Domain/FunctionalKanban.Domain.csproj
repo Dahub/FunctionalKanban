@@ -15,4 +15,9 @@
     <ProjectReference Include="..\FunctionalKanban.Functional\FunctionalKanban.Functional.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Project\ViewProjections\" />
+    <Folder Include="Project\Queries\" />
+  </ItemGroup>
+
 </Project>
