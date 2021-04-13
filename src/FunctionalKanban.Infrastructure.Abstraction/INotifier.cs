@@ -6,6 +6,6 @@
 
     public interface INotifier
     {
-        Exceptional<Unit> Notity(Event @event);
+        Exceptional<Unit> Notify(Event @event);
     }
 }

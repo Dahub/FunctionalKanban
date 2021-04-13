@@ -9,7 +9,6 @@
     using FunctionalKanban.Api.Test.Tools;
     using FunctionalKanban.Domain.Project;
     using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Domain.Project.Events;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 

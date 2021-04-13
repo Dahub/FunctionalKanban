@@ -10,27 +10,22 @@
 
     public class Notifier : INotifier
     {
-        private readonly IViewProjectionRepository _viewProjectionRepository;
+        private readonly IViewProjectionRepository _repo;
 
         public Notifier(IViewProjectionRepository viewProjectionRepository) => 
-            _viewProjectionRepository = viewProjectionRepository;
+            _repo = viewProjectionRepository;
 
-        public Exceptional<Unit> Notity(Event @event) =>
-            NotifyTaskViewProjection(_viewProjectionRepository, @event).
-            Bind(_ => NotifyProjectViewProjection(_viewProjectionRepository, @event));
+        public Exceptional<Unit> Notify(Event @event) =>
+            Notify<TaskViewProjection>(_repo, @event, TaskViewProjection.CanHandle, (p) => p.With(@event)).
+            Bind(_ => Notify<ProjectViewProjection>(_repo, @event, ProjectViewProjection.CanHandle, (p) => p.With(@event)));
 
-        private static Exceptional<Unit> NotifyTaskViewProjection(
+       private static Exceptional<Unit> Notify<T>(
                     IViewProjectionRepository repository,
-                    Event @event) =>
-            TaskViewProjection.CanHandle(@event)
-            ? HandleEvent<TaskViewProjection>(repository, @event, () => new TaskViewProjection(), (p) => p.With(@event))
-            : Unit.Create();
-
-        private static Exceptional<Unit> NotifyProjectViewProjection(
-                    IViewProjectionRepository repository,
-                    Event @event) =>
-            ProjectViewProjection.CanHandle(@event)
-            ? HandleEvent<ProjectViewProjection>(repository, @event, () => new ProjectViewProjection(), (p) => p.With(@event))
+                    Event @event,
+                    Func<Event, bool> canHandle,
+                    Func<T, T> update) where T : ViewProjection, new() =>
+            canHandle(@event)
+            ? HandleEvent(repository, @event, () => new T(), update)
             : Unit.Create();
 
         private static Exceptional<Unit> HandleEvent<T>(

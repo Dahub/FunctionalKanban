@@ -80,7 +80,7 @@ namespace FunctionalKanban.Api
             (evt) => GetService<IEventBus>(services).Publish(evt);
 
         protected virtual Func<Event, Exceptional<Unit>> NotitySubscribersMethod(IServiceCollection services) =>
-            (evt) => GetService<INotifier>(services).Notity(evt);
+            (evt) => GetService<INotifier>(services).Notify(evt);
 
         protected virtual Func<Event, Exceptional<Unit>> StreamEventMethod(IServiceCollection services) =>
             (evt) => GetService<IEventStream>(services).Push(evt);
