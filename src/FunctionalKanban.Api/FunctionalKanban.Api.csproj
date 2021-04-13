@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FunctionalKanban.Application\FunctionalKanban.Application.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Infrastructure.Abstraction\FunctionalKanban.Infrastructure.Abstraction.csproj" />

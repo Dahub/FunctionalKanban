@@ -31,9 +31,6 @@
         public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection =>
             Projections(typeof(T)).Bind(projections => Convert<T>(projections));
 
-        private Exceptional<IEnumerable<T>> Convert<T>(IEnumerable<ViewProjection> projections) where T : ViewProjection =>
-            Try(() => projections.Map(p => (T)p)).Run();
-
         public Exceptional<IEnumerable<ViewProjection>> Projections(Type type)
         {
             if (type == typeof(TaskViewProjection))
@@ -79,6 +76,9 @@
                 tuple.Item2.Add(tuple.Item1.ToEventLine());
                 return Unit.Create();
             }).Run();
+
+        private static Exceptional<IEnumerable<T>> Convert<T>(IEnumerable<ViewProjection> projections) where T : ViewProjection =>
+            Try(() => projections.Map(p => (T)p)).Run();
 
         internal record EventLine(
           Guid Id,

@@ -3,12 +3,10 @@ namespace FunctionalKanban.Api
     using System;
     using System.Collections.Generic;
     using FunctionalKanban.Application.Commands;
-    using FunctionalKanban.Application.Dtos;
     using FunctionalKanban.Application.Queries;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Queries;
-    using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -64,8 +62,8 @@ namespace FunctionalKanban.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => await context.Response.WriteAsync("Hello world !"));
-                endpoints.MapGet("/task", async context => await context.ExecuteQuery<GetTaskQuery, TaskDto>());
-                endpoints.MapGet("/task/{id:guid}", async context => await context.ExecuteQuery<GetTaskByIdQuery, TaskDto>());
+                endpoints.MapGet("/task", async context => await context.ExecuteQuery<GetTaskQuery>());
+                endpoints.MapGet("/task/{id:guid}", async context => await context.ExecuteQuery<GetTaskByIdQuery>());
 
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
                 endpoints.MapPost("/task/changeStatus", async context => await context.ExecuteCommand<ChangeTaskStatus>());
