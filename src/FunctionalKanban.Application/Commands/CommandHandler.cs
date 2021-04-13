@@ -2,6 +2,8 @@
 {
     using System;
     using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Domain.Project;
+    using FunctionalKanban.Domain.Project.Commands;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Functional;
@@ -29,6 +31,7 @@
                 CreateTask c        => TaskEntity.Create(c).PublishEvent(_publishEvent),
                 ChangeTaskStatus c  => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeStatus(c)),
                 DeleteTask c        => Handle<TaskEntityState>(c, _getEntity, (e) => e.Delete(c)),
+                CreateProject c     => ProjectEntity.Create(c).PublishEvent(_publishEvent),
                 _                   => Invalid("Commande non prise en charge")
             });
 

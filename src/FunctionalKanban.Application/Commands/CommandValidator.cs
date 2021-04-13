@@ -13,7 +13,8 @@
         private static readonly IEnumerable<IValidator> _validators = new List<IValidator>()
         {
             new AllCommandValidator(),
-            new CreateTaskValidator()
+            new CreateTaskValidator(),
+            new CreateProjectValidator()
         };
 
         public static Validation<Command> Validate<T>(this T command) where T : Command => HarvestErrors(_validators, command);

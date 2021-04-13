@@ -4,6 +4,9 @@ namespace FunctionalKanban.Application.Test
     using FluentAssertions;
     using FunctionalKanban.Application.Commands;
     using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Domain.Project;
+    using FunctionalKanban.Domain.Project.Commands;
+    using FunctionalKanban.Domain.Project.Events;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
@@ -14,6 +17,37 @@ namespace FunctionalKanban.Application.Test
 
     public class CommandHandlerShould
     {
+        [Fact]
+        public void PublishProjectCreatedWhenHandleCreateProjectCommand()
+        {
+            var expectedAggregateId = Guid.NewGuid();
+            var expectedEntityName = Guid.NewGuid().ToString();
+            var expectedTimeStamp = DateTime.Now;
+            var expectedAggregateName = typeof(ProjectEntityState).FullName;
+
+            ProjectCreated lastPublishedEvent = null;
+
+            var command = new CreateProject()
+            {
+                AggregateId = expectedAggregateId,
+                Name = expectedEntityName
+            };
+
+            var commandHandler = new CommandHandler(
+               getEntity: (id) => Some((State)new ProjectEntityState()),
+               publishEvent: (evt) => { lastPublishedEvent = evt as ProjectCreated; return Unit.Create(); });
+
+            var validationResult = commandHandler.Handle(command);
+
+            validationResult.IsValid.Should().BeTrue();
+            lastPublishedEvent.Should().NotBeNull();
+            lastPublishedEvent.AggregateId.Should().Equals(expectedAggregateId);
+            lastPublishedEvent.EntityVersion.Should().Equals(1);
+            lastPublishedEvent.Name.Should().Equals(expectedEntityName);
+            lastPublishedEvent.TimeStamp.Should().Equals(expectedTimeStamp);
+            lastPublishedEvent.AggregateName.Should().Be(expectedAggregateName);
+        }
+
         [Fact]
         public void PublishTaskCreatedWhenHandleCreateTaskCommand()
         {

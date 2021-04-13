@@ -7,7 +7,7 @@
 
     public static class ProjectEntity
     {
-        private static readonly string _aggregateName = typeof(ProjectEntity).FullName ?? string.Empty;
+        private static readonly string _aggregateName = typeof(ProjectEntityState).FullName ?? string.Empty;
 
         public static Validation<EventAndState> Create(CreateProject cmd)
         {
