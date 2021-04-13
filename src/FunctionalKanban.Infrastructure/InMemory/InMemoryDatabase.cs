@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Domain.Project.ViewProjections;
     using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -18,15 +19,20 @@
 
         private readonly ConcurrentDictionary<Guid, TaskViewProjection> _taskViewProjections;
 
+        private readonly ConcurrentDictionary<Guid, ProjectViewProjection> _projectViewProjections;
+
         public InMemoryDatabase()
         {
             _eventLines = new List<EventLine>();
             _taskViewProjections = new ConcurrentDictionary<Guid, TaskViewProjection>();
+            _projectViewProjections = new ConcurrentDictionary<Guid, ProjectViewProjection>();
         }
 
         public IEnumerable<Event> Events => _eventLines.Select(l => l.Data).ToList().AsReadOnly();
 
         public IEnumerable<TaskViewProjection> TaskViewProjections => _taskViewProjections.Values.ToList().AsReadOnly();
+
+        public IEnumerable<ProjectViewProjection> ProjectViewProjections => _projectViewProjections.Values.ToList().AsReadOnly();
 
         public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection =>
             Projections(typeof(T)).Bind(projections => Convert<T>(projections));
@@ -36,6 +42,10 @@
             if (type == typeof(TaskViewProjection))
             {
                 return Exceptional((IEnumerable<ViewProjection>)_taskViewProjections.Values);
+            }
+            else if(type == typeof(ProjectViewProjection))
+            {
+                return Exceptional((IEnumerable<ViewProjection>)_projectViewProjections.Values);
             }
 
             return new Exception($"projection de type {type} non prise en charge");
@@ -53,6 +63,7 @@
             viewProjection switch
             {
                 TaskViewProjection p => Try(() => UpsertTaskViewProjection(p)).Run(),
+                ProjectViewProjection p => Try(() => UpsertProjectViewProjection(p)).Run(),
                 _ => new Exception($"Impossible d'insérer le type de projection {typeof(T)}")
             };
 
@@ -65,6 +76,20 @@
             else
             {
                 _taskViewProjections.TryAdd(p.Id, p);
+            }
+
+            return Unit.Create();
+        }
+
+        private Unit UpsertProjectViewProjection(ProjectViewProjection p)
+        {
+            if (_projectViewProjections.ContainsKey(p.Id))
+            {
+                _projectViewProjections[p.Id] = p;
+            }
+            else
+            {
+                _projectViewProjections.TryAdd(p.Id, p);
             }
 
             return Unit.Create();

@@ -5,6 +5,7 @@ namespace FunctionalKanban.Api
     using FunctionalKanban.Application.Commands;
     using FunctionalKanban.Application.Queries;
     using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Domain.Project.Commands;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Queries;
     using FunctionalKanban.Functional;
@@ -68,6 +69,7 @@ namespace FunctionalKanban.Api
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
                 endpoints.MapPost("/task/changeStatus", async context => await context.ExecuteCommand<ChangeTaskStatus>());
                 endpoints.MapPost("/task/delete", async context => await context.ExecuteCommand<DeleteTask>());
+                endpoints.MapPost("/project", async context => await context.ExecuteCommand<CreateProject>());
             });
         }
 
