@@ -20,6 +20,5 @@
                 TaskViewProjection p    => TaskDto.FromProjection(p),
                 _                       => throw new Exception($"Type de projection {projection.GetType().Name} non pris en charge")
             };
-
     }
 }
