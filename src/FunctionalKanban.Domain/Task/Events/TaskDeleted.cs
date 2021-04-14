@@ -8,6 +8,8 @@
     {
         public bool IsDeleted { get; init; }
 
+        public uint RemaningWork { get; init; }
+
         public Option<Guid> ProjectId { get; init; }
     }
 }

@@ -12,29 +12,26 @@
     {
         private readonly IViewProjectionRepository _repo;
 
-        public Notifier(IViewProjectionRepository viewProjectionRepository) => 
-            _repo = viewProjectionRepository;
+        public Notifier(IViewProjectionRepository viewProjectionRepository) => _repo = viewProjectionRepository;
 
         public Exceptional<Unit> Notify(Event @event) =>
-            Notify<TaskViewProjection>(_repo, @event, TaskViewProjection.CanHandle, (p) => p.With(@event)).
-            Bind(_ => Notify<ProjectViewProjection>(_repo, @event, ProjectViewProjection.CanHandle, (p) => p.With(@event)));
+            Notify<TaskViewProjection>(_repo, @event, TaskViewProjection.CanHandle).
+            Bind(_ => Notify<ProjectViewProjection>(_repo, @event, ProjectViewProjection.CanHandle));
 
        private static Exceptional<Unit> Notify<T>(
                     IViewProjectionRepository repository,
                     Event @event,
-                    Func<Event, bool> canHandle,
-                    Func<T, T> update) where T : ViewProjection, new() =>
+                    Func<Event, bool> canHandle) where T : ViewProjection, new() =>
             canHandle(@event)
-            ? HandleEvent(repository, @event, () => new T(), update)
+            ? HandleEvent<T>(repository, @event, () => new T())
             : Unit.Create();
 
         private static Exceptional<Unit> HandleEvent<T>(
                     IViewProjectionRepository repository,
                     Event @event,
-                    Func<Exceptional<T>> create,
-                    Func<T, T> update) where T : ViewProjection =>
+                    Func<Exceptional<T>> create) where T : ViewProjection =>
             GetProjection(repository, @event.AggregateId, create).
-            Bind((p) => repository.Upsert(update(p)));
+            Bind((p) => repository.Upsert(p.With(@event)));
 
         private static Exceptional<T> GetProjection<T>(
                     IViewProjectionRepository repository,

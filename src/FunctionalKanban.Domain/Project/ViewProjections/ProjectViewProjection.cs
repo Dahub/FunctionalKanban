@@ -18,17 +18,15 @@
         public uint TotalRemaningWork { get; init; }
 
         public static bool CanHandle(Event @event) =>
-            @event is ProjectCreated or TaskCreated;
-    }
+            @event is ProjectCreated or TaskCreated or TaskDeleted;
 
-    public static class ProjectViewProjectionExt
-    {
-        public static ProjectViewProjection With(this ProjectViewProjection view, Event @event) =>
+        public override ViewProjection With(Event @event) =>
             @event switch
             {
-                ProjectCreated e    => view with { Id = e.AggregateId, Name = e.Name, Status = e.Status, IsDeleted = e.IsDeleted, TotalRemaningWork = 0 },
-                TaskCreated e       => view with { TotalRemaningWork = view.TotalRemaningWork + e.RemaningWork },
-                _                   => view with { }
+                ProjectCreated e => this with { Id = e.AggregateId, Name = e.Name, Status = e.Status, IsDeleted = e.IsDeleted, TotalRemaningWork = 0 },
+                TaskCreated e => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork },
+                TaskDeleted e => this with { TotalRemaningWork = this.TotalRemaningWork - e.RemaningWork },
+                _ => this with { }
             };
     }
 }

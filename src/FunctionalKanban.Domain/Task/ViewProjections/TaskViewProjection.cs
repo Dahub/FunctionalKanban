@@ -22,17 +22,14 @@
 
         public static bool CanHandle(Event @event) => 
             @event is TaskCreated or TaskStatusChanged or TaskDeleted;
-    }
 
-    public static class TaskViewProjectionExt
-    {
-        public static TaskViewProjection With(this TaskViewProjection view, Event @event) =>
+        public override ViewProjection With(Event @event) =>
             @event switch
             {
-                TaskCreated e       => view with { Id = e.AggregateId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status, IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
-                TaskStatusChanged e => view with { RemaningWork = e.RemaningWork, Status = e.NewStatus },
-                TaskDeleted e       => view with { IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
-                _                   => view with { }
+                TaskCreated e => this with { Id = e.AggregateId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status, IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
+                TaskStatusChanged e => this with { RemaningWork = e.RemaningWork, Status = e.NewStatus },
+                TaskDeleted e => this with { IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
+                _ => this with { }
             };
     }
 }
