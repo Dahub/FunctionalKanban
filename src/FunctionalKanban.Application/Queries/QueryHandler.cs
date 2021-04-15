@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using FunctionalKanban.Application.Dtos;
     using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Domain.Project.Queries;
+    using FunctionalKanban.Domain.Project.ViewProjections;
     using FunctionalKanban.Domain.Task.Queries;
     using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
@@ -25,8 +27,9 @@
         private Exceptional<IEnumerable<Dto>> LoadProjections(Query query) =>
             query switch
             {
-                GetTaskQuery q => GetViewProjections<TaskViewProjection, TaskDto>(q),
-                GetTaskByIdQuery q => GetViewProjections<TaskViewProjection, TaskDto>(q),
+                GetTaskQuery q          => GetViewProjections<TaskViewProjection, TaskDto>(q),
+                GetTaskByIdQuery q      => GetViewProjections<TaskViewProjection, TaskDto>(q),
+                GetProjectByIdQuery q   => GetViewProjections<ProjectViewProjection, ProjectDto>(q),
                 _ => new Exception("Type de requête non pris en charge")
             };
 

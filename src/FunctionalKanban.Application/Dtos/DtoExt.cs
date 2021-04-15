@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Domain.Project.ViewProjections;
     using FunctionalKanban.Domain.Task.ViewProjections;
     using FunctionalKanban.Functional;
     using static FunctionalKanban.Functional.F;
@@ -18,6 +19,7 @@
             projection switch
             {
                 TaskViewProjection p    => TaskDto.FromProjection(p),
+                ProjectViewProjection p => ProjectDto.FromProjection(p),
                 _                       => throw new Exception($"Type de projection {projection.GetType().Name} non pris en charge")
             };
     }

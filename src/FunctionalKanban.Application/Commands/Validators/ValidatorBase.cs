@@ -18,13 +18,6 @@
         private static Func<IEnumerable<Error>, Command, Validation<Command>> ToValidation => (errors, command) =>
             errors.Any() ? Invalid(errors) : Valid(command);
     }
-
-    internal interface IValidator
-    {
-        bool CanValidate(Command command);
-
-        Validation<Command> Validate(Command command);
-    }
 }
 
 

@@ -76,7 +76,7 @@ namespace FunctionalKanban.Api.Test
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
-            responseContent.Should().Be("[\"L'id d'aggregat doit être défini\",\"La tâche dans avoir un nom\"]");
+            responseContent.Should().Be("[\"L'id d'aggregat doit être défini\",\"La tâche dois avoir un nom\"]");
         }
 
         [Fact]

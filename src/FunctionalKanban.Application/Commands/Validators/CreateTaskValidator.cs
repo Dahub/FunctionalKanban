@@ -10,7 +10,7 @@
         {
             if (string.IsNullOrWhiteSpace(c.Name))
             {
-                yield return "La tâche dans avoir un nom";
+                yield return "La tâche dois avoir un nom";
             }
 
             yield break;
