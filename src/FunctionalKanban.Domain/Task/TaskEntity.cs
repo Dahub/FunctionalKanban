@@ -45,7 +45,7 @@
                                     TaskStatus.Archived) ? 0 : state.RemaningWork
             };
 
-            return state.WithCheckNotDeleted(@event);
+            return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
         }
 
         public static Validation<EventAndState> Delete(
@@ -81,14 +81,13 @@
                 OldRemaningWork = state.RemaningWork
             };
 
-            return state.WithCheckNotDeleted(@event);
+            return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
         }
 
-        private static Validation<EventAndState> WithCheckNotDeleted(
-                this TaskEntityState state,
-                Event @event) =>
+        private static Validation<TaskEntityState> WithCheckNotDeleted(
+                this TaskEntityState state) =>
             state.IsDeleted
-               ? Invalid("Impossible de changer le status d'une tâche supprimée")
-               : state.ApplyEvent(@event);
+               ? Invalid("Impossible de modifier une tâche supprimée")
+               : state;
     }
 }
