@@ -36,5 +36,28 @@
             lines.Should().HaveCount(2);
             lines.FirstOrDefault(e => e.EntityVersion.Equals(2)).Should().NotBeNull();
         }
+
+        [Fact]
+        public async void DeleteTaskInTaskViewProjection()
+        {
+            var entityId = Guid.NewGuid();
+            var dataBase = new InMemoryDatabase();
+
+            var httpClient = BuildNewHttpClient<InMemoryStartup>( new InMemoryDatabase(), dataBase);
+
+            await InitNewTask(httpClient, entityId);
+
+            dataBase.TaskViewProjections.Any(t => t.Id.Equals(entityId)).Should().BeTrue();
+
+            _ = await httpClient
+                .PostAsJsonAsync(
+                    "task/delete",
+                    new DeleteTask()
+                    {
+                        EntityId = entityId
+                    });
+
+            dataBase.TaskViewProjections.Any(t => t.Id.Equals(entityId)).Should().BeFalse();
+        }
     }
 }

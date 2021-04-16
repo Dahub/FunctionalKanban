@@ -10,8 +10,7 @@
 
         public GetTaskByIdQuery WithId(Guid id) => this with { Id = id };
 
-        public override Func<ViewProjection, bool> BuildPredicate() => (p) => 
-            ((TaskViewProjection)p).Id.Equals(Id)
-            && EqualToValue(((TaskViewProjection)p).IsDeleted, false);
+        public override Func<ViewProjection, bool> BuildPredicate() => (p) =>
+            ((TaskViewProjection)p).Id.Equals(Id);
     }
 }

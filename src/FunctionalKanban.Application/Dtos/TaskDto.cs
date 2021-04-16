@@ -23,7 +23,6 @@
                 Name = projection.Name,
                 RemaningWork = projection.RemaningWork,
                 Status = projection.Status,
-                IsDeleted = projection.IsDeleted,
                 ProjectId = projection.ProjectId.Match(None: () => (Guid?)null, Some: (id) => id)
             };
     }

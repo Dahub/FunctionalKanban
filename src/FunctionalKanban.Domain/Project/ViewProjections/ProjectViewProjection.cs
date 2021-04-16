@@ -4,6 +4,7 @@
     using FunctionalKanban.Domain.Project;
     using FunctionalKanban.Domain.Project.Events;
     using FunctionalKanban.Domain.Task.Events;
+    using FunctionalKanban.Functional;
 
     public record ProjectViewProjection : ViewProjection
     {
@@ -20,7 +21,7 @@
         public static bool CanHandle(Event @event) =>
             @event is ProjectCreated or TaskCreated or TaskDeleted;
 
-        public override ViewProjection With(Event @event) =>
+        public override Option<ViewProjection> With(Event @event) =>
             @event switch
             {
                 ProjectCreated e    => this with { Id = e.EntityId, Name = e.Name, Status = e.Status, IsDeleted = e.IsDeleted, TotalRemaningWork = 0 },

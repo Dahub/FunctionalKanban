@@ -67,6 +67,23 @@
                 _ => new Exception($"Impossible d'insérer le type de projection {typeof(T)}")
             };
 
+        public Exceptional<Unit> Delete<T>(Guid id) where T : ViewProjection =>
+            Try(() =>
+            {
+                if (typeof(T) == typeof(TaskViewProjection))
+                {
+                    _taskViewProjections.TryRemove(id, out _);
+                    return Unit.Create();
+                }
+                else if (typeof(T) == typeof(ProjectViewProjection))
+                {
+                    _projectViewProjections.TryRemove(id, out _);
+                    return Unit.Create();
+                }
+
+                throw new Exception($"projection de type {typeof(T)} non prise en charge");
+            }).Run();
+
         private Unit UpsertTaskViewProjection(TaskViewProjection p)
         {
             if (_taskViewProjections.ContainsKey(p.Id))

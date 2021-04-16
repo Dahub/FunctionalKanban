@@ -5,6 +5,7 @@
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Events;
     using FunctionalKanban.Functional;
+    using static FunctionalKanban.Functional.F;
 
     public record TaskViewProjection : ViewProjection
     {
@@ -16,20 +17,18 @@
 
         public TaskStatus Status { get; init; }
 
-        public bool IsDeleted { get; init; }
-
         public Option<Guid> ProjectId { get; init; }
 
         public static bool CanHandle(Event @event) => 
             @event is TaskCreated or TaskStatusChanged or TaskDeleted;
 
-        public override ViewProjection With(Event @event) =>
+        public override Option<ViewProjection> With(Event @event) =>
             @event switch
             {
-                TaskCreated e => this with { Id = e.EntityId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status, IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
+                TaskCreated e       => this with { Id = e.EntityId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status, ProjectId = e.ProjectId },
                 TaskStatusChanged e => this with { RemaningWork = e.RemaningWork, Status = e.NewStatus },
-                TaskDeleted e => this with { IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
-                _ => this with { }
+                TaskDeleted _       => None,
+                _                   => this with { }
             };
     }
 }

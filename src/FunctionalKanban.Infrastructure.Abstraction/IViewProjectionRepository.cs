@@ -12,6 +12,8 @@
 
         Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection;
 
+        Exceptional<Unit> Delete<T>(Guid id) where T : ViewProjection;
+
         Exceptional<IEnumerable<ViewProjection>> Get(Type projectionType, Func<ViewProjection, bool> predicate);
     }
 }

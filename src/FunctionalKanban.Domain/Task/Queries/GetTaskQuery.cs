@@ -23,7 +23,6 @@
             MoreOrEqualThanValue(((TaskViewProjection)p).RemaningWork, MinRemaningWork)
             && StrictlyLessThanValue(((TaskViewProjection)p).RemaningWork, MaxRemaningWork)
             && EqualToValue(((TaskViewProjection)p).Status, TaskStatus)
-            && NotEqualToValue(((TaskViewProjection)p).Status, Task.TaskStatus.Archived)
-            && EqualToValue(((TaskViewProjection)p).IsDeleted, false);
+            && NotEqualToValue(((TaskViewProjection)p).Status, Task.TaskStatus.Archived);
     }
 }

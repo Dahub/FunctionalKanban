@@ -31,7 +31,9 @@
                     Event @event,
                     Func<Exceptional<T>> create) where T : ViewProjection =>
             GetProjection(repository, @event.EntityId, create).
-            Bind((p) => repository.Upsert(p.With(@event)));
+            Bind((p) => p.With(@event).Match(
+                Some: (value)   => repository.Upsert(value),
+                None: ()        => repository.Delete<T>(p.Id)));
 
         private static Exceptional<T> GetProjection<T>(
                     IViewProjectionRepository repository,
