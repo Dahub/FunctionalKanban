@@ -28,7 +28,7 @@
             {
                 TaskCreated e       => this with { Version = e.EntityVersion, RemaningWork = e.RemaningWork, IsDeleted = e.IsDeleted, TaskName = e.Name, TaskStatus = e.Status, ProjectId = e.ProjectId },
                 TaskStatusChanged e => this with { Version = e.EntityVersion, TaskStatus = e.NewStatus, RemaningWork = e.RemaningWork },
-                TaskDeleted e       => this with { Version = e.EntityVersion, IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
+                TaskDeleted e       => this with { Version = e.EntityVersion, IsDeleted = e.IsDeleted, ProjectId = e.ProjectId, RemaningWork = e.RemaningWork },
                 _                   => this with { }
             };
     }

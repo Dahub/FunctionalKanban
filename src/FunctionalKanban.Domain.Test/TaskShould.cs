@@ -70,6 +70,25 @@ namespace FunctionalKanban.Domain.Test
         }
 
         [Fact]
+        public void SetRemaningWorkToZeroWhenDeleted()
+        {
+            var entityId = Guid.NewGuid();
+            var remaningWork = 10u;
+
+            var deleteTask = new DeleteTask()
+            {
+                EntityId = entityId
+            };
+
+            var eventAndState = BuildNewTask(entityId, remaningWork: remaningWork).
+                Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
+
+            eventAndState.Match(
+               Invalid: (errors) => remaningWork,
+               Valid: (eas) => ((TaskEntityState)eas.State).RemaningWork).Should().Be(0);
+        }
+
+        [Fact]
         public void SetProjectIdToNonWhenDeleted()
         {
             var entityId = Guid.NewGuid();
@@ -247,15 +266,18 @@ namespace FunctionalKanban.Domain.Test
                 Some: (_) => true).Should().BeTrue();
         }
 
-        private static Validation<EventAndState> BuildNewTask(Guid entityId, string taskName = "fake task") =>
-            TaskEntity.Create(BuildCreateTaskCommand(entityId, taskName));
+        private static Validation<EventAndState> BuildNewTask(
+                Guid entityId, 
+                string taskName = "fake task",
+                uint remaningWork = 10) =>
+            TaskEntity.Create(BuildCreateTaskCommand(entityId, taskName, remaningWork));
 
-        private static CreateTask BuildCreateTaskCommand(Guid entityId, string taskName) =>
+        private static CreateTask BuildCreateTaskCommand(Guid entityId, string taskName, uint remaningWork) =>
             new CreateTask()
             {
                 EntityId     = entityId,
                 Name            = taskName,
-                RemaningWork    = 10,
+                RemaningWork    = remaningWork,
                 ProjectId       = Guid.NewGuid()
             };
     }

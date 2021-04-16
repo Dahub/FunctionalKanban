@@ -49,6 +49,29 @@ namespace FunctionalKanban.Application.Test
         }
 
         [Fact]
+        public void PublishTaskDeletedWhenHandleDeleteTaskCommand()
+        {
+            var expectedEntityId = Guid.NewGuid();
+
+            TaskDeleted lastPublishedEvent = null;
+
+            var command = new DeleteTask()
+            {
+                EntityId = expectedEntityId
+            };
+
+            var commandHandler = new CommandHandler(
+              getEntity: (id) => Some((State)new TaskEntityState()),
+              publishEvent: (evt) => { lastPublishedEvent = evt as TaskDeleted; return Unit.Create(); });
+
+            var validationResult = commandHandler.Handle(command);
+
+            validationResult.IsValid.Should().BeTrue();
+            lastPublishedEvent.Should().NotBeNull();
+            lastPublishedEvent.EntityId.Should().Equals(expectedEntityId);
+        }
+
+        [Fact]
         public void PublishTaskCreatedWhenHandleCreateTaskCommand()
         {
             var expectedEntityId = Guid.NewGuid();

@@ -61,7 +61,8 @@
                 EntityVersion = state.Version + 1,
                 TimeStamp = cmd.TimeStamp,
                 IsDeleted = true,
-                RemaningWork = state.RemaningWork,
+                RemaningWork = 0u,
+                OldRemaningWork = state.RemaningWork,
                 ProjectId = None
             };
 

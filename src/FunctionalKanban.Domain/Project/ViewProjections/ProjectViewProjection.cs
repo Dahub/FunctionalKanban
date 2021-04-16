@@ -26,7 +26,7 @@
             {
                 ProjectCreated e    => this with { Id = e.EntityId, Name = e.Name, Status = e.Status, IsDeleted = e.IsDeleted, TotalRemaningWork = 0 },
                 TaskCreated e       => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork },
-                TaskDeleted e       => this with { TotalRemaningWork = this.TotalRemaningWork - e.RemaningWork },
+                TaskDeleted e       => this with { TotalRemaningWork = this.TotalRemaningWork - e.OldRemaningWork },
                 _                   => this with { }
             };
     }

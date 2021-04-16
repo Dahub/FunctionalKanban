@@ -10,6 +10,8 @@
 
         public uint RemaningWork { get; init; }
 
+        public uint OldRemaningWork { get; init; }
+
         public Option<Guid> ProjectId { get; init; }
     }
 }
