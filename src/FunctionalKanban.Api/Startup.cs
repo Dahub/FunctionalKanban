@@ -71,6 +71,7 @@ namespace FunctionalKanban.Api
                 endpoints.MapPost("/task", async context => await context.ExecuteCommand<CreateTask>());
                 endpoints.MapPost("/task/changeStatus", async context => await context.ExecuteCommand<ChangeTaskStatus>());
                 endpoints.MapPost("/task/delete", async context => await context.ExecuteCommand<DeleteTask>());
+                endpoints.MapPost("task/changeRemaningWork", async context => await context.ExecuteCommand<ChangeRemaningWork>());
                 endpoints.MapPost("/project", async context => await context.ExecuteCommand<CreateProject>());
             });
         }

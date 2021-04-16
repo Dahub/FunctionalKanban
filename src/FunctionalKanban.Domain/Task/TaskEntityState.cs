@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
     using FunctionalKanban.Functional;
 
@@ -26,10 +27,11 @@
         protected override State With(Event @event) =>
             @event switch
             {
-                TaskCreated e       => this with { Version = e.EntityVersion, RemaningWork = e.RemaningWork, IsDeleted = e.IsDeleted, TaskName = e.Name, TaskStatus = e.Status, ProjectId = e.ProjectId },
-                TaskStatusChanged e => this with { Version = e.EntityVersion, TaskStatus = e.NewStatus, RemaningWork = e.RemaningWork },
-                TaskDeleted e       => this with { Version = e.EntityVersion, IsDeleted = e.IsDeleted, ProjectId = e.ProjectId, RemaningWork = e.RemaningWork },
-                _                   => this with { }
+                TaskCreated e               => this with { Version = e.EntityVersion, RemaningWork = e.RemaningWork, IsDeleted = e.IsDeleted, TaskName = e.Name, TaskStatus = e.Status, ProjectId = e.ProjectId },
+                TaskStatusChanged e         => this with { Version = e.EntityVersion, TaskStatus = e.NewStatus, RemaningWork = e.RemaningWork },
+                TaskDeleted e               => this with { Version = e.EntityVersion, IsDeleted = e.IsDeleted, ProjectId = e.ProjectId, RemaningWork = e.RemaningWork },
+                TaskRemaningWorkChanged e   => this with { Version = e.EntityVersion , RemaningWork = e.RemaningWork },
+                _                           => this with { }
             };
     }
 }

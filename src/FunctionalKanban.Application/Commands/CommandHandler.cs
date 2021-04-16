@@ -28,11 +28,12 @@
             command.Validate().Bind(command => 
             (command) switch
             {
-                CreateTask c        => TaskEntity.Create(c).PublishEvent(_publishEvent),
-                ChangeTaskStatus c  => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeStatus(c)),
-                DeleteTask c        => Handle<TaskEntityState>(c, _getEntity, (e) => e.Delete(c)),
-                CreateProject c     => ProjectEntity.Create(c).PublishEvent(_publishEvent),
-                _                   => Invalid("Commande non prise en charge")
+                CreateTask c            => TaskEntity.Create(c).PublishEvent(_publishEvent),
+                ChangeTaskStatus c      => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeStatus(c)),
+                DeleteTask c            => Handle<TaskEntityState>(c, _getEntity, (e) => e.Delete(c)),
+                ChangeRemaningWork c    => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeRemaningWork(c)),
+                CreateProject c         => ProjectEntity.Create(c).PublishEvent(_publishEvent),
+                _                       => Invalid("Commande non prise en charge")
             });
 
         private Validation<Exceptional<Unit>> Handle<T>(

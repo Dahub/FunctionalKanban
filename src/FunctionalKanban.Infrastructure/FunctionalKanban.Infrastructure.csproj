@@ -12,4 +12,8 @@
     <ProjectReference Include="..\FunctionalKanban.Infrastructure.Abstraction\FunctionalKanban.Infrastructure.Abstraction.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SqlServer\" />
+  </ItemGroup>
+
 </Project>

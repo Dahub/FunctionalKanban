@@ -41,7 +41,8 @@
             startup.ViewProjectionDataBase = viewProjectionDataBase;
             return startup;
         }
-        protected static async Task InitNewTask(HttpClient httpClient, Guid entityId) =>
+
+        protected static async Task InitNewTask(HttpClient httpClient, Guid entityId, uint remaningWork = 10) =>
             _ = await httpClient
                 .PostAsJsonAsync(
                     "task",
@@ -49,7 +50,7 @@
                     {
                         EntityId = entityId,
                         Name = Guid.NewGuid().ToString(),
-                        RemaningWork = 10
+                        RemaningWork = remaningWork
                     });
     }
 }

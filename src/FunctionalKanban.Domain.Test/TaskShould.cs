@@ -34,6 +34,24 @@ namespace FunctionalKanban.Domain.Test
         }
 
         [Fact]
+        public void ChangeRemaningWorkWhenRemaningWorkChange()
+        {
+            var expectedRemaningWork = 5u;
+            var entityId = Guid.NewGuid();
+            var changeRemaningWork = new ChangeRemaningWork()
+            {
+                EntityId = entityId,
+                RemaningWork = expectedRemaningWork
+            };
+
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).ChangeRemaningWork(changeRemaningWork));
+
+            eventAndState.Match(
+            Invalid: (errors) => 0u,
+            Valid: (eas) => ((TaskEntityState)eas.State).RemaningWork).Should().Be(expectedRemaningWork);
+        }
+
+        [Fact]
         public void ChangeTaskStateStatusWhenStatusChange()
         {
             var expectedTaskStatus = TaskStatus.InProgress;

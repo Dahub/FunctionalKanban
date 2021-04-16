@@ -72,6 +72,32 @@ namespace FunctionalKanban.Application.Test
         }
 
         [Fact]
+        public void PublishTaskRemaningWorkChangedWhenHandleRemaningWorkChangeCommand()
+        {
+            var expectedEntityId = Guid.NewGuid();
+            var expectedRemaningWork = 5u;
+
+            TaskRemaningWorkChanged lastPublishedEvent = null;
+
+            var command = new ChangeRemaningWork()
+            {
+                EntityId = expectedEntityId,
+                RemaningWork = expectedRemaningWork
+            };
+
+            var commandHandler = new CommandHandler(
+             getEntity: (id) => Some((State)new TaskEntityState()),
+             publishEvent: (evt) => { lastPublishedEvent = evt as TaskRemaningWorkChanged; return Unit.Create(); });
+
+            var validationResult = commandHandler.Handle(command);
+
+            validationResult.IsValid.Should().BeTrue();
+            lastPublishedEvent.Should().NotBeNull();
+            lastPublishedEvent.EntityId.Should().Equals(expectedEntityId);
+            lastPublishedEvent.RemaningWork.Should().Equals(expectedRemaningWork);
+        }
+
+        [Fact]
         public void PublishTaskCreatedWhenHandleCreateTaskCommand()
         {
             var expectedEntityId = Guid.NewGuid();
