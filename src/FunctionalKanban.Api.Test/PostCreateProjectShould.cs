@@ -25,7 +25,7 @@
                     "project",
                     new CreateProject()
                     {
-                        AggregateId = Guid.NewGuid(),
+                        EntityId = Guid.NewGuid(),
                         Name = Guid.NewGuid().ToString()
                     });
 
@@ -39,7 +39,7 @@
             var httpClient = BuildNewHttpClient<InMemoryStartup>(
                 new InMemoryDatabase(), viewProjectionDataBase);
 
-            var expectedAggregateId = Guid.NewGuid();
+            var expectedEntityId = Guid.NewGuid();
             var expectedName = Guid.NewGuid().ToString();
             var expectedStatus = ProjectStatus.New;
             var expectedTotalRemaningWork = 0u;
@@ -49,11 +49,11 @@
                     "project",
                     new CreateProject()
                     {
-                        AggregateId = expectedAggregateId,
+                        EntityId = expectedEntityId,
                         Name = expectedName
                     });
 
-            var projectViewProjections = viewProjectionDataBase.ProjectViewProjections.Where(p => p.Id.Equals(expectedAggregateId));
+            var projectViewProjections = viewProjectionDataBase.ProjectViewProjections.Where(p => p.Id.Equals(expectedEntityId));
 
             projectViewProjections.Should().HaveCount(1);
 

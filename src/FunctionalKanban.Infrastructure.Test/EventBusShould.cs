@@ -42,8 +42,8 @@ namespace FunctionalKanban.Infrastructure.Test
 
         private static DumbEvent BuildDumbEvent() => new DumbEvent()
         {
-            AggregateId = Guid.NewGuid(),
-            AggregateName = Guid.NewGuid().ToString(),
+            EntityId = Guid.NewGuid(),
+            EntityName = Guid.NewGuid().ToString(),
             EntityVersion = 1,
             TimeStamp = DateTime.Now
         };

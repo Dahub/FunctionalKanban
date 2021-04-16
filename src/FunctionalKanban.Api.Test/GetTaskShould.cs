@@ -66,7 +66,7 @@
                     "task",
                     new CreateTask()
                     {
-                        AggregateId = entityId,
+                        EntityId = entityId,
                         Name = entityName,
                         RemaningWork = remaningWork,
                         ProjectId = null

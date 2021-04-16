@@ -39,14 +39,14 @@
             Command command,
             Func<Guid, Exceptional<Option<State>>> getEntity,
             Func<T, Option<Validation<EventAndState>>> f) where T : State =>
-                getEntity(command.AggregateId).Match
+                getEntity(command.EntityId).Match
                 (
                     Exception:  (ex)        => (Exceptional<Unit>)ex,
                     Success:    (entity)    => entity.
                         CastTo<T>().
                         Bind(f).
                         Match(
-                            None: ()    => Invalid($"Entité d'id {command.AggregateId} introuvable"),
+                            None: ()    => Invalid($"Entité d'id {command.EntityId} introuvable"),
                             Some: (x)   => x.PublishEvent(_publishEvent))
                 );
     }

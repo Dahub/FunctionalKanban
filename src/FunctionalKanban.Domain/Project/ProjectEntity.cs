@@ -7,14 +7,14 @@
 
     public static class ProjectEntity
     {
-        private static readonly string _aggregateName = typeof(ProjectEntityState).FullName ?? string.Empty;
+        private static readonly string _entityName = typeof(ProjectEntityState).FullName ?? string.Empty;
 
         public static Validation<EventAndState> Create(CreateProject cmd)
         {
             var @event = new ProjectCreated()
             {
-                AggregateId = cmd.AggregateId,
-                AggregateName = _aggregateName,
+                EntityId = cmd.EntityId,
+                EntityName = _entityName,
                 Name = cmd.Name,
                 IsDeleted = false,
                 TimeStamp = cmd.TimeStamp,

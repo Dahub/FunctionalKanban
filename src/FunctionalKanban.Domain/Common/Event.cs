@@ -4,11 +4,11 @@
 
     public abstract record Event
     {
-        public Event() => AggregateName = string.Empty;
+        public Event() => EntityName = string.Empty;
 
-        public Guid AggregateId { get; init; }
+        public Guid EntityId { get; init; }
 
-        public string AggregateName { get; set; }
+        public string EntityName { get; set; }
 
         public DateTime TimeStamp { get; init; }
 

@@ -31,7 +31,7 @@
         private static Func<IEnumerable<Event>, Option<IEnumerable<Event>>> HistoryIsValid<T>() where T : Event => (events) => 
             events.Any() 
             && AreConsecutives(events) 
-            && AreSameAggregate(events)
+            && AreSameEntity(events)
             && events.First() is T
                 ? Some(events)
                 : None;
@@ -39,8 +39,8 @@
         private static bool AreConsecutives(IEnumerable<Event> events) =>
             !events.Map(e => e.EntityVersion). Select((i, j) => i - j).Distinct().Skip(1).Any();
 
-        private static bool AreSameAggregate(IEnumerable<Event> events) =>
-            !events.Map(e => e.AggregateId).Distinct().Skip(1).Any();
+        private static bool AreSameEntity(IEnumerable<Event> events) =>
+            !events.Map(e => e.EntityId).Distinct().Skip(1).Any();
 
         private static State Hydrate(
             IEnumerable<Event> orderedEvents,

@@ -8,14 +8,14 @@
 
     public static class TaskEntity
     {
-        private static readonly string _aggregateName = typeof(TaskEntityState).FullName??string.Empty;
+        private static readonly string _entityName = typeof(TaskEntityState).FullName??string.Empty;
 
         public static Validation<EventAndState> Create(CreateTask cmd)
         {
             var @event = new TaskCreated()
             {
-                AggregateId     = cmd.AggregateId,
-                AggregateName   = _aggregateName,
+                EntityId     = cmd.EntityId,
+                EntityName   = _entityName,
                 Name            = cmd.Name,
                 RemaningWork    = cmd.RemaningWork,
                 IsDeleted       = false,
@@ -34,8 +34,8 @@
         {
             var @event = new TaskStatusChanged()
             {
-                AggregateId     = cmd.AggregateId,
-                AggregateName   = _aggregateName,
+                EntityId     = cmd.EntityId,
+                EntityName   = _entityName,
                 EntityVersion   = state.Version + 1,
                 NewStatus       = cmd.TaskStatus,
                 TimeStamp       = cmd.TimeStamp,
@@ -56,8 +56,8 @@
         {
             var @event = new TaskDeleted()
             {
-                AggregateId = cmd.AggregateId,
-                AggregateName = _aggregateName,
+                EntityId = cmd.EntityId,
+                EntityName = _entityName,
                 EntityVersion = state.Version + 1,
                 TimeStamp = cmd.TimeStamp,
                 IsDeleted = true,

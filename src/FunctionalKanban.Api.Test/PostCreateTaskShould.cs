@@ -26,7 +26,7 @@ namespace FunctionalKanban.Api.Test
                     "task",
                     new CreateTask()
                     {
-                        AggregateId =   Guid.NewGuid(),
+                        EntityId =   Guid.NewGuid(),
                         Name =          Guid.NewGuid().ToString(),
                         RemaningWork =  10
                     });
@@ -87,7 +87,7 @@ namespace FunctionalKanban.Api.Test
 
             var createTaskCommand = new CreateTask()
             {
-                AggregateId =   Guid.NewGuid(),
+                EntityId =   Guid.NewGuid(),
                 Name =          Guid.NewGuid().ToString(),
                 RemaningWork =  10
             };
@@ -103,7 +103,7 @@ namespace FunctionalKanban.Api.Test
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
 
             var responseContent = await httpResponseMessage.Content.ReadAsStringAsync();
-            responseContent.Should().Be("\"Un événement pour cette version d'aggregat est déjà présent\"");
+            responseContent.Should().Be("\"Un événement pour cette version d'entité est déjà présent\"");
         }
 
         [Fact]
@@ -112,8 +112,8 @@ namespace FunctionalKanban.Api.Test
             var eventDataBase = new InMemoryDatabase();
             var httpClient = BuildNewHttpClient<InMemoryStartup>(eventDataBase, new InMemoryDatabase());
 
-            var expectedAggregateId = Guid.NewGuid();
-            var expectedAggregateName = typeof(TaskEntityState).FullName;
+            var expectedEntityId = Guid.NewGuid();
+            var expectedEntityName = typeof(TaskEntityState).FullName;
             var expectedVersion = 1;
             var expectedProjectId = Guid.NewGuid();
 
@@ -122,21 +122,21 @@ namespace FunctionalKanban.Api.Test
                     "task",
                     new CreateTask()
                     {
-                        AggregateId =   expectedAggregateId,
+                        EntityId =   expectedEntityId,
                         Name = Guid.NewGuid().ToString(),
                         RemaningWork =  10,
                         ProjectId = expectedProjectId
                     });
 
-            var events = eventDataBase.Events.Where(e => e.AggregateId.Equals(expectedAggregateId));
+            var events = eventDataBase.Events.Where(e => e.EntityId.Equals(expectedEntityId));
 
             events.Should().HaveCount(1);
 
             var eventLine = events.Single();
 
             eventLine.EntityVersion.Should().Equals(expectedVersion);
-            eventLine.AggregateId.Should().Equals(expectedAggregateId);
-            eventLine.AggregateName.Should().Be(expectedAggregateName);
+            eventLine.EntityId.Should().Equals(expectedEntityId);
+            eventLine.EntityName.Should().Be(expectedEntityName);
 
             eventLine.Should().BeOfType<TaskCreated>();
 
@@ -150,8 +150,8 @@ namespace FunctionalKanban.Api.Test
             var httpClient = BuildNewHttpClient<InMemoryStartup>(
                 new InMemoryDatabase(), viewProjectionDataBase);
 
-            var expectedAggregateId = Guid.NewGuid();
-            var expectedName = Guid.NewGuid().ToString();
+            var expectedEntityId = Guid.NewGuid();
+            var expectedEntityName = Guid.NewGuid().ToString();
             var expectedStatus = Domain.Task.TaskStatus.Todo;
             var expectedRemaningWork = 10u;
 
@@ -160,18 +160,18 @@ namespace FunctionalKanban.Api.Test
                     "task",
                     new CreateTask()
                     {
-                        AggregateId = expectedAggregateId,
-                        Name = expectedName,
+                        EntityId = expectedEntityId,
+                        Name = expectedEntityName,
                         RemaningWork = expectedRemaningWork
                     });
 
-            var taskViewProjections = viewProjectionDataBase.TaskViewProjections.Where(p => p.Id.Equals(expectedAggregateId));
+            var taskViewProjections = viewProjectionDataBase.TaskViewProjections.Where(p => p.Id.Equals(expectedEntityId));
 
             taskViewProjections.Should().HaveCount(1);
 
             var taskViewProjection = taskViewProjections.Single();
 
-            taskViewProjection.Name.Should().Be(expectedName);
+            taskViewProjection.Name.Should().Be(expectedEntityName);
             taskViewProjection.Status.Should().Be(expectedStatus);
             taskViewProjection.RemaningWork.Should().Be(expectedRemaningWork);
         }

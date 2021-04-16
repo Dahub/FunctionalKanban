@@ -47,7 +47,7 @@
                     "task",
                     new CreateTask()
                     {
-                        AggregateId = entityId,
+                        EntityId = entityId,
                         Name = Guid.NewGuid().ToString(),
                         RemaningWork = 10
                     });

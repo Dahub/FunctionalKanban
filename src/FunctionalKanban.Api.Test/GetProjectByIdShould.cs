@@ -43,7 +43,7 @@
                    "project",
                    new CreateProject()
                    {
-                       AggregateId = entityId,
+                       EntityId = entityId,
                        Name = entityName
                    });
     }

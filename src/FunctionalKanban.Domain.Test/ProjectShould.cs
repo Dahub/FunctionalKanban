@@ -15,9 +15,9 @@
         {
             var expectedTaskName = Guid.NewGuid().ToString();
             var expectedTaskStatus = ProjectStatus.New;
-            var aggregateId = Guid.NewGuid();
+            var entityId = Guid.NewGuid();
 
-            var eventAndTask = BuildNewProject(aggregateId, expectedTaskName);
+            var eventAndTask = BuildNewProject(entityId, expectedTaskName);
 
             bool CheckEquality(ProjectEntityState s) =>
                 s.ProjectName.Equals(expectedTaskName)
@@ -29,13 +29,13 @@
                 Valid: (eas) => CheckEquality((ProjectEntityState)eas.State)).Should().BeTrue();
         }
 
-        private static Validation<EventAndState> BuildNewProject(Guid aggregateId, string projectName = "fake task") =>
-            ProjectEntity.Create(BuildCreateProjectCommand(aggregateId, projectName));
+        private static Validation<EventAndState> BuildNewProject(Guid entityId, string projectName = "fake task") =>
+            ProjectEntity.Create(BuildCreateProjectCommand(entityId, projectName));
 
-        private static CreateProject BuildCreateProjectCommand(Guid aggregateId, string projectName) =>
+        private static CreateProject BuildCreateProjectCommand(Guid entityId, string projectName) =>
             new CreateProject()
             {
-                AggregateId = aggregateId,
+                EntityId = entityId,
                 Name = projectName
             };
     }

@@ -52,9 +52,9 @@
         }
 
         public Exceptional<Unit> Add(
-            Guid aggregateId,
-            string aggregateName,
-            uint aggregateVersion,
+            Guid entityId,
+            string entityName,
+            uint entityVersion,
             string eventName,
             Event @event) =>
                 @event.CheckUnicity(_eventLines).Bind(AddEventToLines);
@@ -107,8 +107,8 @@
 
         internal record EventLine(
           Guid Id,
-          Guid AggregateId,
-          string AggregateName,
+          Guid EntityId,
+          string EntityName,
           uint Version,
           string EventName,
           DateTime TimeStamp,
@@ -120,8 +120,8 @@
         public static EventLine ToEventLine(this Event evt) =>
             new EventLine(
                 Id: Guid.NewGuid(),
-                AggregateId: evt.AggregateId,
-                AggregateName: evt.AggregateName,
+                EntityId: evt.EntityId,
+                EntityName: evt.EntityName,
                 Version: evt.EntityVersion,
                 EventName: evt.EventName,
                 TimeStamp: evt.TimeStamp,
@@ -129,10 +129,10 @@
 
         public static Exceptional<(Event, List<EventLine>)> CheckUnicity(this Event @event, List<EventLine> lines) =>
             Try(() =>
-                lines.Where(l => l.AggregateId.Equals(@event.AggregateId)
-                     && l.AggregateName.Equals(@event.AggregateName)
+                lines.Where(l => l.EntityId.Equals(@event.EntityId)
+                     && l.EntityName.Equals(@event.EntityName)
                      && l.Version.Equals(@event.EntityVersion)).Any()
-                ? throw new AggregateException("Un événement pour cette version d'aggregat est déjà présent")
+                ? throw new AggregateException("Un événement pour cette version d'entité est déjà présent")
                 : (@event, lines)).Run();
     }
 }

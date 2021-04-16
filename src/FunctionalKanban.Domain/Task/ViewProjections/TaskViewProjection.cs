@@ -26,7 +26,7 @@
         public override ViewProjection With(Event @event) =>
             @event switch
             {
-                TaskCreated e => this with { Id = e.AggregateId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status, IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
+                TaskCreated e => this with { Id = e.EntityId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status, IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
                 TaskStatusChanged e => this with { RemaningWork = e.RemaningWork, Status = e.NewStatus },
                 TaskDeleted e => this with { IsDeleted = e.IsDeleted, ProjectId = e.ProjectId },
                 _ => this with { }

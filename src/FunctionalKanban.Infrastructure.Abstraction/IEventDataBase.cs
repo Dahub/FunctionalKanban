@@ -10,6 +10,6 @@
     {
         IEnumerable<Event> Events { get; }
 
-        Exceptional<Unit> Add(Guid aggregateId, string aggregateName, uint aggregateVersion, string eventName, Event @event);
+        Exceptional<Unit> Add(Guid entityId, string entityName, uint entityVersion, string eventName, Event @event);
     }
 }

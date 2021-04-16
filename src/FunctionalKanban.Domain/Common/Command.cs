@@ -2,11 +2,11 @@
 {
     using System;
 
-    public record Command
+    public abstract record Command
     {
         private readonly DateTime _timeStamp = DateTime.Now;
 
-        public Guid AggregateId { get; init; }
+        public Guid EntityId { get; init; }
 
         public DateTime TimeStamp => _timeStamp;
     }

@@ -16,15 +16,15 @@
         public EntityStateRepository(IEventDataBase database) => _database = database;
 
         public Exceptional<Option<State>> GetById(Guid id) =>
-            AllEventsOfAggregate(_database.Events, id).
+            AllEventsOfEntity(_database.Events, id).
             Bind(WithEntityType).
             Bind(WithStateInstance).
             Bind(Hydrate).Run();
 
-        private static Try<Option<IEnumerable<Event>>> AllEventsOfAggregate(IEnumerable<Event> allEvents, Guid id) =>
+        private static Try<Option<IEnumerable<Event>>> AllEventsOfEntity(IEnumerable<Event> allEvents, Guid id) =>
             Try(() =>
             {
-                var events = allEvents.Where(e => e.AggregateId.Equals(id));
+                var events = allEvents.Where(e => e.EntityId.Equals(id));
                 return events.Any()
                     ? Some(events)
                     : None;
@@ -52,7 +52,7 @@
                     None: () => None,
                     Some: (e) =>
                     {
-                        var entityName = e.First().AggregateName;
+                        var entityName = e.First().EntityName;
                         var entityType = Assembly.GetAssembly(typeof(State))?.GetType(entityName);
                         return entityType == null ? None : Some((entityType, e));
                     }));      

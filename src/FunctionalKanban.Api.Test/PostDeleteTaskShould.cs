@@ -27,12 +27,12 @@
                     "task/delete",
                     new DeleteTask()
                     {
-                        AggregateId = entityId
+                        EntityId = entityId
                     });
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var lines = eventDataBase.Events.Where(e => e.AggregateId.Equals(entityId));
+            var lines = eventDataBase.Events.Where(e => e.EntityId.Equals(entityId));
             lines.Should().HaveCount(2);
             lines.FirstOrDefault(e => e.EntityVersion.Equals(2)).Should().NotBeNull();
         }

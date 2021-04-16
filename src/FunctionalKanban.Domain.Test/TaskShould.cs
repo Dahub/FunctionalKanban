@@ -19,9 +19,9 @@ namespace FunctionalKanban.Domain.Test
         {
             var expectedTaskName = Guid.NewGuid().ToString();
             var expectedTaskStatus = TaskStatus.Todo;
-            var aggregateId = Guid.NewGuid();
+            var entityId = Guid.NewGuid();
 
-            var eventAndTask = BuildNewTask(aggregateId, expectedTaskName);
+            var eventAndTask = BuildNewTask(entityId, expectedTaskName);
 
             bool CheckEquality(TaskEntityState s) =>
                 s.TaskName.Equals(expectedTaskName)
@@ -37,14 +37,14 @@ namespace FunctionalKanban.Domain.Test
         public void ChangeTaskStateStatusWhenStatusChange()
         {
             var expectedTaskStatus = TaskStatus.InProgress;
-            var aggregateId = Guid.NewGuid();
+            var entityId = Guid.NewGuid();
             var changeTaskStatus = new ChangeTaskStatus()
             {
-                AggregateId = aggregateId,
+                EntityId = entityId,
                 TaskStatus = expectedTaskStatus
             };
 
-            var eventAndState = BuildNewTask(aggregateId).Bind((x) => ((TaskEntityState)x.State).ChangeStatus(changeTaskStatus));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).ChangeStatus(changeTaskStatus));
 
             eventAndState.Match(
                 Invalid:    (errors)    => false,
@@ -55,14 +55,14 @@ namespace FunctionalKanban.Domain.Test
         public void SetIsDeletedToTrueWhenDeleted()
         {
             var expectedIsDeletedValue = true;
-            var aggregateId = Guid.NewGuid();
+            var entityId = Guid.NewGuid();
 
             var deleteTask = new DeleteTask()
             {
-                AggregateId =  aggregateId
+                EntityId =  entityId
             };
 
-            var eventAndState = BuildNewTask(aggregateId).Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
 
             eventAndState.Match(
                 Invalid:    (errors)    => false,
@@ -72,14 +72,14 @@ namespace FunctionalKanban.Domain.Test
         [Fact]
         public void SetProjectIdToNonWhenDeleted()
         {
-            var aggregateId = Guid.NewGuid();
+            var entityId = Guid.NewGuid();
 
             var deleteTask = new DeleteTask()
             {
-                AggregateId = aggregateId
+                EntityId = entityId
             };
 
-            var eventAndState = BuildNewTask(aggregateId).Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
 
             eventAndState.Match(
                 Invalid: (errors) => false,
@@ -100,7 +100,7 @@ namespace FunctionalKanban.Domain.Test
 
             var changeTaskStatus = new ChangeTaskStatus()
             {
-                AggregateId = Guid.NewGuid(),
+                EntityId = Guid.NewGuid(),
                 TaskStatus = TaskStatus.Canceled
             };
 
@@ -121,8 +121,8 @@ namespace FunctionalKanban.Domain.Test
         [Fact]
         public void BeNoneWhenHydratedWithoutCreatedEvent()
         {
-            var aggregateId = Guid.NewGuid();
-            var aggregateName = typeof(TaskEntityState).FullName;
+            var entityId = Guid.NewGuid();
+            var entityName = typeof(TaskEntityState).FullName;
             var changedStatus = TaskStatus.InProgress;
             var lastStatus = TaskStatus.Done;
 
@@ -130,16 +130,16 @@ namespace FunctionalKanban.Domain.Test
             {
                 new TaskStatusChanged()
                 {
-                    AggregateId     = aggregateId,
-                    AggregateName   = aggregateName,
+                    EntityId     = entityId,
+                    EntityName   = entityName,
                     EntityVersion   = 1,
                     NewStatus       = changedStatus,
                     TimeStamp       = DateTime.Now
                 },
                 new TaskStatusChanged()
                 {
-                    AggregateId     = aggregateId,
-                    AggregateName   = aggregateName,
+                    EntityId     = entityId,
+                    EntityName   = entityName,
                     EntityVersion   = 2,
                     NewStatus       = lastStatus,
                     TimeStamp       = DateTime.Now
@@ -154,9 +154,9 @@ namespace FunctionalKanban.Domain.Test
         [Fact]
         public void BeSomeWhenHydrateWithConsecutivesEvents()
         {
-            var aggregateId = Guid.NewGuid();
-            var aggregateName = typeof(TaskEntityState).FullName;
-            var entityName = Guid.NewGuid().ToString();
+            var entityId = Guid.NewGuid();
+            var entityName = typeof(TaskEntityState).FullName;
+            var name = Guid.NewGuid().ToString();
             var remaningWork = 10u;
             var initialStatus = TaskStatus.Todo;
             var changedStatus = TaskStatus.InProgress;
@@ -166,26 +166,26 @@ namespace FunctionalKanban.Domain.Test
             {
                 new TaskCreated()
                 {
-                    AggregateId     = aggregateId,
-                    AggregateName   = aggregateName,
+                    EntityId     = entityId,
+                    EntityName   = entityName,
                     EntityVersion   = 1,
-                    Name            = entityName,
+                    Name            = name,
                     RemaningWork    = remaningWork,
                     Status          = initialStatus,
                     TimeStamp       = DateTime.Now
                 },
                 new TaskStatusChanged()
                 {
-                    AggregateId     = aggregateId,
-                    AggregateName   = aggregateName,
+                    EntityId     = entityId,
+                    EntityName   = entityName,
                     EntityVersion   = 2,
                     NewStatus       = changedStatus,
                     TimeStamp       = DateTime.Now
                 },
                 new TaskStatusChanged()
                 {
-                    AggregateId     = aggregateId,
-                    AggregateName   = aggregateName,
+                    EntityId     = entityId,
+                    EntityName   = entityName,
                     EntityVersion   = 3,
                     NewStatus       = lastStatus,
                     TimeStamp       = DateTime.Now
@@ -202,9 +202,9 @@ namespace FunctionalKanban.Domain.Test
         [Fact]
         public void BeSomeWhenHydrateWithNonOrderedConsecutivesEvents()
         {
-            var aggregateId = Guid.NewGuid();
-            var aggregateName = typeof(TaskEntityState).FullName;
-            var entityName = Guid.NewGuid().ToString();
+            var entityId = Guid.NewGuid();
+            var entityName = typeof(TaskEntityState).FullName;
+            var name = Guid.NewGuid().ToString();
             var remaningWork = 10u;
             var initialStatus = TaskStatus.Todo;
             var changedStatus = TaskStatus.InProgress;
@@ -214,26 +214,26 @@ namespace FunctionalKanban.Domain.Test
             {
                 new TaskStatusChanged()
                 {
-                    AggregateId     = aggregateId,
-                    AggregateName   = aggregateName,
+                    EntityId     = entityId,
+                    EntityName   = entityName,
                     EntityVersion   = 2,
                     NewStatus       = changedStatus,
                     TimeStamp       = DateTime.Now
                 },
                 new TaskStatusChanged()
                 {
-                    AggregateId     = aggregateId,
-                    AggregateName   = aggregateName,
+                    EntityId     = entityId,
+                    EntityName   = entityName,
                     EntityVersion   = 3,
                     NewStatus       = lastStatus,
                     TimeStamp       = DateTime.Now
                 },
                 new TaskCreated()
                 {
-                    AggregateId     = aggregateId,
-                    AggregateName   = aggregateName,
+                    EntityId     = entityId,
+                    EntityName   = entityName,
                     EntityVersion   = 1,
-                    Name            = entityName,
+                    Name            = name,
                     RemaningWork    = remaningWork,
                     Status          = initialStatus,
                     TimeStamp       = DateTime.Now
@@ -247,13 +247,13 @@ namespace FunctionalKanban.Domain.Test
                 Some: (_) => true).Should().BeTrue();
         }
 
-        private static Validation<EventAndState> BuildNewTask(Guid aggregateId, string taskName = "fake task") =>
-            TaskEntity.Create(BuildCreateTaskCommand(aggregateId, taskName));
+        private static Validation<EventAndState> BuildNewTask(Guid entityId, string taskName = "fake task") =>
+            TaskEntity.Create(BuildCreateTaskCommand(entityId, taskName));
 
-        private static CreateTask BuildCreateTaskCommand(Guid aggregateId, string taskName) =>
+        private static CreateTask BuildCreateTaskCommand(Guid entityId, string taskName) =>
             new CreateTask()
             {
-                AggregateId     = aggregateId,
+                EntityId     = entityId,
                 Name            = taskName,
                 RemaningWork    = 10,
                 ProjectId       = Guid.NewGuid()

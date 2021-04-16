@@ -15,7 +15,7 @@
         public Exceptional<Unit> Push(Event @event) =>
             _database.Add(
                 Guid.NewGuid(),
-                @event.AggregateName,
+                @event.EntityName,
                 @event.EntityVersion,
                 @event.EventName,
                 @event);

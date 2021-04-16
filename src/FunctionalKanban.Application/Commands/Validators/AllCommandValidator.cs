@@ -9,7 +9,7 @@
     {
         protected override IEnumerable<Error> GetErrors(Command c)
         {
-            if (c.AggregateId == Guid.Empty)
+            if (c.EntityId == Guid.Empty)
             {
                 yield return "L'id d'aggregat doit être défini";
             }
