@@ -18,6 +18,24 @@ namespace FunctionalKanban.Application.Test
     public class CommandHandlerShould
     {
         [Fact]
+        public void ReturnValidationErrorWhenCreateProjectWithoutName()
+        {
+            var command = new CreateProject()
+            {
+                EntityId = Guid.NewGuid(),
+                Name = string.Empty
+            };
+
+            var commandHandler = new CommandHandler(
+              getEntity: (id) => Some((State)new ProjectEntityState()),
+              publishEvent: (evt) => Unit.Create());
+
+            var validationResult = commandHandler.Handle(command);
+
+            validationResult.IsValid.Should().BeFalse();
+        }
+
+        [Fact]
         public void PublishProjectCreatedWhenHandleCreateProjectCommand()
         {
             var expectedEntityId = Guid.NewGuid();

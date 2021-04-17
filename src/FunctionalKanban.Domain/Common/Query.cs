@@ -5,7 +5,6 @@
 
     public abstract record Query
     {
-
         protected static bool MoreOrEqualThanValue(uint valueToCompare, Option<uint> value) => value.Match(
                     None: () => true,
                     Some: (v) => valueToCompare >= v);
