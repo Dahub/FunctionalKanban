@@ -84,6 +84,22 @@
             return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
         }
 
+        public static Validation<EventAndState> LinkToProject(
+            this TaskEntityState state,
+            LinkToProject cmd)
+        {
+            var @event = new TaskLinkedToProject()
+            {
+                EntityId = cmd.EntityId,
+                EntityName = _entityName,
+                EntityVersion = state.Version + 1,
+                TimeStamp = cmd.TimeStamp,
+                ProjectId = cmd.ProjectId == default?None:cmd.ProjectId
+            };
+
+            return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
+        }
+
         private static Validation<TaskEntityState> WithCheckNotDeleted(
                 this TaskEntityState state) =>
             state.IsDeleted

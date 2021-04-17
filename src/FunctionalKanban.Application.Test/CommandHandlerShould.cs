@@ -18,6 +18,23 @@ namespace FunctionalKanban.Application.Test
     public class CommandHandlerShould
     {
         [Fact]
+        public void ReturnValidationErrorWhenLinkToProjectWithoutProjectid()
+        {
+            var command = new LinkToProject()
+            {
+                EntityId = Guid.NewGuid()
+            };
+
+            var commandHandler = new CommandHandler(
+              getEntity: (id) => Some((State)new TaskEntityState()),
+              publishEvent: (evt) => Unit.Create());
+
+            var validationResult = commandHandler.Handle(command);
+
+            validationResult.IsValid.Should().BeFalse();
+        }
+
+        [Fact]
         public void ReturnValidationErrorWhenCreateProjectWithoutName()
         {
             var command = new CreateProject()
@@ -87,6 +104,32 @@ namespace FunctionalKanban.Application.Test
             validationResult.IsValid.Should().BeTrue();
             lastPublishedEvent.Should().NotBeNull();
             lastPublishedEvent.EntityId.Should().Equals(expectedEntityId);
+        }
+
+        [Fact]
+        public void PublishTaskLinkedToProjectWhenHandleLinkToProjectCommand()
+        {
+            var expectedEntityId = Guid.NewGuid();
+            var expectedProjectId = Guid.NewGuid();
+
+            TaskLinkedToProject lastPublishedEvent = null;
+
+            var command = new LinkToProject()
+            {
+                EntityId = expectedEntityId,
+                ProjectId = expectedProjectId
+            };
+
+            var commandHandler = new CommandHandler(
+            getEntity: (id) => Some((State)new TaskEntityState()),
+            publishEvent: (evt) => { lastPublishedEvent = evt as TaskLinkedToProject; return Unit.Create(); });
+
+            var validationResult = commandHandler.Handle(command);
+
+            validationResult.IsValid.Should().BeTrue();
+            lastPublishedEvent.Should().NotBeNull();
+            lastPublishedEvent.EntityId.Should().Equals(expectedEntityId);
+            lastPublishedEvent.ProjectId.Should().Equals(expectedProjectId);
         }
 
         [Fact]

@@ -14,7 +14,8 @@
         {
             new AllCommandValidator(),
             new CreateTaskValidator(),
-            new CreateProjectValidator()
+            new CreateProjectValidator(),
+            new LinkToProjectValidator()
         };
 
         public static Validation<Command> Validate<T>(this T command) where T : Command => HarvestErrors(_validators, command);

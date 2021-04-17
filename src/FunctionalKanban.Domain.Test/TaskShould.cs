@@ -15,6 +15,42 @@ namespace FunctionalKanban.Domain.Test
     public class TaskShould
     {
         [Fact]
+        public void ReturnTaskStateWithProjectIdWhenLinkedProject()
+        {
+            var expectedProjectId = Guid.NewGuid();
+            var entityId = Guid.NewGuid();
+
+            var linkToProject = new LinkToProject()
+            {
+                EntityId = entityId,
+                ProjectId = expectedProjectId
+            };
+
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
+
+            eventAndState.Match(
+            Invalid: (errors) => default,
+            Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(Some(expectedProjectId));
+        }
+
+        [Fact]
+        public void ReturnTaskStateWithProjectIdSetToNoneWhenLinkedProjectWithoutId()
+        {
+            var entityId = Guid.NewGuid();
+
+            var linkToProject = new LinkToProject()
+            {
+                EntityId = entityId
+            };
+
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
+
+            eventAndState.Match(
+            Invalid: (errors) => default,
+            Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(new Option<Guid>());
+        }
+
+        [Fact]
         public void ReturnTaskStateWithNameAndStatusWhenCreated()
         {
             var expectedTaskName = Guid.NewGuid().ToString();
@@ -107,7 +143,7 @@ namespace FunctionalKanban.Domain.Test
         }
 
         [Fact]
-        public void SetProjectIdToNonWhenDeleted()
+        public void SetProjectIdToNoneWhenDeleted()
         {
             var entityId = Guid.NewGuid();
 
