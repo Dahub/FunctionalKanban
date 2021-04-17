@@ -46,8 +46,25 @@ namespace FunctionalKanban.Domain.Test
             var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
 
             eventAndState.Match(
-            Invalid: (errors) => default,
-            Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(new Option<Guid>());
+                Invalid: (errors) => default,
+                Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(new Option<Guid>());
+        }
+
+        [Fact]
+        public void ReturnInvalidWhenLinkToAlreadyLinkedProject()
+        {
+            var entityId = Guid.NewGuid();
+            var projectId = Guid.NewGuid();
+
+            var linkToProject = new LinkToProject()
+            {
+                EntityId = entityId,
+                ProjectId = projectId
+            };
+
+            var eventAndState = BuildNewTask(entityId, projectId: projectId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
+
+            eventAndState.IsValid.Should().BeFalse();
         }
 
         [Fact]
@@ -323,16 +340,21 @@ namespace FunctionalKanban.Domain.Test
         private static Validation<EventAndState> BuildNewTask(
                 Guid entityId, 
                 string taskName = "fake task",
-                uint remaningWork = 10) =>
-            TaskEntity.Create(BuildCreateTaskCommand(entityId, taskName, remaningWork));
+                uint remaningWork = 10,
+                Guid projectId = default) =>
+            TaskEntity.Create(BuildCreateTaskCommand(entityId, taskName, remaningWork, projectId));
 
-        private static CreateTask BuildCreateTaskCommand(Guid entityId, string taskName, uint remaningWork) =>
+        private static CreateTask BuildCreateTaskCommand(
+                Guid entityId, 
+                string taskName, 
+                uint remaningWork, 
+                Guid projectId) =>
             new()
             {
-                EntityId     = entityId,
+                EntityId        = entityId,
                 Name            = taskName,
                 RemaningWork    = remaningWork,
-                ProjectId       = Guid.NewGuid()
+                ProjectId       = projectId == default ? Guid.NewGuid() : projectId
             };
     }
 }

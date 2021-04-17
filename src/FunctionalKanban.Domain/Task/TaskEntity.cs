@@ -1,5 +1,6 @@
 ﻿namespace FunctionalKanban.Domain.Task
 {
+    using System;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
@@ -94,10 +95,14 @@
                 EntityName = _entityName,
                 EntityVersion = state.Version + 1,
                 TimeStamp = cmd.TimeStamp,
-                ProjectId = cmd.ProjectId == default?None:cmd.ProjectId
+                ProjectId = cmd.ProjectId == default?None:cmd.ProjectId,
+                RemaningWork = state.RemaningWork
             };
 
-            return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
+            return state
+                .WithCheckNotDeleted()
+                .Bind(s => s.WithCheckProjectNotAlreadyLinked(cmd.ProjectId))
+                .Bind(s => s.ApplyEvent(@event));
         }
 
         private static Validation<TaskEntityState> WithCheckNotDeleted(
@@ -105,5 +110,13 @@
             state.IsDeleted
                ? Invalid("Impossible de modifier une tâche supprimée")
                : state;
+
+        private static Validation<TaskEntityState> WithCheckProjectNotAlreadyLinked(
+                this TaskEntityState state, Guid projectId) =>
+            state.ProjectId.Match(
+                None: () => state,
+                Some: (id) => id.Equals(projectId)
+                    ? Invalid("La tâche est déjà associée au projet")
+                    : Valid(state));
     }
 }

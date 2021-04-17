@@ -19,7 +19,12 @@
         public uint TotalRemaningWork { get; init; }
 
         public static bool CanHandle(Event @event) =>
-            @event is ProjectCreated or TaskCreated or TaskDeleted or TaskRemaningWorkChanged;
+            @event is 
+                ProjectCreated 
+                or TaskCreated 
+                or TaskDeleted 
+                or TaskRemaningWorkChanged
+                or TaskLinkedToProject;
 
         public override Option<ViewProjection> With(Event @event) =>
             @event switch
@@ -28,6 +33,7 @@
                 TaskCreated e               => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork },
                 TaskDeleted e               => this with { TotalRemaningWork = this.TotalRemaningWork - e.OldRemaningWork },
                 TaskRemaningWorkChanged e   => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork - e.OldRemaningWork },
+                TaskLinkedToProject e       => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork  },
                 _                           => this with { }
             };
     }

@@ -7,5 +7,7 @@
     public sealed record TaskLinkedToProject : Event
     {
         public Option<Guid> ProjectId { get; init; }
+
+        public uint RemaningWork { get; init; }
     }
 }
