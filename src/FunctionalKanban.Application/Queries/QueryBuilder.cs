@@ -5,7 +5,7 @@
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project.Queries;
     using FunctionalKanban.Domain.Task.Queries;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using QueriesBuilders;
 
     public static class QueryBuilder

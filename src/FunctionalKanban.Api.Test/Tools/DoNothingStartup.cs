@@ -2,11 +2,11 @@
 {
     using System;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using FunctionalKanban.Infrastructure.InMemory;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using static FunctionalKanban.Functional.F;
+    using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
 
     internal class DoNothingStartup : Startup, ITestStartup

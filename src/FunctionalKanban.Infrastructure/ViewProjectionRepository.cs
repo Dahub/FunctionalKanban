@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
-    using static FunctionalKanban.Functional.F;
+    using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
 
     public class ViewProjectionRepository : IViewProjectionRepository

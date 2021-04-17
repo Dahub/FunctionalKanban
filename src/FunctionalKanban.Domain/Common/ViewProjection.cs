@@ -1,7 +1,7 @@
 ﻿namespace FunctionalKanban.Domain.Common
 {
     using System;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     public abstract record ViewProjection
     {

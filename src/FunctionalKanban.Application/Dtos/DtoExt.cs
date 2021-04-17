@@ -5,8 +5,8 @@
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project.ViewProjections;
     using FunctionalKanban.Domain.Task.ViewProjections;
-    using FunctionalKanban.Functional;
-    using static FunctionalKanban.Functional.F;
+    using LaYumba.Functional;
+    using static LaYumba.Functional.F;
 
     public static class DtoExt
     {

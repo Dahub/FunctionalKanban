@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     internal class CreateProjectValidator : ValidatorBase<CreateProject>
     {

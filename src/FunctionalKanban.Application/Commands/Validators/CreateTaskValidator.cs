@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Task.Commands;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     internal class CreateTaskValidator : ValidatorBase<CreateTask>
     {

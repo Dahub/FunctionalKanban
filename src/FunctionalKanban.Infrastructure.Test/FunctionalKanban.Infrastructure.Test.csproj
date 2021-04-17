@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Functional\FunctionalKanban.Functional.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Infrastructure\FunctionalKanban.Infrastructure.csproj" />
   </ItemGroup>
 

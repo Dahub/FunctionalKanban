@@ -8,9 +8,9 @@ namespace FunctionalKanban.Domain.Test
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using Xunit;
-    using static FunctionalKanban.Functional.F;
+    using static LaYumba.Functional.F;
 
     public class TaskShould
     {
@@ -291,7 +291,7 @@ namespace FunctionalKanban.Domain.Test
             TaskEntity.Create(BuildCreateTaskCommand(entityId, taskName, remaningWork));
 
         private static CreateTask BuildCreateTaskCommand(Guid entityId, string taskName, uint remaningWork) =>
-            new CreateTask()
+            new()
             {
                 EntityId     = entityId,
                 Name            = taskName,

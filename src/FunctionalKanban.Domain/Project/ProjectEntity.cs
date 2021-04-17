@@ -3,7 +3,7 @@
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project.Commands;
     using FunctionalKanban.Domain.Project.Events;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     public static class ProjectEntity
     {

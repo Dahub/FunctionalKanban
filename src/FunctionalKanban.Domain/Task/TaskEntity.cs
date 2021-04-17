@@ -3,8 +3,8 @@
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
-    using FunctionalKanban.Functional;
-    using static FunctionalKanban.Functional.F;
+    using LaYumba.Functional;
+    using static LaYumba.Functional.F;
 
     public static class TaskEntity
     {

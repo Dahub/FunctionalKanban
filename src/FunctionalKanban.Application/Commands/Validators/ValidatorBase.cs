@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
-    using static FunctionalKanban.Functional.F;
+    using LaYumba.Functional;
+    using static LaYumba.Functional.F;
 
     internal abstract class ValidatorBase<T> : IValidator where T : Command
     {

@@ -7,9 +7,9 @@
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project.ViewProjections;
     using FunctionalKanban.Domain.Task.ViewProjections;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
-    using static FunctionalKanban.Functional.F;
+    using static LaYumba.Functional.F;
     using static FunctionalKanban.Infrastructure.InMemory.InMemoryDatabase;
     using Unit = System.ValueTuple;
 
@@ -135,7 +135,7 @@
     internal static class InMemoryDatabaseExt
     {
         public static EventLine ToEventLine(this Event evt) =>
-            new EventLine(
+            new(
                 Id: Guid.NewGuid(),
                 EntityId: evt.EntityId,
                 EntityName: evt.EntityName,

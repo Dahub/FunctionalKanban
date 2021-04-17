@@ -2,7 +2,7 @@
 {
     using System;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
     using Unit = System.ValueTuple;
 

@@ -3,9 +3,8 @@
     using System;
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     public sealed record TaskEntityState : State
     {

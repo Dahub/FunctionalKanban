@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project.Queries;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     public static class GetProjectByIdQueryBuilder
     {

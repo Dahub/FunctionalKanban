@@ -10,9 +10,9 @@ namespace FunctionalKanban.Application.Test
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using Xunit;
-    using static FunctionalKanban.Functional.F;
+    using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
 
     public class CommandHandlerShould

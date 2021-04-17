@@ -6,8 +6,8 @@
     using FunctionalKanban.Domain.Project.Commands;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
-    using FunctionalKanban.Functional;
-    using static FunctionalKanban.Functional.F;
+    using LaYumba.Functional;
+    using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
 
     public class CommandHandler

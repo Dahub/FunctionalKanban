@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="LaYumba.Functional" Version="0.10.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -23,7 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\FunctionalKanban.Application\FunctionalKanban.Application.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Functional\FunctionalKanban.Functional.csproj" />
   </ItemGroup>
 
 </Project>

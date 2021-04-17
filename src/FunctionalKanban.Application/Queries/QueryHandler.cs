@@ -8,8 +8,8 @@
     using FunctionalKanban.Domain.Project.ViewProjections;
     using FunctionalKanban.Domain.Task.Queries;
     using FunctionalKanban.Domain.Task.ViewProjections;
-    using FunctionalKanban.Functional;
-    using static FunctionalKanban.Functional.F;
+    using LaYumba.Functional;
+    using static LaYumba.Functional.F;
     using static QueryBuilder;
 
     public class QueryHandler

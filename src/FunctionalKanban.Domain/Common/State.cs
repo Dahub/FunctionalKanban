@@ -3,8 +3,8 @@
     using System;
     using System.Linq;
     using System.Collections.Generic;
-    using FunctionalKanban.Functional;
-    using static FunctionalKanban.Functional.F;
+    using LaYumba.Functional;
+    using static LaYumba.Functional.F;
 
     public abstract record State
     {

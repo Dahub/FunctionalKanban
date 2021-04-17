@@ -5,8 +5,8 @@
     using System.Linq;
     using FunctionalKanban.Application.Commands.Validators;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
-    using static FunctionalKanban.Functional.F;
+    using LaYumba.Functional;
+    using static LaYumba.Functional.F;
 
     public static class CommandValidator
     {

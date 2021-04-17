@@ -1,7 +1,7 @@
 ﻿namespace FunctionalKanban.Infrastructure.Abstraction
 {
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using Unit = System.ValueTuple;
 
     public interface INotifier

@@ -2,7 +2,7 @@
 {
     using System;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     public sealed record TaskDeleted : Event
     {

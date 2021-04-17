@@ -3,7 +3,7 @@
     using System;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.ViewProjections;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using FunctionalKanban.Infrastructure;
     using FunctionalKanban.Infrastructure.Abstraction;
     using FunctionalKanban.Infrastructure.InMemory;

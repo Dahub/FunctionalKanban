@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     internal class AllCommandValidator : ValidatorBase<Command>
     {

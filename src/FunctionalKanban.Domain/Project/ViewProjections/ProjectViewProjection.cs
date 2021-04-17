@@ -4,7 +4,7 @@
     using FunctionalKanban.Domain.Project;
     using FunctionalKanban.Domain.Project.Events;
     using FunctionalKanban.Domain.Task.Events;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     public record ProjectViewProjection : ViewProjection
     {

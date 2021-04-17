@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
-    using static FunctionalKanban.Functional.F;
+    using LaYumba.Functional;
+    using static LaYumba.Functional.F;
 
     internal static class QueryBuilderExt
     {

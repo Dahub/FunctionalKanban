@@ -5,9 +5,9 @@
     using System.Linq;
     using System.Reflection;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
-    using static FunctionalKanban.Functional.F;
+    using static LaYumba.Functional.F;
 
     public class EntityStateRepository : IEntityStateRepository
     {

@@ -5,7 +5,7 @@
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project;
     using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using Xunit;
 
     public class ProjectShould
@@ -33,7 +33,7 @@
             ProjectEntity.Create(BuildCreateProjectCommand(entityId, projectName));
 
         private static CreateProject BuildCreateProjectCommand(Guid entityId, string projectName) =>
-            new CreateProject()
+            new()
             {
                 EntityId = entityId,
                 Name = projectName

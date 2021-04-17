@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project.Events;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
 
     public sealed record ProjectEntityState : State
     {

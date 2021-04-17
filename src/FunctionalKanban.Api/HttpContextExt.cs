@@ -9,13 +9,13 @@
     using FunctionalKanban.Application.Dtos;
     using FunctionalKanban.Application.Queries;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Functional;
+    using LaYumba.Functional;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
-    using static FunctionalKanban.Functional.F;
+    using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
 
     internal static class HttpContextExt
@@ -31,7 +31,7 @@
         private static Exceptional<Dictionary<string, string>> ExtractParameters(this HttpContext context) =>
             Try(() =>
                 context.Request.Query.Select(v => KeyValuePair.Create(v.Key, (string)v.Value)).
-                Union(context.Request.RouteValues.Select(v => KeyValuePair.Create(v.Key, (string)v.Value))).
+                Union(context.Request.RouteValues.Select(v => KeyValuePair.Create(v.Key, (string)(v.Value??string.Empty)))).
                 ToDictionary((kv) => kv.Key, (kv) => kv.Value)).
             Run();
 
