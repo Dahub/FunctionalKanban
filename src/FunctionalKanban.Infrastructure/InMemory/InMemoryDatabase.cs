@@ -66,17 +66,17 @@
                 _ => new Exception($"Impossible d'insérer le type de projection {typeof(T)}")
             };
 
-        public Exceptional<Unit> Delete<T>(Guid id) where T : ViewProjection =>
+        public Exceptional<Unit> Delete<T>(T viewProjection) where T : ViewProjection =>
             Try(() =>
             {
                 if (typeof(T) == typeof(TaskViewProjection))
                 {
-                    _taskViewProjections.TryRemove(id, out _);
+                    _taskViewProjections.TryRemove(viewProjection.Id, out _);
                     return Unit.Create();
                 }
                 else if (typeof(T) == typeof(ProjectViewProjection))
                 {
-                    _projectViewProjections.TryRemove(id, out _);
+                    _projectViewProjections.TryRemove(viewProjection.Id, out _);
                     return Unit.Create();
                 }
 

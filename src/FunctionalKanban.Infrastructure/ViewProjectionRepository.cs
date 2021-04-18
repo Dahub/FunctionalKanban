@@ -29,7 +29,7 @@
 
         public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection => _dataBase.Upsert(viewProjection);
 
-        public Exceptional<Unit> Delete<T>(Guid id) where T : ViewProjection => _dataBase.Delete<T>(id);
+        public Exceptional<Unit> Delete<T>(T viewProjection) where T : ViewProjection => _dataBase.Delete<T>(viewProjection);
 
         private static Exceptional<IEnumerable<T>> GetByPredicate<T>(
                 Func<T, bool> predicate,

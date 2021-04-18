@@ -33,7 +33,7 @@
             GetProjection(repository, projectionId, create).
             Bind((p) => p.With(@event).Match(
                 Some: (value)   => repository.Upsert(value),
-                None: ()        => repository.Delete<T>(p.Id)));
+                None: ()        => repository.Delete(p)));
 
         private static Exceptional<T> GetProjection<T>(
                     IViewProjectionRepository repository,
