@@ -2,7 +2,7 @@
 {
     using System;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project.ViewProjections;
+    using FunctionalKanban.Domain.ViewProjections;
 
     public record GetProjectByIdQuery : Query
     {

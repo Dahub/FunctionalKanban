@@ -5,12 +5,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project.ViewProjections;
-    using FunctionalKanban.Domain.Task.ViewProjections;
-    using LaYumba.Functional;
+    using FunctionalKanban.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.Abstraction;
-    using static LaYumba.Functional.F;
+    using LaYumba.Functional;
     using static FunctionalKanban.Infrastructure.InMemory.InMemoryDatabase;
+    using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
 
     public class InMemoryDatabase : IViewProjectionDataBase, IEventDataBase

@@ -5,9 +5,8 @@
     using FunctionalKanban.Application.Dtos;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project.Queries;
-    using FunctionalKanban.Domain.Project.ViewProjections;
     using FunctionalKanban.Domain.Task.Queries;
-    using FunctionalKanban.Domain.Task.ViewProjections;
+    using FunctionalKanban.Domain.ViewProjections;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
     using static QueryBuilder;

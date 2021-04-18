@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Domain.Project.ViewProjections
+﻿namespace FunctionalKanban.Domain.ViewProjections
 {
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project;

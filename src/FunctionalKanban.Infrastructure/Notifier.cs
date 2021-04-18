@@ -2,8 +2,7 @@
 {
     using System;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project.ViewProjections;
-    using FunctionalKanban.Domain.Task.ViewProjections;
+    using FunctionalKanban.Domain.ViewProjections;
     using LaYumba.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
     using Unit = System.ValueTuple;

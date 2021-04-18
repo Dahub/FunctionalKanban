@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Task.ViewProjections;
+    using FunctionalKanban.Domain.ViewProjections;
     using LaYumba.Functional;
     using Unit = System.ValueTuple;
 

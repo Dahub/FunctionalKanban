@@ -2,7 +2,7 @@
 {
     using System;
     using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Task.ViewProjections;
+    using FunctionalKanban.Domain.ViewProjections;
 
     public record TaskDto : Dto
     {
