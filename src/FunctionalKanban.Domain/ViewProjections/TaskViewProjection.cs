@@ -19,23 +19,25 @@
 
         public Option<Guid> ProjectId { get; init; }
 
-        public static bool CanHandle(Event @event) =>
-            @event is
-                TaskCreated
-                or TaskStatusChanged
-                or TaskDeleted
-                or TaskRemaningWorkChanged
-                or TaskLinkedToProject;
+        public static Option<Guid> HandleWithId(Event @event) =>
+           @event switch
+           {
+                TaskCreated 
+                    or TaskDeleted 
+                    or TaskRemaningWorkChanged 
+                    or TaskLinkedToProject => @event.EntityId,
+                _ => None
+           };
 
         public override Option<ViewProjection> With(Event @event) =>
             @event switch
             {
-                TaskCreated e => this with { Id = e.EntityId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status, ProjectId = e.ProjectId },
-                TaskStatusChanged e => this with { RemaningWork = e.RemaningWork, Status = e.NewStatus },
-                TaskDeleted _ => None,
-                TaskRemaningWorkChanged e => this with { RemaningWork = e.RemaningWork },
-                TaskLinkedToProject e => this with { ProjectId = e.ProjectId },
-                _ => this with { }
+                TaskCreated e               => this with { Id = e.EntityId, Name = e.Name, RemaningWork = e.RemaningWork, Status = e.Status, ProjectId = e.ProjectId },
+                TaskStatusChanged e         => this with { RemaningWork = e.RemaningWork, Status = e.NewStatus },
+                TaskDeleted _               => None,
+                TaskRemaningWorkChanged e   => this with { RemaningWork = e.RemaningWork },
+                TaskLinkedToProject e       => this with { ProjectId = e.ProjectId },
+                _                           => this with { }
             };
     }
 }

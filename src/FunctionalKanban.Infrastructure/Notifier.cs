@@ -14,22 +14,23 @@
         public Notifier(IViewProjectionRepository viewProjectionRepository) => _repo = viewProjectionRepository;
 
         public Exceptional<Unit> Notify(Event @event) =>
-            Notify<TaskViewProjection>(_repo, @event, TaskViewProjection.CanHandle).
-            Bind(_ => Notify<ProjectViewProjection>(_repo, @event, ProjectViewProjection.CanHandle));
+            Notify<TaskViewProjection>(_repo, @event, TaskViewProjection.HandleWithId).
+            Bind(_ => Notify<ProjectViewProjection>(_repo, @event, ProjectViewProjection.HandleWithId));
 
-       private static Exceptional<Unit> Notify<T>(
-                    IViewProjectionRepository repository,
-                    Event @event,
-                    Func<Event, bool> canHandle) where T : ViewProjection, new() =>
-            canHandle(@event)
-            ? HandleEvent<T>(repository, @event, () => new T())
-            : Unit.Create();
+        private static Exceptional<Unit> Notify<T>(
+                     IViewProjectionRepository repository,
+                     Event @event,
+                     Func<Event, Option<Guid>> handleWithId) where T : ViewProjection, new() =>
+             handleWithId(@event).Match(
+                 None: ()   => Unit.Create(),
+                 Some: (id) => HandleEvent<T>(repository, id, @event, () => new T()));
 
         private static Exceptional<Unit> HandleEvent<T>(
                     IViewProjectionRepository repository,
+                    Guid projectionId, 
                     Event @event,
                     Func<Exceptional<T>> create) where T : ViewProjection =>
-            GetProjection(repository, @event.EntityId, create).
+            GetProjection(repository, projectionId, create).
             Bind((p) => p.With(@event).Match(
                 Some: (value)   => repository.Upsert(value),
                 None: ()        => repository.Delete<T>(p.Id)));

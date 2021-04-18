@@ -7,6 +7,7 @@
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Events;
     using FunctionalKanban.Domain.ViewProjections;
+    using LaYumba.Functional;
     using Xunit;
     using static LaYumba.Functional.F;
 
@@ -43,7 +44,7 @@
                 TotalRemaningWork = expectedRemaningWork
             };
 
-            ProjectViewProjection.CanHandle(projectCreated).Should().BeTrue();
+            ProjectViewProjection.HandleWithId(projectCreated).Should().Be(Some(projectEntityId));
 
             var projectProjection = new ProjectViewProjection();
 
@@ -70,7 +71,7 @@
                 TimeStamp = DateTime.Now
             };
 
-            ProjectViewProjection.CanHandle(taskCreated).Should().BeFalse();
+            ProjectViewProjection.HandleWithId(taskCreated).Should().Be(new Option<Guid>());
         }
 
         [Fact]
@@ -116,7 +117,7 @@
                 TimeStamp = DateTime.Now
             };
 
-            ProjectViewProjection.CanHandle(taskCreated).Should().BeTrue();
+            ProjectViewProjection.HandleWithId(taskCreated).Should().Be(Some(projectEntityId));
 
             var resultProjectProjection = projectProjection.With(taskCreated);
 
@@ -139,7 +140,7 @@
                 TimeStamp = DateTime.Now
             };
 
-            ProjectViewProjection.CanHandle(taskDeleted).Should().BeFalse();
+            ProjectViewProjection.HandleWithId(taskDeleted).Should().Be(new Option<Guid>());
         }
 
         [Fact]
@@ -184,7 +185,7 @@
                 TimeStamp = DateTime.Now
             };
 
-            ProjectViewProjection.CanHandle(taskDeleted).Should().BeTrue();
+            ProjectViewProjection.HandleWithId(taskDeleted).Should().Be(Some(projectEntityId));
 
             var resultProjectProjection = projectProjection.With(taskDeleted);
 
@@ -207,7 +208,7 @@
                 TimeStamp = DateTime.Now
             };
 
-            ProjectViewProjection.CanHandle(taskRemaningWorkChanged).Should().BeFalse();
+            ProjectViewProjection.HandleWithId(taskRemaningWorkChanged).Should().Be(new Option<Guid>());
         }
 
         [Fact]
@@ -251,7 +252,7 @@
                 TimeStamp = DateTime.Now
             };
 
-            ProjectViewProjection.CanHandle(taskRemaningWorkChanged).Should().BeTrue();
+            ProjectViewProjection.HandleWithId(taskRemaningWorkChanged).Should().Be(Some(projectEntityId));
 
             var resultProjectProjection = projectProjection.With(taskRemaningWorkChanged);
 
@@ -273,7 +274,7 @@
                 TimeStamp = DateTime.Now
             };
 
-            ProjectViewProjection.CanHandle(taskLinkedToProject).Should().BeFalse();
+            ProjectViewProjection.HandleWithId(taskLinkedToProject).Should().Be(new Option<Guid>());
         }
 
         [Fact]
@@ -316,7 +317,7 @@
                 TimeStamp = DateTime.Now
             };
 
-            ProjectViewProjection.CanHandle(taskLinkedToProject).Should().BeTrue();
+            ProjectViewProjection.HandleWithId(taskLinkedToProject).Should().Be(Some(projectEntityId));
 
             var resultProjectProjection = projectProjection.With(taskLinkedToProject);
 

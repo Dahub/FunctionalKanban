@@ -6,6 +6,7 @@
     using FunctionalKanban.Domain.Project.Events;
     using FunctionalKanban.Domain.Task.Events;
     using LaYumba.Functional;
+    using static LaYumba.Functional.F;
 
     public record ProjectViewProjection : ViewProjection
     {
@@ -19,15 +20,15 @@
 
         public uint TotalRemaningWork { get; init; }
 
-        public static bool CanHandle(Event @event) =>
+        public static Option<Guid> HandleWithId(Event @event) =>
             @event switch
             {
-                ProjectCreated _                                        => true,
-                TaskCreated e when e.ProjectId.IsDefine()               => true,
-                TaskDeleted e when e.ProjectId.IsDefine()               => true,
-                TaskRemaningWorkChanged e when e.ProjectId.IsDefine()   => true,
-                TaskLinkedToProject e when e.ProjectId.IsDefine()       => true,
-                _                                                       => false
+                ProjectCreated e            => e.EntityId,
+                TaskCreated e               => e.ProjectId,
+                TaskDeleted e               => e.ProjectId,
+                TaskRemaningWorkChanged e   => e.ProjectId,
+                TaskLinkedToProject e       => e.ProjectId,
+                _                           => None
             };
 
         public override Option<ViewProjection> With(Event @event) =>
@@ -40,13 +41,5 @@
                 TaskLinkedToProject e       => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork  },
                 _                           => this with { }
             };
-    }
-
-    internal static class ProjectViewProjectionExt
-    {
-        internal static bool IsDefine(this Option<Guid> projectId) =>
-            projectId.Match(
-                None: () => false,
-                Some: (_) => true);
     }
 }
