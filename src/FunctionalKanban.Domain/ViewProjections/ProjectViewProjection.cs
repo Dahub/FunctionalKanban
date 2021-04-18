@@ -1,5 +1,6 @@
 ﻿namespace FunctionalKanban.Domain.ViewProjections
 {
+    using System;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project;
     using FunctionalKanban.Domain.Project.Events;
@@ -19,12 +20,15 @@
         public uint TotalRemaningWork { get; init; }
 
         public static bool CanHandle(Event @event) =>
-            @event is 
-                ProjectCreated 
-                or TaskCreated 
-                or TaskDeleted 
-                or TaskRemaningWorkChanged
-                or TaskLinkedToProject;
+            @event switch
+            {
+                ProjectCreated _                                        => true,
+                TaskCreated e when e.ProjectId.IsDefine()               => true,
+                TaskDeleted e when e.ProjectId.IsDefine()               => true,
+                TaskRemaningWorkChanged e when e.ProjectId.IsDefine()   => true,
+                TaskLinkedToProject e when e.ProjectId.IsDefine()       => true,
+                _                                                       => false
+            };
 
         public override Option<ViewProjection> With(Event @event) =>
             @event switch
@@ -36,5 +40,13 @@
                 TaskLinkedToProject e       => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork  },
                 _                           => this with { }
             };
+    }
+
+    internal static class ProjectViewProjectionExt
+    {
+        internal static bool IsDefine(this Option<Guid> projectId) =>
+            projectId.Match(
+                None: () => false,
+                Some: (_) => true);
     }
 }

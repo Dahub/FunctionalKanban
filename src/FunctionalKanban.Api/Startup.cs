@@ -9,10 +9,10 @@ namespace FunctionalKanban.Api
     using FunctionalKanban.Domain.Project.Queries;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Queries;
-    using LaYumba.Functional;
     using FunctionalKanban.Infrastructure;
     using FunctionalKanban.Infrastructure.Abstraction;
     using FunctionalKanban.Infrastructure.InMemory;
+    using LaYumba.Functional;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;

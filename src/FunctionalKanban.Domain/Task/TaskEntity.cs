@@ -79,7 +79,8 @@
                 EntityVersion = state.Version + 1,
                 TimeStamp = cmd.TimeStamp,
                 RemaningWork = cmd.RemaningWork,
-                OldRemaningWork = state.RemaningWork
+                OldRemaningWork = state.RemaningWork,
+                ProjectId = state.ProjectId
             };
 
             return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
