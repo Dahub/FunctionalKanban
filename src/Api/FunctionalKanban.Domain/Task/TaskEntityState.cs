@@ -1,7 +1,6 @@
 ﻿namespace FunctionalKanban.Domain.Task
 {
     using System;
-    using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task.Events;
     using LaYumba.Functional;
@@ -19,9 +18,6 @@
         public uint RemaningWork { get; init; }
 
         public bool IsDeleted { get; init; }
-
-        public override Option<State> From(IEnumerable<Event> history) => 
-            From<TaskCreated>(history, () => new TaskEntityState());
        
         protected override State With(Event @event) =>
             @event switch

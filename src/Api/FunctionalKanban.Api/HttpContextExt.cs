@@ -47,7 +47,7 @@
 
         public static async Task ExecuteCommand<T>(this HttpContext context) where T : Command =>
             (await context.ReadCommandAsync<T>()).
-                Bind(HandleWithCommandHandler(context)).
+                Bind(command => HandleWithCommandHandler(command, context)).
                 Match(
                     Invalid: async (errors) => await context.SetResponseBadRequest(errors),
                     Valid: (v) =>
@@ -58,14 +58,13 @@
                         );
                     });
 
-        private static Func<Command, Validation<Exceptional<Unit>>> HandleWithCommandHandler(HttpContext context) =>
-            c =>
-            {
-                var service = context.RequestServices.GetService<CommandHandler>();
-                return service == null
-                    ? Invalid("Impossible de charger le commandHandler")
-                    : service.Handle(c);
-            };
+        private static Validation<Exceptional<Unit>> HandleWithCommandHandler(Command command, HttpContext context)
+        {
+            var service = context.RequestServices.GetService<CommandHandler>();
+            return service == null
+                ? Invalid("Impossible de charger le commandHandler")
+                : service.Handle(command);
+        }
 
         private static async Task<Validation<T>> ReadCommandAsync<T>(this HttpContext context) where T : Command =>
             (await RunAsync(() => context.Request.ReadFromJsonAsync<T>())).

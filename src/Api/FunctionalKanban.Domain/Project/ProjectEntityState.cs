@@ -1,9 +1,7 @@
 ﻿namespace FunctionalKanban.Domain.Project
 {
-    using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project.Events;
-    using LaYumba.Functional;
 
     public sealed record ProjectEntityState : State
     {
@@ -14,9 +12,6 @@
         public ProjectStatus ProjectStatus { get; init; }
 
         public bool IsDeleted { get; init; }
-
-        public override Option<State> From(IEnumerable<Event> history) =>
-            From<ProjectCreated>(history, () => new ProjectEntityState());
 
         protected override State With(Event @event) =>
             @event switch

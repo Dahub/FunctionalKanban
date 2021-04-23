@@ -10,29 +10,25 @@
     {
         public uint Version { get; init; }
 
-        public abstract Option<State> From(IEnumerable<Event> history);
-
         public Validation<EventAndState> ApplyEvent(Event @event) => new EventAndState(@event, With(@event));
 
         protected abstract State With(Event @event);
 
-        protected Option<State> From<T>(
-            IEnumerable<Event> history,
-            Func<State> createState) where T : Event =>
+        public Option<State> From(
+            IEnumerable<Event> history) =>
                 OrderEvents(history).
-                    Bind(HistoryIsValid<T>()).
+                    Bind(HistoryIsValid).
                     Match(
                         None: ()        => None,
-                        Some: (evts)    => Some(Hydrate(evts, createState(), (state, evt) => With(evt))));
+                        Some: (evts)    => Some(Hydrate(evts, this, (state, evt) => With(evt))));
 
         private static Option<IEnumerable<Event>> OrderEvents(IEnumerable<Event> events) =>
             Some(events.OrderBy(e => e.EntityVersion).AsEnumerable());
 
-        private static Func<IEnumerable<Event>, Option<IEnumerable<Event>>> HistoryIsValid<T>() where T : Event => (events) => 
+        private static Option<IEnumerable<Event>> HistoryIsValid(IEnumerable<Event> events) => 
             events.Any() 
             && AreConsecutives(events) 
             && AreSameEntity(events)
-            && events.First() is T
                 ? Some(events)
                 : None;
 
