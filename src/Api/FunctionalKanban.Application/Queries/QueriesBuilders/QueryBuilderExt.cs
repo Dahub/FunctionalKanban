@@ -20,7 +20,7 @@
                 string key,
                 Func<TParam, TQuery> f) 
                     where TQuery : Query
-                    where TParam : notnull, new() =>
+                    where TParam : notnull =>
             parameters != null && parameters.ContainsKey(key)
                 ? ParseParameterAndExecute(parameters, key, f)
                 : Valid(query);
@@ -30,12 +30,12 @@
                 string key, 
                 Func<TParam, TQuery> f) 
                     where TQuery : Query
-                    where TParam : notnull, new() => 
+                    where TParam : notnull => 
             parameters[key].Parse<TParam>().Match(
                 Some: (value)   => Valid(f(value)),
                 None: ()        => Invalid($"Paramètre incorrect {key} : type attendu {typeof(TParam).Name}"));
 
-        private static Option<T> Parse<T>(this string input) where T : notnull, new() =>
+        private static Option<T> Parse<T>(this string input) where T : notnull =>
             GetConverter<T>(input).Bind((tc) => Some((T)tc.ConvertFromString(input)));
 
         private static Option<TypeConverter> GetConverter<T>(string input)
