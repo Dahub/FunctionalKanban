@@ -11,7 +11,7 @@
     {
         private static readonly string _entityName = typeof(TaskEntityState).FullName ?? string.Empty;
 
-        public static Validation<EventAndState> Create(CreateTask cmd)
+        public static Validation<Event> Create(CreateTask cmd)
         {
             var @event = new TaskCreated()
             {
@@ -29,7 +29,7 @@
             return new TaskEntityState().ApplyEvent(@event);
         }
 
-        public static Validation<EventAndState> ChangeStatus(
+        public static Validation<Event> ChangeStatus(
                 this TaskEntityState state,
                 ChangeTaskStatus cmd)
         {
@@ -49,7 +49,7 @@
             return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
         }
 
-        public static Validation<EventAndState> Delete(
+        public static Validation<Event> Delete(
                 this TaskEntityState state,
                 DeleteTask cmd)
         {
@@ -68,7 +68,7 @@
             return state.ApplyEvent(@event);
         }
 
-        public static Validation<EventAndState> ChangeRemaningWork(
+        public static Validation<Event> ChangeRemaningWork(
             this TaskEntityState state,
             ChangeRemaningWork cmd)
         {
@@ -86,7 +86,7 @@
             return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
         }
 
-        public static Validation<EventAndState> LinkToProject(
+        public static Validation<Event> LinkToProject(
             this TaskEntityState state,
             LinkToProject cmd)
         {

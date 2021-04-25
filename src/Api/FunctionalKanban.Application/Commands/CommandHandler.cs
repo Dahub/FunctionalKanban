@@ -40,7 +40,7 @@
         private Validation<Exceptional<Unit>> Handle<T>(
             Command command,
             Func<Guid, Exceptional<Option<State>>> getEntity,
-            Func<T, Option<Validation<EventAndState>>> f) where T : State =>
+            Func<T, Option<Validation<Event>>> f) where T : State =>
                 getEntity(command.EntityId).Match
                 (
                     Exception:  (ex)        => (Exceptional<Unit>)ex,
@@ -56,9 +56,9 @@
     internal static class CommandHandlerExt
     {
         public static Validation<Exceptional<Unit>> PublishEvent(
-                            this Validation<EventAndState> v,
+                            this Validation<Event> v,
                             Func<Event, Exceptional<Unit>> publishEvent) => 
-            v.Bind<EventAndState, Exceptional<Unit>>((x) => publishEvent(x.Event));
+            v.Bind<Event, Exceptional<Unit>>((x) => publishEvent(x));
 
         public static Option<T> CastTo<T>(this Option<State> value) where T : State =>
             value.Bind<State, T>((state) => state is T t ? t : None);

@@ -9,7 +9,7 @@
     {
         private static readonly string _entityName = typeof(ProjectEntityState).FullName ?? string.Empty;
 
-        public static Validation<EventAndState> Create(CreateProject cmd)
+        public static Validation<Event> Create(CreateProject cmd)
         {
             var @event = new ProjectCreated()
             {

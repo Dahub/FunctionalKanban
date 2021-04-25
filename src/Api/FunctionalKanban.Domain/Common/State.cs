@@ -10,7 +10,11 @@
     {
         public uint Version { get; init; }
 
-        public Validation<EventAndState> ApplyEvent(Event @event) => new EventAndState(@event, With(@event));
+        public Validation<Event> ApplyEvent(Event @event)
+        {
+            With(@event);
+            return @event;
+        }
 
         protected abstract State With(Event @event);
 
