@@ -26,11 +26,11 @@ namespace FunctionalKanban.Domain.Test
                 ProjectId = expectedProjectId
             };
 
-            var @event = BuildNewTask(out var state, entityId).Bind((x) => state.LinkToProject(linkToProject));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
 
-            @event.Match(
-                Invalid: (errors) => default,
-                Valid: (eas) => state.ProjectId.Should().Be(Some(expectedProjectId)));
+            eventAndState.Match(
+            Invalid: (errors) => default,
+            Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(Some(expectedProjectId));
         }
 
         [Fact]
@@ -43,11 +43,11 @@ namespace FunctionalKanban.Domain.Test
                 EntityId = entityId
             };
 
-            var @event = BuildNewTask(out var state, entityId).Bind((x) => state.LinkToProject(linkToProject));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
 
-            @event.Match(
+            eventAndState.Match(
                 Invalid: (errors) => default,
-                Valid: (eas) => state.ProjectId.Should().Be(new Option<Guid>()));
+                Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(new Option<Guid>());
         }
 
         [Fact]
@@ -62,10 +62,9 @@ namespace FunctionalKanban.Domain.Test
                 ProjectId = projectId
             };
 
-            var @event = BuildNewTask(out var state, entityId, projectId: projectId).Bind((x) => 
-                state.LinkToProject(linkToProject));
+            var eventAndState = BuildNewTask(entityId, projectId: projectId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
 
-            @event.IsValid.Should().BeFalse();
+            eventAndState.IsValid.Should().BeFalse();
         }
 
         [Fact]
@@ -75,7 +74,7 @@ namespace FunctionalKanban.Domain.Test
             var expectedTaskStatus = TaskStatus.Todo;
             var entityId = Guid.NewGuid();
 
-            var eventAndTask = BuildNewTask(out var state, entityId, expectedTaskName);
+            var eventAndTask = BuildNewTask(entityId, expectedTaskName);
 
             bool CheckEquality(TaskEntityState s) =>
                 s.TaskName.Equals(expectedTaskName)
@@ -84,7 +83,7 @@ namespace FunctionalKanban.Domain.Test
 
             eventAndTask.Match(
                 Invalid: (errors) => false,
-                Valid: (eas) => CheckEquality(state)).Should().BeTrue();
+                Valid: (eas) => CheckEquality((TaskEntityState)eas.State)).Should().BeTrue();
         }
 
         [Fact]
@@ -98,11 +97,11 @@ namespace FunctionalKanban.Domain.Test
                 RemaningWork = expectedRemaningWork
             };
 
-            var @event = BuildNewTask(out var state, entityId).Bind((_) => state.ChangeRemaningWork(changeRemaningWork));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).ChangeRemaningWork(changeRemaningWork));
 
-            @event.Match(
-                Invalid: (errors) => 0u,
-                Valid: (eas) => state.RemaningWork).Should().Be(expectedRemaningWork);
+            eventAndState.Match(
+            Invalid: (errors) => 0u,
+            Valid: (eas) => ((TaskEntityState)eas.State).RemaningWork).Should().Be(expectedRemaningWork);
         }
 
         [Fact]
@@ -116,11 +115,11 @@ namespace FunctionalKanban.Domain.Test
                 TaskStatus = expectedTaskStatus
             };
 
-            var eventAndState = BuildNewTask(out var state, entityId).Bind((x) => state.ChangeStatus(changeTaskStatus));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).ChangeStatus(changeTaskStatus));
 
             eventAndState.Match(
                 Invalid:    (errors)    => false,
-                Valid:      (eas)       => state.TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
+                Valid:      (eas)       => ((TaskEntityState)eas.State).TaskStatus.Equals(expectedTaskStatus)).Should().BeTrue();
         }
 
         [Fact]
@@ -134,11 +133,11 @@ namespace FunctionalKanban.Domain.Test
                 EntityId =  entityId
             };
 
-            var eventAndState = BuildNewTask(out var state, entityId).Bind((x) => state.Delete(deleteTask));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
 
             eventAndState.Match(
                 Invalid:    (errors)    => false,
-                Valid:      (eas)       => state.IsDeleted.Equals(expectedIsDeletedValue)).Should().BeTrue();
+                Valid:      (eas)       => ((TaskEntityState)eas.State).IsDeleted.Equals(expectedIsDeletedValue)).Should().BeTrue();
         }
 
         [Fact]
@@ -152,12 +151,12 @@ namespace FunctionalKanban.Domain.Test
                 EntityId = entityId
             };
 
-            var eventAndState = BuildNewTask(out var state, entityId, remaningWork: remaningWork).
-                Bind((x) => state.Delete(deleteTask));
+            var eventAndState = BuildNewTask(entityId, remaningWork: remaningWork).
+                Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
 
             eventAndState.Match(
                Invalid: (errors) => remaningWork,
-               Valid: (eas) => state.RemaningWork).Should().Be(0);
+               Valid: (eas) => ((TaskEntityState)eas.State).RemaningWork).Should().Be(0);
         }
 
         [Fact]
@@ -170,11 +169,11 @@ namespace FunctionalKanban.Domain.Test
                 EntityId = entityId
             };
 
-            var eventAndState = BuildNewTask(out var state, entityId).Bind((x) => state.Delete(deleteTask));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).Delete(deleteTask));
 
             eventAndState.Match(
                 Invalid: (errors) => false,
-                Valid: (eas) => state.ProjectId.Equals(None)).Should().BeTrue();
+                Valid: (eas) => ((TaskEntityState)eas.State).ProjectId.Equals(None)).Should().BeTrue();
         }
 
         [Fact]
@@ -338,16 +337,12 @@ namespace FunctionalKanban.Domain.Test
                 Some: (_) => true).Should().BeTrue();
         }
 
-        private static Validation<Event> BuildNewTask(
-                out TaskEntityState state,
+        private static Validation<EventAndState> BuildNewTask(
                 Guid entityId, 
                 string taskName = "fake task",
                 uint remaningWork = 10,
-                Guid projectId = default)
-        {
-            state = new TaskEntityState();
-            return TaskEntity.Create(state, BuildCreateTaskCommand(entityId, taskName, remaningWork, projectId));
-        }
+                Guid projectId = default) =>
+            TaskEntity.Create(BuildCreateTaskCommand(entityId, taskName, remaningWork, projectId));
 
         private static CreateTask BuildCreateTaskCommand(
                 Guid entityId, 
