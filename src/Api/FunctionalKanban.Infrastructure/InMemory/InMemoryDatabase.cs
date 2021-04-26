@@ -12,7 +12,7 @@
     using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
 
-    public class InMemoryDatabase : IViewProjectionDataBase, IEventDataBase
+    public class InMemoryDatabase : IViewProjectionDataBase, IEventStore
     {
         private readonly List<EventLine> _eventLines;
 
@@ -49,6 +49,11 @@
 
             return new Exception($"projection de type {type} non prise en charge");
         }
+
+        public Exceptional<Unit> AddRange(IEnumerable<(Guid entityId, string entityName, uint entityVersion, string eventName, Event @event)> events) =>
+            events.Aggregate(
+                seed: Exceptional(Unit.Create()),
+                func: (ex, next) => ex.Bind(_ => Add(next.entityId, next.entityName, next.entityVersion, next.eventName, next.@event)));
 
         public Exceptional<Unit> Add(
             Guid entityId,
@@ -120,7 +125,7 @@
 
         private static Exceptional<IEnumerable<T>> Convert<T>(IEnumerable<ViewProjection> projections) where T : ViewProjection =>
             Try(() => projections.Map(p => (T)p)).Run();
-
+  
         internal record EventLine(
           Guid Id,
           Guid EntityId,
