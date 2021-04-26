@@ -86,8 +86,8 @@ namespace FunctionalKanban.Api
         protected virtual Func<Event, Exceptional<Unit>> NotitySubscribersMethod(IServiceCollection services) =>
             (evt) => GetService<INotifier>(services).Notify(evt);
 
-        protected virtual Func<Event, Exceptional<Unit>> StreamEventMethod(IServiceCollection services) =>
-            (evt) => GetService<IEventStream>(services).Push(evt);
+        protected virtual Func<Event[], Exceptional<Unit>> StreamEventMethod(IServiceCollection services) =>
+            (events) => GetService<IEventStream>(services).Push(events);
 
         protected virtual Func<Type, Func<ViewProjection, bool>, Exceptional<IEnumerable<ViewProjection>>> GetFindProjectionsMethod(IServiceCollection services) =>
              GetService<IViewProjectionRepository>(services).Get;
