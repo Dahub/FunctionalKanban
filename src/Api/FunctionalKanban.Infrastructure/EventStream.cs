@@ -12,12 +12,17 @@
 
         public EventStream(IEventStore database) => _database = database;
 
-        public Exceptional<Unit> Push(params Event[] @event) =>
-            _database.AddRange(@event.Map(e => (
+        public Exceptional<Unit> Push(params Event[] @event)
+        {
+            var tt = _database.AddRange(@event.Map(e => (
              Guid.NewGuid(),
              e.EntityName,
              e.EntityVersion,
              e.EventName,
-             e)));         
+             e)));
+
+            return tt;
+        }
+         
     }
 }
