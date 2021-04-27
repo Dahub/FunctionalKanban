@@ -11,9 +11,9 @@
 
     public class EntityStateRepository : IEntityStateRepository
     {
-        private readonly IEventStore _database;
+        private readonly IEventDataBase _database;
 
-        public EntityStateRepository(IEventStore database) => _database = database;
+        public EntityStateRepository(IEventDataBase database) => _database = database;
 
         public Exceptional<Option<State>> GetById(Guid id) =>
             AllEventsOfEntity(_database.Events, id).

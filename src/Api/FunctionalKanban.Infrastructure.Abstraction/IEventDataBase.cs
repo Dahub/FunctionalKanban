@@ -6,12 +6,10 @@
     using LaYumba.Functional;
     using Unit = System.ValueTuple;
 
-    public interface IEventStore
+    public interface IEventDataBase
     {
         IEnumerable<Event> Events { get; }
 
         Exceptional<Unit> Add(Guid entityId, string entityName, uint entityVersion, string eventName, Event @event);
-
-        Exceptional<Unit> AddRange(IEnumerable<(Guid entityId, string entityName, uint entityVersion, string eventName, Event @event)> events);
     }
 }

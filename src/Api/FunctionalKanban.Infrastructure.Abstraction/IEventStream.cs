@@ -6,6 +6,6 @@
 
     public interface IEventStream
     {
-        Exceptional<Unit> Push(params Event[] @event);
+        Exceptional<Unit> Push(Event @event);
     }
 }

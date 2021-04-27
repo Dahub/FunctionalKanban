@@ -94,7 +94,7 @@ namespace FunctionalKanban.Api
 
         protected virtual IViewProjectionDataBase BuildViewProjectionDataBase() => new InMemoryDatabase();
 
-        protected virtual IEventStore BuildEventDataBase() => new InMemoryDatabase();
+        protected virtual IEventDataBase BuildEventDataBase() => new InMemoryDatabase();
 
         private static T GetService<T>(IServiceCollection services) where T : notnull => services.BuildServiceProvider().GetRequiredService<T>();
     }

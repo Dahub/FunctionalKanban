@@ -16,6 +16,6 @@
 
         protected override IViewProjectionDataBase BuildViewProjectionDataBase() => ViewProjectionDataBase;
 
-        protected override IEventStore BuildEventDataBase() => EventDataBase;
+        protected override IEventDataBase BuildEventDataBase() => EventDataBase;
     }
 }

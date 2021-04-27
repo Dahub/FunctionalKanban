@@ -8,21 +8,16 @@
 
     public class EventStream : IEventStream
     {
-        private readonly IEventStore _database;
+        private readonly IEventDataBase _database;
 
-        public EventStream(IEventStore database) => _database = database;
+        public EventStream(IEventDataBase database) => _database = database;
 
-        public Exceptional<Unit> Push(params Event[] @event)
-        {
-            var tt = _database.AddRange(@event.Map(e => (
-             Guid.NewGuid(),
-             e.EntityName,
-             e.EntityVersion,
-             e.EventName,
-             e)));
-
-            return tt;
-        }
-         
+        public Exceptional<Unit> Push(Event @event) =>
+            _database.Add(
+                Guid.NewGuid(),
+                @event.EntityName,
+                @event.EntityVersion,
+                @event.EventName,
+                @event);
     }
 }
