@@ -6,6 +6,6 @@
 
     public interface IEventBus
     {
-        Exceptional<Unit> Publish(params Event[] events);
+        Exceptional<Unit> Publish(Event @event);
     }
 }
