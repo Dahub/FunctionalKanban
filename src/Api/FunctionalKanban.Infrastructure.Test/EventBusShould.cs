@@ -40,7 +40,7 @@ namespace FunctionalKanban.Infrastructure.Test
             isNotified.Should().BeFalse();
         }
 
-        private static DumbEvent BuildDumbEvent() => new DumbEvent()
+        private static DumbEvent BuildDumbEvent() => new()
         {
             EntityId = Guid.NewGuid(),
             EntityName = Guid.NewGuid().ToString(),

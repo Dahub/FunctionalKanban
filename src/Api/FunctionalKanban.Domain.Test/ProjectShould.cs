@@ -1,6 +1,7 @@
 ﻿namespace FunctionalKanban.Domain.Test
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using FluentAssertions;
     using FunctionalKanban.Domain.Common;
@@ -55,7 +56,23 @@
                 Some: (_) => true).Should().BeTrue();
         }
 
-        private static Validation<EventAndState> BuildNewProject(Guid entityId, string projectName = "fake task") =>
+        [Fact]
+        public void AddTaskToProjectTasksAndFireProjectNewTaskLinkedEvent()
+        {
+            var entityId = Guid.NewGuid();
+            var taskId = Guid.NewGuid();
+            var timeStamp = DateTime.Now;
+
+            var eventAndState = BuildNewProject(entityId).
+                Bind(eas => ((ProjectEntityState)eas.State).AddTaskToProject(timeStamp, taskId));
+
+            eventAndState.Match(
+                Invalid : (_)   => false,
+                Valid :   (eas) => ((ProjectEntityState)eas.State).AssociatedTaskIds.ToList().Contains(taskId)).
+            Should().BeTrue();
+        }
+
+        private static Validation<EventAndState> BuildNewProject(Guid entityId, string projectName = "fake project") =>
             ProjectEntity.Create(BuildCreateProjectCommand(entityId, projectName));
 
         private static CreateProject BuildCreateProjectCommand(Guid entityId, string projectName) =>

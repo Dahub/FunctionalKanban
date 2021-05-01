@@ -1,5 +1,6 @@
 ﻿namespace FunctionalKanban.Domain.Project
 {
+    using System;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project.Commands;
     using FunctionalKanban.Domain.Project.Events;
@@ -23,6 +24,23 @@
             };
 
             return new ProjectEntityState().ApplyEvent(@event);
+        }
+
+        public static Validation<EventAndState> AddTaskToProject(
+            this ProjectEntityState state, 
+            DateTime timeStamp,
+            Guid taskId)
+        {
+            var @event = new ProjectNewTaskLinked()
+            {
+                EntityId = state.ProjectId,
+                EntityName = _entityName,
+                EntityVersion = state.Version + 1,
+                TaskId = taskId,
+                TimeStamp = timeStamp
+            };
+
+            return state.ApplyEvent(@event);
         }
     }
 }

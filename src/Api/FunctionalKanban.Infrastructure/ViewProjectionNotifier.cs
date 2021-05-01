@@ -7,11 +7,11 @@
     using FunctionalKanban.Infrastructure.Abstraction;
     using Unit = System.ValueTuple;
 
-    public class Notifier : INotifier
+    public class ViewProjectionNotifier : INotifier
     {
         private readonly IViewProjectionRepository _repo;
 
-        public Notifier(IViewProjectionRepository viewProjectionRepository) => _repo = viewProjectionRepository;
+        public ViewProjectionNotifier(IViewProjectionRepository viewProjectionRepository) => _repo = viewProjectionRepository;
 
         public Exceptional<Unit> Notify(Event @event) =>
             Notify<TaskViewProjection>(_repo, @event, TaskViewProjection.HandleWithId).

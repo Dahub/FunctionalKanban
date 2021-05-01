@@ -96,7 +96,7 @@
                 EntityName = _entityName,
                 EntityVersion = state.Version + 1,
                 TimeStamp = cmd.TimeStamp,
-                ProjectId = cmd.ProjectId == default?None:cmd.ProjectId,
+                ProjectId = cmd.ProjectId == default ? None : cmd.ProjectId,
                 RemaningWork = state.RemaningWork
             };
 

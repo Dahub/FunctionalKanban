@@ -36,7 +36,7 @@ namespace FunctionalKanban.Api
             services.AddScoped<IEntityStateRepository, EntityStateRepository>();
             services.AddScoped<IViewProjectionRepository, ViewProjectionRepository>();
 
-            services.AddScoped<INotifier, Notifier>();
+            services.AddScoped<INotifier, ViewProjectionNotifier>();
             services.AddScoped<IEventBus>(e => new EventBus(
                 streamEvent: StreamEventMethod(services),
                 notifySubscribers: NotitySubscribersMethod(services)));

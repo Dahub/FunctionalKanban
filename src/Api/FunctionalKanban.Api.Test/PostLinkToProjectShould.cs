@@ -15,7 +15,13 @@
     public class PostLinkToProjectShould : BaseTestClass
     {
         [Fact]
-        public async void LinkToProject()
+        public async void AddTaskToProjectRelatedTasks()
+        {
+
+        }
+
+        [Fact]
+        public async void LinkTaskToProject()
         {
             var entityId = Guid.NewGuid();
             var expectedProjectId = Guid.NewGuid();
@@ -46,7 +52,6 @@
 
             ((TaskLinkedToProject)lastEvent).ProjectId.Should().Be(Some(expectedProjectId));
         }
-
 
         [Fact]
         public async void UpdateProjectIdInViewProjection()
