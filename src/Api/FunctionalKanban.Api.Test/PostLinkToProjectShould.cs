@@ -6,6 +6,7 @@
     using System.Net.Http.Json;
     using FluentAssertions;
     using FunctionalKanban.Api.Test.Tools;
+    using FunctionalKanban.Domain.Project.Events;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
     using FunctionalKanban.Infrastructure.InMemory;
@@ -15,42 +16,37 @@
     public class PostLinkToProjectShould : BaseTestClass
     {
         [Fact]
-        public async void AddTaskToProjectRelatedTasks()
-        {
-
-        }
-
-        [Fact]
         public async void LinkTaskToProject()
         {
-            var entityId = Guid.NewGuid();
+            var taskId = Guid.NewGuid();
             var expectedProjectId = Guid.NewGuid();
             var eventDataBase = new InMemoryDatabase();
 
             var httpClient = BuildNewHttpClient<InMemoryStartup>(eventDataBase, new InMemoryDatabase());
 
-            await InitNewTask(httpClient, entityId);
+            await InitNewTask(httpClient, taskId);
 
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
                     "task/linkToProject",
                     new LinkToProject()
                     {
-                        EntityId = entityId,
+                        EntityId = taskId,
                         ProjectId = expectedProjectId
                     });
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var lines = eventDataBase.Events.Where(e => e.EntityId.Equals(entityId));
+            var lines = eventDataBase.Events.Where(e => e.EntityId.Equals(taskId));
             lines.Should().HaveCount(2);
 
-            var lastEvent = lines.FirstOrDefault(e => e.EntityVersion.Equals(2));
+            var taskLinkToProjectEvent = lines.FirstOrDefault(e => e is TaskLinkedToProject);
+            taskLinkToProjectEvent.Should().NotBeNull();
+            ((TaskLinkedToProject)taskLinkToProjectEvent).ProjectId.Should().Be(Some(expectedProjectId));
 
-            lastEvent.Should().NotBeNull();
-            lastEvent.Should().BeOfType<TaskLinkedToProject>();
-
-            ((TaskLinkedToProject)lastEvent).ProjectId.Should().Be(Some(expectedProjectId));
+            var projectNewTaskLinkedEvent = lines.FirstOrDefault(e => e is ProjectNewTaskLinked);
+            projectNewTaskLinkedEvent.Should().NotBeNull();
+            ((ProjectNewTaskLinked)projectNewTaskLinkedEvent).TaskId.Should().Be(taskId);
         }
 
         [Fact]
