@@ -19,12 +19,13 @@
         public async void LinkTaskToProject()
         {
             var taskId = Guid.NewGuid();
-            var expectedProjectId = Guid.NewGuid();
+            var projectId = Guid.NewGuid();
             var eventDataBase = new InMemoryDatabase();
 
             var httpClient = BuildNewHttpClient<InMemoryStartup>(eventDataBase, new InMemoryDatabase());
 
             await InitNewTask(httpClient, taskId);
+            await InitNewProject(httpClient, projectId);
 
             var httpResponseMessage = await httpClient
                 .PostAsJsonAsync(
@@ -32,7 +33,7 @@
                     new LinkToProject()
                     {
                         EntityId = taskId,
-                        ProjectId = expectedProjectId
+                        ProjectId = projectId
                     });
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -42,7 +43,9 @@
 
             var taskLinkToProjectEvent = lines.FirstOrDefault(e => e is TaskLinkedToProject);
             taskLinkToProjectEvent.Should().NotBeNull();
-            ((TaskLinkedToProject)taskLinkToProjectEvent).ProjectId.Should().Be(Some(expectedProjectId));
+            ((TaskLinkedToProject)taskLinkToProjectEvent).ProjectId.Should().Be(Some(projectId));
+
+            lines = eventDataBase.Events.Where(e => e.EntityId.Equals(projectId));
 
             var projectNewTaskLinkedEvent = lines.FirstOrDefault(e => e is ProjectNewTaskLinked);
             projectNewTaskLinkedEvent.Should().NotBeNull();
@@ -53,12 +56,13 @@
         public async void UpdateProjectIdInViewProjection()
         {
             var entityId = Guid.NewGuid();
-            var expectedProjectId = Guid.NewGuid();
+            var projectId = Guid.NewGuid();
             var dataBase = new InMemoryDatabase();
 
             var httpClient = BuildNewHttpClient<InMemoryStartup>(new InMemoryDatabase(), dataBase);
 
             await InitNewTask(httpClient, entityId);
+            await InitNewProject(httpClient, projectId);
 
             _ = await httpClient
                 .PostAsJsonAsync(
@@ -66,10 +70,10 @@
                     new LinkToProject()
                     {
                         EntityId = entityId,
-                        ProjectId = expectedProjectId
+                        ProjectId = projectId
                     });
 
-            dataBase.TaskViewProjections.Single(v => v.Id.Equals(entityId)).ProjectId.Should().Be(Some(expectedProjectId));
+            dataBase.TaskViewProjections.Single(v => v.Id.Equals(entityId)).ProjectId.Should().Be(Some(projectId));
         }
     }
 }

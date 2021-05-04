@@ -4,6 +4,7 @@
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using FunctionalKanban.Domain.Project.Commands;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Infrastructure.InMemory;
     using Microsoft.AspNetCore.Hosting;
@@ -52,5 +53,15 @@
                         Name = Guid.NewGuid().ToString(),
                         RemaningWork = remaningWork
                     });
+
+        protected static async Task InitNewProject(HttpClient httpClient, Guid entityId) =>
+           _ = await httpClient
+               .PostAsJsonAsync(
+                   "project",
+                   new CreateProject()
+                   {
+                       EntityId = entityId,
+                       Name = Guid.NewGuid().ToString()
+                   });
     }
 }

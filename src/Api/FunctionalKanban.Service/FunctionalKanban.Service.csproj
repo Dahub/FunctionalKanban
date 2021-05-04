@@ -7,4 +7,12 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="LaYumba.Functional" Version="0.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

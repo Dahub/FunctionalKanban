@@ -112,7 +112,7 @@ namespace FunctionalKanban.Application.Test
             var expectedEntityId = Guid.NewGuid();
             var expectedProjectId = Guid.NewGuid();
 
-            TaskLinkedToProject lastPublishedEvent = null;
+            ProjectNewTaskLinked lastPublishedEvent = null;
 
             var command = new LinkToProject()
             {
@@ -121,15 +121,17 @@ namespace FunctionalKanban.Application.Test
             };
 
             var commandHandler = new CommandHandler(
-            getEntity: (id) => Some((State)new TaskEntityState()),
-            publishEvent: (evt) => { lastPublishedEvent = evt as TaskLinkedToProject; return Unit.Create(); });
+                getEntity: (id) => Some((State)(id == expectedEntityId 
+                    ? new TaskEntityState() { TaskId = expectedEntityId }
+                    : new ProjectEntityState() { ProjectId = expectedProjectId } )),
+                publishEvent: (evt) => { lastPublishedEvent = evt as ProjectNewTaskLinked; return Unit.Create(); });
 
             var validationResult = commandHandler.Handle(command);
 
             validationResult.IsValid.Should().BeTrue();
             lastPublishedEvent.Should().NotBeNull();
-            lastPublishedEvent.EntityId.Should().Equals(expectedEntityId);
-            lastPublishedEvent.ProjectId.Should().Equals(expectedProjectId);
+            lastPublishedEvent.EntityId.Should().Be(expectedProjectId);
+            lastPublishedEvent.TaskId.Should().Be(expectedEntityId);
         }
 
         [Fact]

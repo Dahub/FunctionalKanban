@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
+    <ProjectReference Include="..\FunctionalKanban.Service\FunctionalKanban.Service.csproj" />
   </ItemGroup>
 
 </Project>
