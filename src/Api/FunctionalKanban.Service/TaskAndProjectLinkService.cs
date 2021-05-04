@@ -14,22 +14,40 @@
     public static class TaskAndProjectLinkService
     {
         public static Exceptional<Validation<IEnumerable<Event>>> HandleLinkToProjectCommand(
-                LinkToProject command,
-                Func<Guid, Exceptional<Validation<State>>> getEntity)
-            => ToEvents(
-                NewMethod(command, getEntity),
-                getEntity(command.ProjectId).Bind((Func<Validation<State>, Exceptional<Validation<EventAndState>>>)(v => v.Bind(e => ((ProjectEntityState)e).AddTaskToProject(DateTime.Now, command.EntityId)))));
-        private static Exceptional<Validation<EventAndState>> NewMethod(LinkToProject command, Func<Guid, Exceptional<Validation<State>>> getEntity) => getEntity(command.EntityId).Bind<Validation<State>, Validation<EventAndState>>(v => v.Bind(e => ((TaskEntityState)e).LinkToProject(command)));
+              LinkToProject command,
+              Func<Guid, Exceptional<Validation<State>>> getEntity)
+                  => ToEvents(
+                      getEntity(command.EntityId).Bind<Validation<State>, Validation<EventAndState>>(v => v.Bind(e => ((TaskEntityState)e).LinkToProject(command))),
+                      getEntity(command.ProjectId).Bind<Validation<State>, Validation<EventAndState>>(v => v.Bind(e => ((ProjectEntityState)e).AddTaskToProject(DateTime.Now, command.EntityId))));
 
-        private static Exceptional<Validation<IEnumerable<Event>>> ToEvents(params Exceptional<Validation<EventAndState>>[] eventsAndStates)
+
+        //public static Exceptional<Validation<IEnumerable<Event>>> HandleLinkToProjectCommand(
+        //        LinkToProject command,
+        //        Func<Guid, Exceptional<Validation<State>>> getEntity)
+        //{
+
+        //}
+
+        private static Exceptional<Validation<IEnumerable<Event>>> ToEvents(
+            params Exceptional<Validation<EventAndState>>[] eventsAndStates)
         {
+
+            var exEnumValid = eventsAndStates.Aggregate(
+                seed: Exceptional(Enumerable.Empty<Validation<EventAndState>>()),
+                func: (list, next) => next.Match(
+                    Exception: (ex) => new Exception("plop"),
+                    Success: (value) => list.Bind((a) => Exceptional(a.Append(value)))));
 
         }
 
-        private static Exceptional<Validation<IEnumerable<Event>>> AddEvent(
-            this Exceptional<Validation<IEnumerable<Event>>> events,
-            Exceptional<Validation<EventAndState>> @event) =>
 
+        //public static Exceptional<Validation<IEnumerable<Event>>> HandleLinkToProjectCommand(
+        //      LinkToProject command,
+        //      Func<Guid, Exceptional<Validation<State>>> getEntity)
+        //  => getEntity(command.EntityId).
+        //          Bind<Validation<State>, Validation<IEnumerable<Event>>>(v => v.
+        //              Bind(e => ((TaskEntityState)e).LinkToProject(command).
+        //                  Bind<EventAndState, IEnumerable<Event>>(eas => new List<Event>() { eas.Event })));
 
     }
 }
