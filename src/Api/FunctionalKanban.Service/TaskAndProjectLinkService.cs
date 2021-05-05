@@ -21,9 +21,13 @@
 
         private static Exceptional<Validation<IEnumerable<Event>>> ToEvents(
                 params Exceptional<Validation<EventAndState>>[] eventsAndStates) =>
-            eventsAndStates.ToExceptionalOfList().
-                Bind(x => Exceptional(x.ToValidationOfList().
-                    Bind(v => Valid(v.Map(eas => eas.Event)))));
+            eventsAndStates.ToExceptionalOfList().Bind(ConvertToExceptionalEvents);
+
+        private static Exceptional<Validation<IEnumerable<Event>>> ConvertToExceptionalEvents(IEnumerable<Validation<EventAndState>> validations) => 
+            Exceptional(validations.ToValidationOfList().Bind(ConvertToValidationEvents));
+
+        private static Validation<IEnumerable<Event>> ConvertToValidationEvents(IEnumerable<EventAndState> eventsAndStates) =>
+            Valid(eventsAndStates.Map(eas => eas.Event));
 
         private static Exceptional<IEnumerable<T>> ToExceptionalOfList<T>(this IEnumerable<Exceptional<T>> exceptionals) =>
             exceptionals.Aggregate(

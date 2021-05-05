@@ -18,9 +18,7 @@
             IEnumerable<Event> history) =>
                 OrderEvents(history).
                     Bind(HistoryIsValid).
-                    Match(
-                        None: ()        => None,
-                        Some: (evts)    => Some(Hydrate(evts, this, (state, evt) => With(evt))));
+                    Bind((evts) => Some(Hydrate(evts, this, (state, evt) => With(evt))));
 
         private static Option<IEnumerable<Event>> OrderEvents(IEnumerable<Event> events) =>
             Some(events.OrderBy(e => e.EntityVersion).AsEnumerable());

@@ -62,9 +62,7 @@
                 );
 
         private Validation<Exceptional<Unit>> Handle(Exceptional<Validation<IEnumerable<Event>>> events) =>
-            events.Match(
-                Exception:  (ex)        => (Exceptional<Unit>)ex,
-                Success:    (events)    => events.PublishEvents(_publishEvent));
+            events.Bind(evts => evts.PublishEvents(_publishEvent));
     }
 
     internal static class CommandHandlerExt
