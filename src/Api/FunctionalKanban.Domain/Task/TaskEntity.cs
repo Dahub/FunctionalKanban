@@ -87,22 +87,23 @@
         }
 
         public static Validation<EventAndState> LinkToProject(
-            this TaskEntityState state,
-            LinkToProject cmd)
+            this TaskEntityState state, 
+            DateTime timeStamp,
+            Guid projectId)
         {
             var @event = new TaskLinkedToProject()
             {
-                EntityId = cmd.EntityId,
+                EntityId = state.TaskId,
                 EntityName = _entityName,
                 EntityVersion = state.Version + 1,
-                TimeStamp = cmd.TimeStamp,
-                ProjectId = cmd.ProjectId == default ? None : cmd.ProjectId,
+                TimeStamp = timeStamp,
+                ProjectId = projectId,
                 RemaningWork = state.RemaningWork
             };
 
             return state
                 .WithCheckNotDeleted()
-                .Bind(s => s.WithCheckProjectNotAlreadyLinked(cmd.ProjectId))
+                .Bind(s => s.WithCheckProjectNotAlreadyLinked(projectId))
                 .Bind(s => s.ApplyEvent(@event));
         }
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <LangVersion>9.0</LangVersion>
@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Service\FunctionalKanban.Service.csproj" />
   </ItemGroup>
 
 </Project>
