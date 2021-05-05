@@ -26,28 +26,13 @@ namespace FunctionalKanban.Domain.Test
                 ProjectId = expectedProjectId
             };
 
-            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
+            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(
+                linkToProject.TimeStamp, 
+                linkToProject.ProjectId));
 
             eventAndState.Match(
             Invalid: (errors) => default,
             Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(Some(expectedProjectId));
-        }
-
-        [Fact]
-        public void ReturnTaskStateWithProjectIdSetToNoneWhenLinkedProjectWithoutId()
-        {
-            var entityId = Guid.NewGuid();
-
-            var linkToProject = new LinkToProject()
-            {
-                EntityId = entityId
-            };
-
-            var eventAndState = BuildNewTask(entityId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
-
-            eventAndState.Match(
-                Invalid: (errors) => default,
-                Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(new Option<Guid>());
         }
 
         [Fact]
@@ -62,7 +47,9 @@ namespace FunctionalKanban.Domain.Test
                 ProjectId = projectId
             };
 
-            var eventAndState = BuildNewTask(entityId, projectId: projectId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(linkToProject));
+            var eventAndState = BuildNewTask(entityId, projectId: projectId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(
+                linkToProject.TimeStamp,
+                linkToProject.ProjectId));
 
             eventAndState.IsValid.Should().BeFalse();
         }
