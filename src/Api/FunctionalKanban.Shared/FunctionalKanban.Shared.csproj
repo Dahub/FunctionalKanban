@@ -11,9 +11,4 @@
     <PackageReference Include="LaYumba.Functional" Version="0.10.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Shared\FunctionalKanban.Shared.csproj" />
-  </ItemGroup>
-
 </Project>

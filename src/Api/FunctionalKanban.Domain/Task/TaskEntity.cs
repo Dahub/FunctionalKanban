@@ -15,15 +15,15 @@
         {
             var @event = new TaskCreated()
             {
-                EntityId     = cmd.EntityId,
-                EntityName   = _entityName,
+                EntityId        = cmd.EntityId,
+                EntityName      = _entityName,
                 Name            = cmd.Name,
                 RemaningWork    = cmd.RemaningWork,
                 IsDeleted       = false,
                 TimeStamp       = cmd.TimeStamp,
                 Status          = TaskStatus.Todo,
                 EntityVersion   = 1,
-                ProjectId       = cmd.ProjectId.HasValue?Some(cmd.ProjectId.Value):None
+                ProjectId       = cmd.ProjectId.HasValue ? Some(cmd.ProjectId.Value) : None
             };
 
             return new TaskEntityState().ApplyEvent(@event);

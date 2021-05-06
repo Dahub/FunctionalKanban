@@ -12,6 +12,7 @@
     using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
     using FunctionalKanban.Service;
+    using FunctionalKanban.Shared;
 
     public class CommandHandler
     {
@@ -54,7 +55,7 @@
                 (
                     Exception:  (ex)        => (Exceptional<Unit>)ex,
                     Success:    (entity)    => entity.
-                        CastTo<T>().
+                        CastTo<T, State>().
                         Bind(f).
                         Match(
                             None: ()    => Invalid($"Entité d'id {command.EntityId} introuvable"),
@@ -80,8 +81,5 @@
             events.Bind<IEnumerable<Event>, Exceptional<Unit>>((evts) => evts.Aggregate(
                         seed: new Exceptional<Unit>(),
                         func: (ex, next) => ex.Bind(_ => publishEvent(next))));
-
-        public static Option<T> CastTo<T>(this Option<State> value) where T : State =>
-            value.Bind<State, T>((state) => state is T t ? t : None);
     }
 }

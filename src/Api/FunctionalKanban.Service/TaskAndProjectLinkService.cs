@@ -2,11 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Project;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Shared;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
 
@@ -28,19 +28,5 @@
 
         private static Validation<IEnumerable<Event>> ConvertToValidationEvents(IEnumerable<EventAndState> eventsAndStates) =>
             Valid(eventsAndStates.Map(eas => eas.Event));
-
-        private static Exceptional<IEnumerable<T>> ToExceptionalOfList<T>(this IEnumerable<Exceptional<T>> exceptionals) =>
-            exceptionals.Aggregate(
-                seed: Exceptional(Enumerable.Empty<T>()),
-                func: (list, next) => next.Match(
-                    Exception:  (ex)    => ex,
-                    Success:    (value) => list.Bind((a) => Exceptional(a.Append(value)))));
-
-        private static Validation<IEnumerable<T>> ToValidationOfList<T>(this IEnumerable<Validation<T>> exceptionals) =>
-            exceptionals.Aggregate(
-                seed: Valid(Enumerable.Empty<T>()),
-                func: (list, next) => next.Match(
-                    Invalid:    (errors)    => Invalid(errors),
-                    Valid:      (value)     => list.Bind((a) => Valid(a.Append(value)))));
     }
 }
