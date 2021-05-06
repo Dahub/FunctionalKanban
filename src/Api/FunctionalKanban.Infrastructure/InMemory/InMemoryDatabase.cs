@@ -20,6 +20,8 @@
 
         private readonly ConcurrentDictionary<Guid, ProjectViewProjection> _projectViewProjections;
 
+        private const string _failRemoveProjectionMessage = "Erreur lors de la tentative de suppression de la projection";
+
         public InMemoryDatabase()
         {
             _eventLines = new List<EventLine>();
@@ -67,21 +69,12 @@
             };
 
         public Exceptional<Unit> Delete<T>(T viewProjection) where T : ViewProjection =>
-            Try(() =>
+            viewProjection switch
             {
-                if (typeof(T) == typeof(TaskViewProjection))
-                {
-                    _taskViewProjections.TryRemove(viewProjection.Id, out _);
-                    return Unit.Create();
-                }
-                else if (typeof(T) == typeof(ProjectViewProjection))
-                {
-                    _projectViewProjections.TryRemove(viewProjection.Id, out _);
-                    return Unit.Create();
-                }
-
-                throw new Exception($"projection de type {typeof(T)} non prise en charge");
-            }).Run();
+                TaskViewProjection p => Try(() => _taskViewProjections.TryRemove(p.Id, out _) ? Unit.Create() : throw new Exception(_failRemoveProjectionMessage)).Run(),
+                ProjectViewProjection p => Try(() => _projectViewProjections.TryRemove(viewProjection.Id, out _) ? Unit.Create() : throw new Exception(_failRemoveProjectionMessage)).Run(),
+                _ => new Exception($"projection de type {typeof(T)} non prise en charge")
+            };
 
         private Unit UpsertTaskViewProjection(TaskViewProjection p)
         {

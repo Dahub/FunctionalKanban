@@ -55,7 +55,7 @@
                 (
                     Exception:  (ex)        => (Exceptional<Unit>)ex,
                     Success:    (entity)    => entity.
-                        CastTo<T, State>().
+                        CastTo<State, T>().
                         Bind(f).
                         Match(
                             None: ()    => Invalid($"Entité d'id {command.EntityId} introuvable"),

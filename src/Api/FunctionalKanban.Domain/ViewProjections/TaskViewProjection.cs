@@ -19,16 +19,6 @@
 
         public Option<Guid> ProjectId { get; init; }
 
-        public static Option<Guid> HandleWithId(Event @event) =>
-           @event switch
-           {
-                TaskCreated 
-                    or TaskDeleted 
-                    or TaskRemaningWorkChanged 
-                    or TaskLinkedToProject => @event.EntityId,
-                _ => None
-           };
-
         public override Option<ViewProjection> With(Event @event) =>
             @event switch
             {

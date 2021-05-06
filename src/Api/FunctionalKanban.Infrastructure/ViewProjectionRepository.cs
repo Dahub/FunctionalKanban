@@ -15,7 +15,9 @@
 
         public ViewProjectionRepository(IViewProjectionDataBase dataBase) => _dataBase = dataBase;
 
-        public Exceptional<IEnumerable<ViewProjection>> Get(Type projectionType, Func<ViewProjection, bool> predicate) =>
+        public Exceptional<IEnumerable<ViewProjection>> Get(
+                Type projectionType, 
+                Func<ViewProjection, bool> predicate) =>
             _dataBase.Projections(projectionType).Bind(ps => GetByPredicate(predicate, ps));
 
         public Exceptional<Option<T>> GetById<T>(Guid id) where T : ViewProjection =>
@@ -27,9 +29,11 @@
                     Success: (ps) => ps.Any()?Some(ps.Single()):None)).
             Run();
 
-        public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection => _dataBase.Upsert(viewProjection);
+        public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection => 
+            _dataBase.Upsert(viewProjection);
 
-        public Exceptional<Unit> Delete<T>(T viewProjection) where T : ViewProjection => _dataBase.Delete<T>(viewProjection);
+        public Exceptional<Unit> Delete<T>(T viewProjection) where T : ViewProjection => 
+            _dataBase.Delete(viewProjection);
 
         private static Exceptional<IEnumerable<T>> GetByPredicate<T>(
                 Func<T, bool> predicate,
