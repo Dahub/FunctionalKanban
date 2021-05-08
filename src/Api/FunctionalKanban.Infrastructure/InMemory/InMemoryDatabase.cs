@@ -16,48 +16,35 @@
     {
         private readonly List<EventLine> _eventLines;
 
-        private readonly ConcurrentDictionary<Guid, TaskViewProjection> _taskViewProjections;
-
-        private readonly ConcurrentDictionary<Guid, ProjectViewProjection> _projectViewProjections;
-
-        private readonly ConcurrentDictionary<Guid, DeletedTaskViewProjection> _deletedTaskViewProjections;
+        private readonly IDictionary<string, ConcurrentDictionary<Guid, ViewProjection>> _dbSets;
 
         public InMemoryDatabase()
         {
             _eventLines = new List<EventLine>();
-            _taskViewProjections = new ConcurrentDictionary<Guid, TaskViewProjection>();
-            _projectViewProjections = new ConcurrentDictionary<Guid, ProjectViewProjection>();
-            _deletedTaskViewProjections = new ConcurrentDictionary<Guid, DeletedTaskViewProjection>();
+            _dbSets = new Dictionary<string, ConcurrentDictionary<Guid, ViewProjection>> ()
+            {
+                { typeof(TaskViewProjection).Name, new ConcurrentDictionary<Guid, ViewProjection>() },
+                { typeof(ProjectViewProjection).Name, new ConcurrentDictionary<Guid, ViewProjection>() },
+                { typeof(DeletedTaskViewProjection).Name, new ConcurrentDictionary<Guid, ViewProjection>() }
+            };
         }
 
         public IEnumerable<Event> Events => _eventLines.Select(l => l.Data).ToList().AsReadOnly();
 
-        public IEnumerable<TaskViewProjection> TaskViewProjections => _taskViewProjections.Values.ToList().AsReadOnly();
-
-        public IEnumerable<DeletedTaskViewProjection> DeletedTaskViewProjections => _deletedTaskViewProjections.Values.ToList().AsReadOnly();
-
-        public IEnumerable<ProjectViewProjection> ProjectViewProjections => _projectViewProjections.Values.ToList().AsReadOnly();
+        public IEnumerable<T> GetProjections<T>() where T : ViewProjection =>
+        _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
+            ? dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsEnumerable()
+            : Enumerable.Empty<T>();
 
         public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection =>
-            Projections(typeof(T)).Bind(projections => Convert<T>(projections));
+            _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
+                ? Exceptional(dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsEnumerable())
+                : new Exception($"projection de type {typeof(T).Name} non prise en charge");
 
-        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type)
-        {
-            if (type == typeof(TaskViewProjection))
-            {
-                return Exceptional((IEnumerable<ViewProjection>)_taskViewProjections.Values);
-            }
-            else if (type == typeof(ProjectViewProjection))
-            {
-                return Exceptional((IEnumerable<ViewProjection>)_projectViewProjections.Values);
-            }
-            else if (type == typeof(DeletedTaskViewProjection))
-            {
-                return Exceptional((IEnumerable<ViewProjection>)_deletedTaskViewProjections.Values);
-            }
-
-            return new Exception($"projection de type {type} non prise en charge");
-        }
+        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type) =>
+            _dbSets[type.Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
+                ? Exceptional(dbSet.Values.ToList().AsReadOnly().AsEnumerable())
+                : new Exception($"projection de type {type} non prise en charge");
 
         public Exceptional<Unit> Add(
             Guid entityId,
@@ -67,42 +54,25 @@
             Event @event) => @event.CheckUnicity(_eventLines).Bind(AddEventToLines);
 
         public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection =>
-            viewProjection switch
-            {
-                TaskViewProjection p        => UpsertViewProjection(_taskViewProjections, p),
-                ProjectViewProjection p     => UpsertViewProjection(_projectViewProjections, p),
-                DeletedTaskViewProjection p => UpsertViewProjection(_deletedTaskViewProjections, p),
-                _                           => new Exception($"Impossible d'insérer le type de projection {typeof(T)}")
-            };
-
-        public Exceptional<Unit> Delete<T>(T viewProjection) where T : ViewProjection =>
-            viewProjection switch
-            {
-                TaskViewProjection p        => RemoveViewProjection(_taskViewProjections, p),
-                ProjectViewProjection p     => RemoveViewProjection(_projectViewProjections, p),
-                DeletedTaskViewProjection p => RemoveViewProjection(_deletedTaskViewProjections, p),
-                _                           => new Exception($"projection de type {typeof(T)} non prise en charge")
-            };
-
-        private Exceptional<Unit> UpsertViewProjection<T>(ConcurrentDictionary<Guid, T> collection, T item) where T : ViewProjection =>
             Try(() =>
             {
-                if (collection.ContainsKey(item.Id))
+                var dbSet = _dbSets[viewProjection.GetType().Name];
+                if (dbSet.ContainsKey(viewProjection.Id))
                 {
-                    collection[item.Id] = item;
+                    dbSet[viewProjection.Id] = viewProjection;
                 }
                 else
                 {
-                    collection.TryAdd(item.Id, item);
+                    dbSet.TryAdd(viewProjection.Id, viewProjection);
                 }
 
                 return Unit.Create();
             }).Run();
 
-        private Exceptional<Unit> RemoveViewProjection<T>(ConcurrentDictionary<Guid, T> collection, T item) where T : ViewProjection =>
-            Try(() => collection.TryRemove(item.Id, out _) 
-                        ? Unit.Create() 
-                        : throw new Exception("Erreur lors de la tentative de suppression de la projection")).Run();
+        public Exceptional<Unit> Delete<T>(T viewProjection) where T : ViewProjection =>
+            Try(() => _dbSets[typeof(T).Name].TryRemove(viewProjection.Id, out _)
+                ? Unit.Create()
+                : throw new Exception("Erreur lors de la tentative de suppression de la projection")).Run();
 
         private readonly Func<(Event, List<EventLine>), Exceptional<Unit>> AddEventToLines = (tuple) =>
             Try(() =>

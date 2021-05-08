@@ -10,6 +10,7 @@ namespace FunctionalKanban.Api.Test
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
+    using FunctionalKanban.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 
@@ -165,7 +166,7 @@ namespace FunctionalKanban.Api.Test
                         RemaningWork = expectedRemaningWork
                     });
 
-            var taskViewProjections = viewProjectionDataBase.TaskViewProjections.Where(p => p.Id.Equals(expectedEntityId));
+            var taskViewProjections = viewProjectionDataBase.GetProjections<TaskViewProjection>().Where(p => p.Id.Equals(expectedEntityId));
 
             taskViewProjections.Should().HaveCount(1);
 

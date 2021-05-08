@@ -9,6 +9,7 @@
     using FunctionalKanban.Api.Test.Tools;
     using FunctionalKanban.Domain.Project;
     using FunctionalKanban.Domain.Project.Commands;
+    using FunctionalKanban.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 
@@ -53,7 +54,7 @@
                         Name = expectedName
                     });
 
-            var projectViewProjections = viewProjectionDataBase.ProjectViewProjections.Where(p => p.Id.Equals(expectedEntityId));
+            var projectViewProjections = viewProjectionDataBase.GetProjections<ProjectViewProjection>().Where(p => p.Id.Equals(expectedEntityId));
 
             projectViewProjections.Should().HaveCount(1);
 

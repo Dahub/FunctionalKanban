@@ -8,6 +8,7 @@
     using FunctionalKanban.Api.Test.Tools;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
+    using FunctionalKanban.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 
@@ -66,7 +67,7 @@
                         RemaningWork = expectedRemaningWork
                     });
 
-            dataBase.TaskViewProjections.Single(v => v.Id.Equals(entityId)).RemaningWork.Should().Be(expectedRemaningWork);
+            dataBase.GetProjections<TaskViewProjection>().Single(v => v.Id.Equals(entityId)).RemaningWork.Should().Be(expectedRemaningWork);
         }
     }
 }

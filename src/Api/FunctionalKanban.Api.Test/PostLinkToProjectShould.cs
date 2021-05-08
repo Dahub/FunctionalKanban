@@ -9,6 +9,7 @@
     using FunctionalKanban.Domain.Project.Events;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
+    using FunctionalKanban.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
     using static LaYumba.Functional.F;
@@ -73,7 +74,7 @@
                         ProjectId = projectId
                     });
 
-            dataBase.TaskViewProjections.Single(v => v.Id.Equals(entityId)).ProjectId.Should().Be(Some(projectId));
+            dataBase.GetProjections<TaskViewProjection>().Single(v => v.Id.Equals(entityId)).ProjectId.Should().Be(Some(projectId));
         }
     }
 }

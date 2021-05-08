@@ -8,12 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Infrastructure.Abstraction\FunctionalKanban.Infrastructure.Abstraction.csproj" />
+    <Compile Remove="SqlServer\**" />
+    <EmbeddedResource Remove="SqlServer\**" />
+    <None Remove="SqlServer\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="SqlServer\" />
+    <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
+    <ProjectReference Include="..\FunctionalKanban.Infrastructure.Abstraction\FunctionalKanban.Infrastructure.Abstraction.csproj" />
   </ItemGroup>
 
   <ItemGroup>

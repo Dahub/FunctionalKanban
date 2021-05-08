@@ -9,8 +9,6 @@
 
     public interface IViewProjectionDataBase
     {
-        IEnumerable<TaskViewProjection> TaskViewProjections { get; }
-
         Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection;
 
         Exceptional<IEnumerable<ViewProjection>> Projections(Type type);

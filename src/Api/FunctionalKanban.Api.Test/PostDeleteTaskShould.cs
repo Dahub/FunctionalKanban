@@ -7,6 +7,7 @@
     using FluentAssertions;
     using FunctionalKanban.Api.Test.Tools;
     using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 
@@ -47,7 +48,7 @@
 
             await InitNewTask(httpClient, entityId);
 
-            dataBase.TaskViewProjections.Any(t => t.Id.Equals(entityId)).Should().BeTrue();
+            dataBase.GetProjections<TaskViewProjection>().Any(t => t.Id.Equals(entityId)).Should().BeTrue();
 
             _ = await httpClient
                 .PostAsJsonAsync(
@@ -57,7 +58,7 @@
                         EntityId = entityId
                     });
 
-            dataBase.TaskViewProjections.Any(t => t.Id.Equals(entityId)).Should().BeFalse();
+            dataBase.GetProjections<TaskViewProjection>().Any(t => t.Id.Equals(entityId)).Should().BeFalse();
         }
 
         [Fact]
@@ -78,7 +79,7 @@
                         EntityId = entityId
                     });
 
-            dataBase.DeletedTaskViewProjections.Where(t => t.Id.Equals(entityId)).Should().HaveCount(1);
+            dataBase.GetProjections<DeletedTaskViewProjection>().Where(t => t.Id.Equals(entityId)).Should().HaveCount(1);
         }
     }
 }
