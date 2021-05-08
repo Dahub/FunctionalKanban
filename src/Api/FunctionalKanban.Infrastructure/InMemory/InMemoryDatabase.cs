@@ -81,9 +81,6 @@
                 return Unit.Create();
             }).Run();
 
-        private static Exceptional<IEnumerable<T>> Convert<T>(IEnumerable<ViewProjection> projections) where T : ViewProjection =>
-            Try(() => projections.Map(p => (T)p)).Run();
-
         internal record EventLine(
           Guid Id,
           Guid EntityId,
