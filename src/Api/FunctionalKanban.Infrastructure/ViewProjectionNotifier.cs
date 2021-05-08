@@ -15,7 +15,8 @@
 
         public Exceptional<Unit> Notify(Event @event) =>
             Notify<TaskViewProjection>(_repo, @event, (e) => e.EntityId).
-            Bind(_ => Notify<ProjectViewProjection>(_repo, @event, ProjectViewProjection.HandleWithId));
+            Bind(_ => Notify<ProjectViewProjection>(_repo, @event, ProjectViewProjection.HandleWithId)).
+            Bind(_ => Notify<DeletedTaskViewProjection>(_repo, @event, DeletedTaskViewProjection.HandleWithId));
 
         private static Exceptional<Unit> Notify<T>(
                      IViewProjectionRepository repository,
@@ -41,6 +42,6 @@
                 Exception:  (e) => Exceptional.Of<T>(e),
                 Success:    (p) => p.Match(
                         None: ()    => new T(),
-                        Some: (p)   => Exceptional.Of(p)));
+                        Some: (p)   => p));
     }
 }

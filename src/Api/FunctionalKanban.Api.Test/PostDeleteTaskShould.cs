@@ -59,5 +59,26 @@
 
             dataBase.TaskViewProjections.Any(t => t.Id.Equals(entityId)).Should().BeFalse();
         }
+
+        [Fact]
+        public async void PopulateDeletedTaskViewProjection()
+        {
+            var entityId = Guid.NewGuid();
+            var dataBase = new InMemoryDatabase();
+
+            var httpClient = BuildNewHttpClient<InMemoryStartup>(new InMemoryDatabase(), dataBase);
+
+            await InitNewTask(httpClient, entityId);
+
+            _ = await httpClient
+                .PostAsJsonAsync(
+                    "task/delete",
+                    new DeleteTask()
+                    {
+                        EntityId = entityId
+                    });
+
+            dataBase.DeletedTaskViewProjections.Where(t => t.Id.Equals(entityId)).Should().HaveCount(1);
+        }
     }
 }

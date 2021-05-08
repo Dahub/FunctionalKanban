@@ -26,7 +26,7 @@
                 Bind(ps => GetByPredicate((p) => p.Id.Equals(id), ps)).
                 Match(
                     Exception: (ex) => throw ex,
-                    Success: (ps) => ps.Any()?Some(ps.Single()):None)).
+                    Success: (ps) => ps.Any() ? Some(ps.Single()) : None)).
             Run();
 
         public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection => 
@@ -37,7 +37,7 @@
 
         private static Exceptional<IEnumerable<T>> GetByPredicate<T>(
                 Func<T, bool> predicate,
-                IEnumerable<T> ps) where T : ViewProjection =>
+                IEnumerable<T> ps) =>
             Try(() => ps.Where(predicate)).Run();
     }
 }

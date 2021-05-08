@@ -20,18 +20,21 @@
 
         private readonly ConcurrentDictionary<Guid, ProjectViewProjection> _projectViewProjections;
 
-        private const string _failRemoveProjectionMessage = "Erreur lors de la tentative de suppression de la projection";
+        private readonly ConcurrentDictionary<Guid, DeletedTaskViewProjection> _deletedTaskViewProjections;
 
         public InMemoryDatabase()
         {
             _eventLines = new List<EventLine>();
             _taskViewProjections = new ConcurrentDictionary<Guid, TaskViewProjection>();
             _projectViewProjections = new ConcurrentDictionary<Guid, ProjectViewProjection>();
+            _deletedTaskViewProjections = new ConcurrentDictionary<Guid, DeletedTaskViewProjection>();
         }
 
         public IEnumerable<Event> Events => _eventLines.Select(l => l.Data).ToList().AsReadOnly();
 
         public IEnumerable<TaskViewProjection> TaskViewProjections => _taskViewProjections.Values.ToList().AsReadOnly();
+
+        public IEnumerable<DeletedTaskViewProjection> DeletedTaskViewProjections => _deletedTaskViewProjections.Values.ToList().AsReadOnly();
 
         public IEnumerable<ProjectViewProjection> ProjectViewProjections => _projectViewProjections.Values.ToList().AsReadOnly();
 
@@ -48,6 +51,10 @@
             {
                 return Exceptional((IEnumerable<ViewProjection>)_projectViewProjections.Values);
             }
+            else if (type == typeof(DeletedTaskViewProjection))
+            {
+                return Exceptional((IEnumerable<ViewProjection>)_deletedTaskViewProjections.Values);
+            }
 
             return new Exception($"projection de type {type} non prise en charge");
         }
@@ -57,52 +64,45 @@
             string entityName,
             uint entityVersion,
             string eventName,
-            Event @event) =>
-                @event.CheckUnicity(_eventLines).Bind(AddEventToLines);
+            Event @event) => @event.CheckUnicity(_eventLines).Bind(AddEventToLines);
 
         public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection =>
             viewProjection switch
             {
-                TaskViewProjection p => Try(() => UpsertTaskViewProjection(p)).Run(),
-                ProjectViewProjection p => Try(() => UpsertProjectViewProjection(p)).Run(),
-                _ => new Exception($"Impossible d'insérer le type de projection {typeof(T)}")
+                TaskViewProjection p        => UpsertViewProjection(_taskViewProjections, p),
+                ProjectViewProjection p     => UpsertViewProjection(_projectViewProjections, p),
+                DeletedTaskViewProjection p => UpsertViewProjection(_deletedTaskViewProjections, p),
+                _                           => new Exception($"Impossible d'insérer le type de projection {typeof(T)}")
             };
 
         public Exceptional<Unit> Delete<T>(T viewProjection) where T : ViewProjection =>
             viewProjection switch
             {
-                TaskViewProjection p => Try(() => _taskViewProjections.TryRemove(p.Id, out _) ? Unit.Create() : throw new Exception(_failRemoveProjectionMessage)).Run(),
-                ProjectViewProjection p => Try(() => _projectViewProjections.TryRemove(viewProjection.Id, out _) ? Unit.Create() : throw new Exception(_failRemoveProjectionMessage)).Run(),
-                _ => new Exception($"projection de type {typeof(T)} non prise en charge")
+                TaskViewProjection p        => RemoveViewProjection(_taskViewProjections, p),
+                ProjectViewProjection p     => RemoveViewProjection(_projectViewProjections, p),
+                DeletedTaskViewProjection p => RemoveViewProjection(_deletedTaskViewProjections, p),
+                _                           => new Exception($"projection de type {typeof(T)} non prise en charge")
             };
 
-        private Unit UpsertTaskViewProjection(TaskViewProjection p)
-        {
-            if (_taskViewProjections.ContainsKey(p.Id))
+        private Exceptional<Unit> UpsertViewProjection<T>(ConcurrentDictionary<Guid, T> collection, T item) where T : ViewProjection =>
+            Try(() =>
             {
-                _taskViewProjections[p.Id] = p;
-            }
-            else
-            {
-                _taskViewProjections.TryAdd(p.Id, p);
-            }
+                if (collection.ContainsKey(item.Id))
+                {
+                    collection[item.Id] = item;
+                }
+                else
+                {
+                    collection.TryAdd(item.Id, item);
+                }
 
-            return Unit.Create();
-        }
+                return Unit.Create();
+            }).Run();
 
-        private Unit UpsertProjectViewProjection(ProjectViewProjection p)
-        {
-            if (_projectViewProjections.ContainsKey(p.Id))
-            {
-                _projectViewProjections[p.Id] = p;
-            }
-            else
-            {
-                _projectViewProjections.TryAdd(p.Id, p);
-            }
-
-            return Unit.Create();
-        }
+        private Exceptional<Unit> RemoveViewProjection<T>(ConcurrentDictionary<Guid, T> collection, T item) where T : ViewProjection =>
+            Try(() => collection.TryRemove(item.Id, out _) 
+                        ? Unit.Create() 
+                        : throw new Exception("Erreur lors de la tentative de suppression de la projection")).Run();
 
         private readonly Func<(Event, List<EventLine>), Exceptional<Unit>> AddEventToLines = (tuple) =>
             Try(() =>
