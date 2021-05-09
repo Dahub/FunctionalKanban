@@ -32,9 +32,9 @@
         public IEnumerable<Event> Events => _eventLines.Select(l => l.Data).ToList().AsReadOnly();
 
         public IEnumerable<T> GetProjections<T>() where T : ViewProjection =>
-        _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
-            ? dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsEnumerable()
-            : Enumerable.Empty<T>();
+            _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
+                ? dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsEnumerable()
+                : Enumerable.Empty<T>();
 
         public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection =>
             _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet

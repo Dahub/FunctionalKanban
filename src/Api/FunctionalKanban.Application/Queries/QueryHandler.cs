@@ -9,7 +9,6 @@
     using FunctionalKanban.Domain.ViewProjections;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
-    using static QueryBuilder;
 
     public class QueryHandler
     {
@@ -20,7 +19,7 @@
 
         public Exceptional<IEnumerable<Dto>> Handle<TQuery>(Dictionary<string, string> parameters)
                 where TQuery : Query, new() =>
-            BuildQuery<TQuery>(parameters).
+            new TQuery().Build(parameters).
             Bind(LoadProjections);
 
         private Exceptional<IEnumerable<Dto>> LoadProjections(Query query) =>

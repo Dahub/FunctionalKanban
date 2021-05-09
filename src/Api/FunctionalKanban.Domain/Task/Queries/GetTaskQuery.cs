@@ -1,6 +1,7 @@
 ﻿namespace FunctionalKanban.Domain.Task.Queries
 {
     using System;
+    using System.Collections.Generic;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.ViewProjections;
     using LaYumba.Functional;
@@ -20,6 +21,12 @@
         public GetTaskQuery WithTaskStatus(TaskStatus taskStatus) => this with { TaskStatus = taskStatus };
 
         public override Func<ViewProjection, bool> BuildPredicate() => (p) => BuildPredicate((TaskViewProjection)p);
+
+        public override Exceptional<Query> Build(IDictionary<string, string> parameters) => this.
+           WithParameterValue<GetTaskQuery, uint>(parameters, "minRemaningWork", WithMinRemaningWork).Bind(q => q.
+           WithParameterValue<GetTaskQuery, uint>(parameters, "maxRemaningWork", q.WithMaxRemaningWork)).Bind(q => q.
+           WithParameterValue<GetTaskQuery, TaskStatus>(parameters, "taskStatus", q.WithTaskStatus)).
+           ToExceptional();
 
         private bool BuildPredicate(TaskViewProjection p) =>
             p.RemaningWork.MoreOrEqualThan(MinRemaningWork)
