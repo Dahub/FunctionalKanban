@@ -14,6 +14,43 @@
     public class ProjectShould
     {
         [Fact]
+        public void ReturnProjectStateWithIsDeletedToTrueAndFireProjectDeletedEventWhenDeleted()
+        {
+            var entityId = Guid.NewGuid();
+
+            var projectEntityState = new ProjectEntityState()
+            {
+                ProjectId = entityId,
+                IsDeleted = false,
+                Version = 1
+            };
+
+            var deleteProjectCommand = new DeleteProject()
+            {
+                DeleteChildrenTasks = false,
+                EntityId = entityId
+            };
+
+            var eventAndState = projectEntityState.Delete(deleteProjectCommand);
+
+            var expectedEvent = new ProjectDeleted()
+            {
+                EntityId = entityId,
+                DeleteChlildrenTasks = false,
+                EntityName = typeof(ProjectEntityState).FullName,
+                EntityVersion = 2,
+                TimeStamp = deleteProjectCommand.TimeStamp,
+                IsDeleted = true
+            };
+
+            eventAndState.Match(
+                Invalid:    (errors)    => false,
+                Valid:      (eas)       => 
+                    ((ProjectEntityState)eas.State).IsDeleted
+                    && ((ProjectDeleted)eas.Event) == expectedEvent).Should().BeTrue();
+        }
+
+        [Fact]
         public void ReturnProjectStateWithNameAndStatusWhenCreated()
         {
             var expectedTaskName = Guid.NewGuid().ToString();

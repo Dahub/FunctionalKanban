@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Application.Dtos
+﻿namespace FunctionalKanban.Application.Queries.Dtos
 {
     using System;
     using System.Collections.Generic;

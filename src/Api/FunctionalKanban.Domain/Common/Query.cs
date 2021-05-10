@@ -10,7 +10,7 @@
     {
         public abstract Func<ViewProjection, bool> BuildPredicate();
 
-        public abstract Exceptional<Query> Build(IDictionary<string, string> parameters);
+        public abstract Exceptional<Query> WithParameters(IDictionary<string, string> parameters);
     }
 
     internal static class QueryExt

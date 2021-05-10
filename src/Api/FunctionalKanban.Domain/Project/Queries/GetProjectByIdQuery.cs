@@ -16,7 +16,7 @@
              ((ProjectViewProjection)p).Id.Equals(Id)
              && ((ProjectViewProjection)p).IsDeleted.EqualTo(false);
 
-        public override Exceptional<Query> Build(IDictionary<string, string> parameters) => this.
+        public override Exceptional<Query> WithParameters(IDictionary<string, string> parameters) => this.
             WithParameterValue<GetProjectByIdQuery, Guid>(parameters, "id", WithId).
             ToExceptional();
     }

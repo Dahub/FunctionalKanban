@@ -42,5 +42,22 @@
 
             return state.ApplyEvent(@event);
         }
+
+        public static Validation<EventAndState> Delete(
+            this ProjectEntityState state, 
+            DeleteProject cmd)
+        {
+            var @event = new ProjectDeleted()
+            {
+                EntityId = state.ProjectId,
+                EntityName = _entityName,
+                EntityVersion = state.Version + 1,
+                TimeStamp = cmd.TimeStamp,
+                DeleteChlildrenTasks = cmd.DeleteChildrenTasks,
+                IsDeleted = true
+            };
+
+            return state.ApplyEvent(@event);
+        }
     }
 }

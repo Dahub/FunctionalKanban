@@ -15,7 +15,7 @@
         public override Func<ViewProjection, bool> BuildPredicate() => (p) =>
              ((TaskViewProjection)p).Id.Equals(Id);
 
-        public override Exceptional<Query> Build(IDictionary<string, string> parameters) => this.
+        public override Exceptional<Query> WithParameters(IDictionary<string, string> parameters) => this.
             WithParameterValue<GetTaskByIdQuery, Guid>(parameters, "id", WithId).
             ToExceptional();
     }

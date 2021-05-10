@@ -31,8 +31,8 @@ namespace FunctionalKanban.Domain.Test
                 linkToProject.ProjectId));
 
             eventAndState.Match(
-            Invalid: (errors) => default,
-            Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(Some(expectedProjectId));
+                Invalid: (errors) => default,
+                Valid: (eas) => ((TaskEntityState)eas.State).ProjectId).Should().Be(Some(expectedProjectId));
         }
 
         [Fact]

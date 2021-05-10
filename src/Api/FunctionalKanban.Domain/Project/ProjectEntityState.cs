@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Domain.Project.Commands;
     using FunctionalKanban.Domain.Project.Events;
 
     public sealed record ProjectEntityState : State
@@ -31,6 +32,7 @@
             {
                 ProjectCreated e        => this with { ProjectId = e.EntityId, Version = e.EntityVersion, ProjectName = e.Name, ProjectStatus = e.Status, IsDeleted = e.IsDeleted },
                 ProjectNewTaskLinked e  => this with { Version = e.EntityVersion, AssociatedTaskIds = AssociatedTaskIds.Append(e.TaskId) },
+                ProjectDeleted e        => this with { Version = e.EntityVersion, IsDeleted = e.IsDeleted },
                 _                       => this with { }
             };
     }

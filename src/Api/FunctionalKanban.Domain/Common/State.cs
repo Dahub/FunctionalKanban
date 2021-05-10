@@ -31,7 +31,7 @@
                 : None;
 
         private static bool AreConsecutives(IEnumerable<Event> events) =>
-            !events.Map(e => e.EntityVersion). Select((i, j) => i - j).Distinct().Skip(1).Any();
+            !events.Map(e => e.EntityVersion).Select((i, j) => i - j).Distinct().Skip(1).Any();
 
         private static bool AreSameEntity(IEnumerable<Event> events) =>
             !events.Map(e => e.EntityId).Distinct().Skip(1).Any();

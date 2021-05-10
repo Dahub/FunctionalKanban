@@ -6,7 +6,7 @@
     using System.Net;
     using System.Threading.Tasks;
     using FunctionalKanban.Application.Commands;
-    using FunctionalKanban.Application.Dtos;
+    using FunctionalKanban.Application.Queries.Dtos;
     using FunctionalKanban.Application.Queries;
     using FunctionalKanban.Domain.Common;
     using LaYumba.Functional;
