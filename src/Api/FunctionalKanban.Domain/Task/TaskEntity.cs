@@ -51,14 +51,18 @@
 
         public static Validation<EventAndState> Delete(
                 this TaskEntityState state,
-                DeleteTask cmd)
+                DeleteTask cmd) => state.Delete(cmd.TimeStamp);
+
+        public static Validation<EventAndState> Delete(
+                this TaskEntityState state,
+                DateTime timeStamp)
         {
             var @event = new TaskDeleted()
             {
-                EntityId = cmd.EntityId,
+                EntityId = state.TaskId,
                 EntityName = _entityName,
                 EntityVersion = state.Version + 1,
-                TimeStamp = cmd.TimeStamp,
+                TimeStamp = timeStamp,
                 IsDeleted = true,
                 RemaningWork = 0u,
                 OldRemaningWork = state.RemaningWork,

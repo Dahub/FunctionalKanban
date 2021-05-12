@@ -1,5 +1,6 @@
 ﻿namespace FunctionalKanban.Shared
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using LaYumba.Functional;
@@ -7,7 +8,13 @@
 
     public static class FunctionalExtension
     {
-        public static Option<T> CastTo<R, T>(this Option<R> value) => value.Bind<R, T>((x) => x is T t ? t : None);
+        public static Option<T> CastTo<R, T>(this Option<R> value) => value.Bind<R, T>(x => x is T t ? t : None);
+
+        public static Exceptional<T> CastTo<R, T>(this Exceptional<R> value) =>
+            value.Bind<R, T>(x => x is T t ? t : new Exception($"Impossible de caster {typeof(R)} en {typeof(T)}"));
+
+        public static Validation<T> CastTo<R, T>(this Validation<R> value) =>
+            value.Bind<R, T>(x => x is T t ? t : Invalid($"Impossible de caster {typeof(R)} en {typeof(T)}"));
 
         public static Exceptional<IEnumerable<T>> ToMonadOfList<T>(this IEnumerable<Exceptional<T>> exceptionals) =>
           exceptionals.Aggregate(
