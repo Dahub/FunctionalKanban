@@ -9,7 +9,6 @@
     using FunctionalKanban.Domain.Project.Commands;
     using FunctionalKanban.Domain.Project.Events;
     using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
     using LaYumba.Functional;
     using Xunit;
@@ -39,7 +38,90 @@
         }
 
         [Fact]
-        public void GenerateRightEventsWhenHandleLinkToProjectCommand()
+        public void GenerateRightEventsWhenHandleLinkToProjectCommandWithDeleteChildrenFalse()
+        {
+            var projectId = Guid.NewGuid();
+            var firstTaskId = Guid.NewGuid();
+            var secondTaskId = Guid.NewGuid();
+
+            var deleteProject = new DeleteProject() { EntityId = projectId, DeleteChildrenTasks = false };
+
+            var expectedEvents = new List<Event>()
+                {
+                    new ProjectDeleted()
+                    {
+                        DeleteChildrenTasks = false,
+                        EntityId = projectId,
+                        EntityName = typeof(ProjectEntityState).FullName,
+                        EntityVersion = 1,
+                        IsDeleted = true,
+                        TimeStamp = deleteProject.TimeStamp
+                    },
+                    new TaskRemovedFromProject()
+                    {
+                        EntityId = firstTaskId,
+                        EntityName = typeof(TaskEntityState).FullName,
+                        EntityVersion = 1,
+                        RemaningWork = 0,
+                        OldProjectId = projectId,
+                        ProjectId = None,
+                        TimeStamp = deleteProject.TimeStamp
+                    },
+                    new TaskRemovedFromProject()
+                    {
+                        EntityId = secondTaskId,
+                        EntityName = typeof(TaskEntityState).FullName,
+                        EntityVersion = 1,
+                        RemaningWork = 0,
+                        OldProjectId = projectId,
+                        ProjectId = None,
+                        TimeStamp = deleteProject.TimeStamp
+                    }
+                };
+
+            var eventsAndSates = DeleteProjectService.HandleDeleteProjectCommand(
+                deleteProject,
+                (id) =>
+                {
+                    if (id == projectId)
+                    {
+                        return Exceptional(Valid<State>(new ProjectEntityState()
+                        {
+                            ProjectId = projectId,
+                            AssociatedTaskIds = new List<Guid>() { firstTaskId, secondTaskId }
+                        }));
+                    }
+                    else if (id == firstTaskId)
+                    {
+                        return Exceptional(Valid<State>(new TaskEntityState()
+                        {
+                            ProjectId = projectId,
+                            TaskId = firstTaskId
+                        }));
+                    }
+                    else
+                    {
+                        return Exceptional(Valid<State>(new TaskEntityState()
+                        {
+                            ProjectId = projectId,
+                            TaskId = secondTaskId
+                        }));
+                    }
+                });
+
+            eventsAndSates.Exception.Should().BeFalse();
+
+            eventsAndSates.ForEach(e => e.IsValid.Should().BeTrue());
+
+            eventsAndSates.ForEach(e => e.ForEach(
+                eas => eas.Should().HaveCount(3)));
+
+            eventsAndSates.ForEach(e => e.ForEach(
+                eas => AreEquals(eas, expectedEvents).Should().BeTrue()));
+        }
+
+        [Fact]
+        public void GenerateRightEventsWhenHandleLinkToProjectCommandWithDeleteChildrenTrue()
         {
             var projectId = Guid.NewGuid();
             var firstTaskId = Guid.NewGuid();
@@ -66,7 +148,7 @@
                         IsDeleted = true,
                         OldRemaningWork = 0,
                         RemaningWork = 0,
-                        ProjectId = projectId,
+                        ProjectId = None,
                         TimeStamp = deleteProject.TimeStamp
                     },
                     new TaskDeleted()
@@ -77,7 +159,7 @@
                         IsDeleted = true,
                         OldRemaningWork = 0,
                         RemaningWork = 0,
-                        ProjectId = projectId,
+                        ProjectId = None,
                         TimeStamp = deleteProject.TimeStamp
                     }
                 };
@@ -126,7 +208,7 @@
 
         private static bool AreEquals(IEnumerable<Event> firsts, IEnumerable<Event> seconds) => 
             firsts.Count() == seconds.Count()
-            && firsts.Where(f => seconds.Where(s => AreEquals(f, s)).Any()).Any();
+            && !firsts.Any(f => seconds.Where(s => AreEquals(f, s)).Count() == 0);
 
         private static bool AreEquals(Event first, Event second) => 
             first.Equals(second);
