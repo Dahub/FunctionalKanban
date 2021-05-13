@@ -36,6 +36,41 @@ namespace FunctionalKanban.Domain.Test
         }
 
         [Fact]
+        public void RemoveLinkToProjectWhenRemoveFromProject()
+        {
+            var entityId = Guid.NewGuid();
+            var projectId = Guid.NewGuid();
+            var timeStamp = DateTime.Now;
+
+            var eventAndState = BuildNewTask(entityId).
+               Bind((x) => ((TaskEntityState)x.State).LinkToProject(
+                   timeStamp,
+                   projectId)).
+               Bind((x) => ((TaskEntityState)x.State).RemoveFromProject(
+                   timeStamp,
+                   projectId));
+
+            eventAndState.IsValid.Should().BeTrue();
+
+            eventAndState.ForEach(e => (((TaskEntityState)e.State).ProjectId == None).Should().BeTrue());
+        }
+
+        [Fact]
+        public void BeInvalidWhenTryToRemoveUnlinkedTaskFromProject()
+        {
+            var entityId = Guid.NewGuid();
+            var projectId = Guid.NewGuid();
+            var timeStamp = DateTime.Now;
+
+            var eventAndState = BuildNewTask(entityId).
+               Bind((x) => ((TaskEntityState)x.State).RemoveFromProject(
+                   timeStamp,
+                   projectId));
+
+            eventAndState.IsValid.Should().BeFalse();
+        }
+
+        [Fact]
         public void ReturnInvalidWhenLinkToAlreadyLinkedProject()
         {
             var entityId = Guid.NewGuid();

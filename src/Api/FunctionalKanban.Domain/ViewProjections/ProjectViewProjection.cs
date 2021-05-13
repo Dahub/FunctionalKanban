@@ -27,6 +27,7 @@
                 TaskDeleted e               => e.ProjectId,
                 TaskRemaningWorkChanged e   => e.ProjectId,
                 TaskLinkedToProject e       => e.ProjectId,
+                TaskRemovedFromProject e    => e.ProjectId,
                 ProjectCreated e            => e.EntityId,
                 ProjectDeleted e            => e.EntityId,
                 _                           => None
@@ -39,7 +40,8 @@
                 TaskCreated e               => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork },
                 TaskDeleted e               => this with { TotalRemaningWork = this.TotalRemaningWork - e.OldRemaningWork },
                 TaskRemaningWorkChanged e   => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork - e.OldRemaningWork },
-                TaskLinkedToProject e       => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork  },
+                TaskLinkedToProject e       => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork },
+                TaskRemovedFromProject e    => this with { TotalRemaningWork = this.TotalRemaningWork - e.RemaningWork },
                 ProjectDeleted _            => None,
                 _                           => this with { }
             };

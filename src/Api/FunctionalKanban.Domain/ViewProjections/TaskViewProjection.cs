@@ -27,6 +27,7 @@
                 TaskDeleted _               => None,
                 TaskRemaningWorkChanged e   => this with { RemaningWork = e.RemaningWork },
                 TaskLinkedToProject e       => this with { ProjectId = e.ProjectId },
+                TaskRemovedFromProject e    => this with { ProjectId = e.ProjectId },
                 _                           => this with { }
             };
     }

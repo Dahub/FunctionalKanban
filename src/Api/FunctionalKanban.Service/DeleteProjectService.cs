@@ -35,10 +35,13 @@
                 DeleteProject cmd,
                 Func<Guid, Exceptional<Validation<State>>> getEntity) =>
             p.AssociatedTaskIds.Aggregate(
-                        seed: Exceptional(p.Delete(cmd)).ToEnumerable(),
-                        func: (list, taskId) => list.Append(
-                            getEntity(taskId).Bind<Validation<State>, Validation<EventAndState>>
-                                (e => e.CastTo<State, TaskEntityState>().Bind((v) => v.Delete(cmd.TimeStamp)))));
+                seed: Exceptional(p.Delete(cmd)).ToEnumerable(),
+                func: (list, taskId) => list.Append(
+                    getEntity(taskId).Bind<Validation<State>, Validation<EventAndState>>
+                        (e => e.CastTo<State, TaskEntityState>().Bind((v) =>
+                            cmd.DeleteChildrenTasks
+                                ? v.Delete(cmd.TimeStamp)
+                                : v.RemoveFromProject(cmd.TimeStamp, cmd.EntityId)))));
 
         private static IEnumerable<Exceptional<T>> ToEnumerable<T>(this Exceptional<T> ex) 
         {

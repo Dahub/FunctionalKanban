@@ -14,7 +14,7 @@
     public class PostDeleteProjectShould : BaseTestClass
     {
         [Fact]
-        public async void DeleteProjectBtNotChildrenTaskWhenDeleteWithDeleteChildrenFalse()
+        public async void DeleteProjectButNotChildrenTaskWhenDeleteWithDeleteChildrenFalse()
         {
             var eventDataBase = new InMemoryDatabase();
             var projectionDateBase = new InMemoryDatabase();

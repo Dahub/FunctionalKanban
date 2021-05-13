@@ -90,6 +90,28 @@
             return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
         }
 
+        public static Validation<EventAndState> RemoveFromProject(
+            this TaskEntityState state,
+            DateTime timeStamp,
+            Guid projectId)
+        {
+            var @event = new TaskRemovedFromProject()
+            {
+                EntityId = state.TaskId,
+                EntityName = _entityName,
+                EntityVersion = state.Version + 1,
+                TimeStamp = timeStamp,
+                ProjectId = None,
+                OldProjectId = state.ProjectId,
+                RemaningWork = state.RemaningWork
+            };
+
+            return state
+               .WithCheckNotDeleted()
+               .Bind(s => s.WithCheckProjectIsLinked(projectId))
+               .Bind(s => s.ApplyEvent(@event));
+        }
+
         public static Validation<EventAndState> LinkToProject(
             this TaskEntityState state, 
             DateTime timeStamp,
@@ -124,5 +146,11 @@
                 Some: (id) => id.Equals(projectId)
                     ? Invalid("La tâche est déjà associée au projet")
                     : Valid(state));
+
+        private static Validation<TaskEntityState> WithCheckProjectIsLinked(
+                this TaskEntityState state, Guid projectId) =>
+            state.ProjectId == projectId
+                ? Valid(state)
+                : Invalid("La tâche nest pas associée au projet");
     }
 }
