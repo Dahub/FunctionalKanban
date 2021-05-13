@@ -43,7 +43,22 @@
             return startup;
         }
 
-        protected static async Task InitNewTask(HttpClient httpClient, Guid entityId, uint remaningWork = 10) =>
+        protected static async Task InitLinkTaskToProject(
+                HttpClient httpClient,
+                Guid taskId,
+                Guid projectId) =>
+            _ = await httpClient.PostAsJsonAsync(
+                    "/task/linkToProject",
+                    new LinkToProject()
+                    {
+                        EntityId = taskId,
+                        ProjectId = projectId
+                    });
+
+        protected static async Task InitNewTask(
+                HttpClient httpClient, 
+                Guid entityId, 
+                uint remaningWork = 10) =>
             _ = await httpClient
                 .PostAsJsonAsync(
                     "task",

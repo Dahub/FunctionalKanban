@@ -53,7 +53,7 @@
                 EntityName = _entityName,
                 EntityVersion = state.Version + 1,
                 TimeStamp = cmd.TimeStamp,
-                DeleteChlildrenTasks = cmd.DeleteChildrenTasks,
+                DeleteChildrenTasks = cmd.DeleteChildrenTasks,
                 IsDeleted = true
             };
 

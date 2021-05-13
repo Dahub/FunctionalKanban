@@ -47,9 +47,13 @@ namespace FunctionalKanban.Domain.Test
                 ProjectId = projectId
             };
 
-            var eventAndState = BuildNewTask(entityId, projectId: projectId).Bind((x) => ((TaskEntityState)x.State).LinkToProject(
-                linkToProject.TimeStamp,
-                linkToProject.ProjectId));
+            var eventAndState = BuildNewTask(entityId).
+                Bind((x) => ((TaskEntityState)x.State).LinkToProject(
+                    linkToProject.TimeStamp,
+                    linkToProject.ProjectId)).
+                Bind((x) => ((TaskEntityState)x.State).LinkToProject(
+                    linkToProject.TimeStamp,
+                    linkToProject.ProjectId));
 
             eventAndState.IsValid.Should().BeFalse();
         }
@@ -327,21 +331,18 @@ namespace FunctionalKanban.Domain.Test
         private static Validation<EventAndState> BuildNewTask(
                 Guid entityId, 
                 string taskName = "fake task",
-                uint remaningWork = 10,
-                Guid projectId = default) =>
-            TaskEntity.Create(BuildCreateTaskCommand(entityId, taskName, remaningWork, projectId));
+                uint remaningWork = 10) =>
+            TaskEntity.Create(BuildCreateTaskCommand(entityId, taskName, remaningWork));
 
         private static CreateTask BuildCreateTaskCommand(
                 Guid entityId, 
                 string taskName, 
-                uint remaningWork, 
-                Guid projectId) =>
+                uint remaningWork) =>
             new()
             {
                 EntityId        = entityId,
                 Name            = taskName,
-                RemaningWork    = remaningWork,
-                ProjectId       = projectId == default ? Guid.NewGuid() : projectId
+                RemaningWork    = remaningWork
             };
     }
 }

@@ -68,8 +68,7 @@
                     {
                         EntityId = entityId,
                         Name = entityName,
-                        RemaningWork = remaningWork,
-                        ProjectId = null
+                        RemaningWork = remaningWork
                     });
     }
 }

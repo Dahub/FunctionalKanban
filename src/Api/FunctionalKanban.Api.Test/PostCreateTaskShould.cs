@@ -116,7 +116,6 @@ namespace FunctionalKanban.Api.Test
             var expectedEntityId = Guid.NewGuid();
             var expectedEntityName = typeof(TaskEntityState).FullName;
             var expectedVersion = 1;
-            var expectedProjectId = Guid.NewGuid();
 
             _ = await httpClient
                 .PostAsJsonAsync(
@@ -125,8 +124,7 @@ namespace FunctionalKanban.Api.Test
                     {
                         EntityId =   expectedEntityId,
                         Name = Guid.NewGuid().ToString(),
-                        RemaningWork =  10,
-                        ProjectId = expectedProjectId
+                        RemaningWork =  10
                     });
 
             var events = eventDataBase.Events.Where(e => e.EntityId.Equals(expectedEntityId));
@@ -140,8 +138,6 @@ namespace FunctionalKanban.Api.Test
             eventLine.EntityName.Should().Be(expectedEntityName);
 
             eventLine.Should().BeOfType<TaskCreated>();
-
-            ((TaskCreated)eventLine).ProjectId.Should().Equals(expectedProjectId);
         }
 
         [Fact]

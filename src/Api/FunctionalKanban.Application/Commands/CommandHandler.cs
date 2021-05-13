@@ -38,6 +38,7 @@
                 ChangeRemaningWork c    => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeRemaningWork(c)),
                 LinkToProject c         => Handle(TaskAndProjectLinkService.HandleLinkToProjectCommand(c, LoadEntity)),
                 CreateProject c         => ProjectEntity.Create(c).PublishEvent(_publishEvent),
+                DeleteProject c         => Handle(DeleteProjectService.HandleDeleteProjectCommand(c, LoadEntity)),
                 _                       => Invalid("Commande non prise en charge")
             });
 

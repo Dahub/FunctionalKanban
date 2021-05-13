@@ -23,11 +23,12 @@
         public static Option<Guid> HandleWithId(Event @event) =>
             @event switch
             {
-                ProjectCreated e            => e.EntityId,
                 TaskCreated e               => e.ProjectId,
                 TaskDeleted e               => e.ProjectId,
                 TaskRemaningWorkChanged e   => e.ProjectId,
                 TaskLinkedToProject e       => e.ProjectId,
+                ProjectCreated e            => e.EntityId,
+                ProjectDeleted e            => e.EntityId,
                 _                           => None
             };
 
@@ -39,6 +40,7 @@
                 TaskDeleted e               => this with { TotalRemaningWork = this.TotalRemaningWork - e.OldRemaningWork },
                 TaskRemaningWorkChanged e   => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork - e.OldRemaningWork },
                 TaskLinkedToProject e       => this with { TotalRemaningWork = this.TotalRemaningWork + e.RemaningWork  },
+                ProjectDeleted _            => None,
                 _                           => this with { }
             };
     }

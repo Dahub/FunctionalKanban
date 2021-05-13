@@ -23,7 +23,7 @@
                 TimeStamp       = cmd.TimeStamp,
                 Status          = TaskStatus.Todo,
                 EntityVersion   = 1,
-                ProjectId       = cmd.ProjectId.HasValue ? Some(cmd.ProjectId.Value) : None
+                ProjectId       = None
             };
 
             return new TaskEntityState().ApplyEvent(@event);

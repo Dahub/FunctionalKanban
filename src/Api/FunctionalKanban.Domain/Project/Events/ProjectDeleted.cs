@@ -4,7 +4,7 @@
 
     public record ProjectDeleted : Event
     {
-        public bool DeleteChlildrenTasks { get; init; }
+        public bool DeleteChildrenTasks { get; init; }
 
         public bool IsDeleted { get; init; }
     }

@@ -36,7 +36,7 @@
             var expectedEvent = new ProjectDeleted()
             {
                 EntityId = entityId,
-                DeleteChlildrenTasks = false,
+                DeleteChildrenTasks = false,
                 EntityName = typeof(ProjectEntityState).FullName,
                 EntityVersion = 2,
                 TimeStamp = deleteProjectCommand.TimeStamp,
