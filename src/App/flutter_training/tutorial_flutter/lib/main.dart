@@ -4,11 +4,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'Person.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  @override
+  // @override
+  TextEditingController _controller = TextEditingController(text: "Initial value here");
+  String _searchTerm = '';
+
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Welcome to Flutter',
@@ -16,13 +20,30 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('Welcome to Flutter'),
         ),
-        body: Center(
-          child: RandomWords(),
+        // body: Center(
+        //   child: RandomWords(),
+        // ),
+        body: Container(          
+          alignment: Alignment.center,
+          child: 
+          //  const Text('plop'),
+            TextField(
+              controller: _controller,
+              onChanged: (String val) => _searchTerm = val,
+            ),
+            // Container(child: Image.asset('assets/images/zappa1.jpg', fit: BoxFit.contain)), 
+            ////Person(firstName: "plop", lastName: "plffi"), // Text("Hello World"),         
         ),
+        floatingActionButton : FloatingActionButton(
+          child: Icon(Icons.thumb_up),
+          onPressed: () => {},
+        )
       ),
     );
   }
 }
+
+
 
 class RandomWords extends StatefulWidget {
   @override
