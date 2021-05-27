@@ -10,12 +10,9 @@
 
         public InMemoryDatabase EventDataBase { get; set; }
 
-        public InMemoryStartup(IConfiguration configuration) : base(configuration)
-        {
-        }
+        public InMemoryStartup(IConfiguration configuration) : base(configuration) { }
 
-        protected override IViewProjectionDataBase BuildViewProjectionDataBase() => ViewProjectionDataBase;
-
-        protected override IEventDataBase BuildEventDataBase() => EventDataBase;
+        protected override IDatabaseFactory BuildDatabaseFactory() => 
+            new InMemoryDatabaseFactory(EventDataBase, ViewProjectionDataBase);
     }
 }

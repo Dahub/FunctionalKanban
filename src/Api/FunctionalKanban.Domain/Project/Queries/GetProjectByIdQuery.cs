@@ -12,9 +12,10 @@
 
         public GetProjectByIdQuery WithId(Guid id) => this with { Id = id };
 
-        public override Func<ViewProjection, bool> BuildPredicate() => (p) =>
-             ((ProjectViewProjection)p).Id.Equals(Id)
-             && ((ProjectViewProjection)p).IsDeleted.EqualTo(false);
+        public override Func<ViewProjection, bool> BuildPredicate() => (viewProjection) =>
+            viewProjection is ProjectViewProjection p
+            && p.Id.Equals(Id)
+            && p.IsDeleted.EqualTo(false);
 
         public override Exceptional<Query> WithParameters(IDictionary<string, string> parameters) => this.
             WithParameterValue<GetProjectByIdQuery, Guid>(parameters, "id", WithId).

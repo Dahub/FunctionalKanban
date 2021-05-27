@@ -12,6 +12,7 @@ namespace FunctionalKanban.Api
     using FunctionalKanban.Infrastructure;
     using FunctionalKanban.Infrastructure.Abstraction;
     using FunctionalKanban.Infrastructure.InMemory;
+    using FunctionalKanban.Infrastructure.SqlServer;
     using LaYumba.Functional;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -29,8 +30,8 @@ namespace FunctionalKanban.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(BuildViewProjectionDataBase());
-            services.AddSingleton(BuildEventDataBase());
+            services.AddScoped(s => BuildDatabaseFactory().CreateEventDatabase());
+            services.AddScoped(s => BuildDatabaseFactory().CreateViewProjectionDatabase());
             services.AddScoped<IEventStream, EventStream>();
 
             services.AddScoped<IEntityStateRepository, EntityStateRepository>();
@@ -60,6 +61,7 @@ namespace FunctionalKanban.Api
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseMiddleware<EndRequestMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
@@ -78,6 +80,11 @@ namespace FunctionalKanban.Api
             });
         }
 
+        protected virtual IDatabaseFactory BuildDatabaseFactory()
+          => new SqlServerEfContextFactory(
+              Configuration.GetConnectionString("EventDatabaseConnexionString"),
+              Configuration.GetConnectionString("ViewProjectionDatabaseConnexionString"));
+
         protected virtual Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) =>
             (id) => GetService<IEntityStateRepository>(services).GetById(id);
 
@@ -92,10 +99,6 @@ namespace FunctionalKanban.Api
 
         protected virtual Func<Type, Func<ViewProjection, bool>, Exceptional<IEnumerable<ViewProjection>>> GetFindProjectionsMethod(IServiceCollection services) =>
              GetService<IViewProjectionRepository>(services).Get;
-
-        protected virtual IViewProjectionDataBase BuildViewProjectionDataBase() => new InMemoryDatabase();
-
-        protected virtual IEventDataBase BuildEventDataBase() => new InMemoryDatabase();
 
         private static T GetService<T>(IServiceCollection services) where T : notnull => services.BuildServiceProvider().GetRequiredService<T>();
     }

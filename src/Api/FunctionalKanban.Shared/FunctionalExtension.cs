@@ -16,6 +16,9 @@
         public static Validation<T> CastTo<R, T>(this Validation<R> value) =>
             value.Bind<R, T>(x => x is T t ? t : Invalid($"Impossible de caster {typeof(R)} en {typeof(T)}"));
 
+        public static Option<T> ToOption<T>(this T value) =>
+            value == null ? None : Some(value);
+
         public static Exceptional<IEnumerable<T>> ToMonadOfList<T>(this IEnumerable<Exceptional<T>> exceptionals) =>
           exceptionals.Aggregate(
               seed: Exceptional(Enumerable.Empty<T>()),

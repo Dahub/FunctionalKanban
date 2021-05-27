@@ -4,7 +4,7 @@
     using FunctionalKanban.Domain.Project.Commands;
     using LaYumba.Functional;
 
-    internal class CreateProjectValidator : ValidatorBase<CreateProject>
+    internal class CreateProjectValidator : Validator<CreateProject>
     {
         protected override IEnumerable<Error> GetErrors(CreateProject c)
         {

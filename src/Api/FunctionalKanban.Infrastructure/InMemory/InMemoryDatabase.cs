@@ -4,6 +4,7 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -21,7 +22,7 @@
         public InMemoryDatabase()
         {
             _eventLines = new List<EventLine>();
-            _dbSets = new Dictionary<string, ConcurrentDictionary<Guid, ViewProjection>> ()
+            _dbSets = new Dictionary<string, ConcurrentDictionary<Guid, ViewProjection>>()
             {
                 { typeof(TaskViewProjection).Name, new ConcurrentDictionary<Guid, ViewProjection>() },
                 { typeof(ProjectViewProjection).Name, new ConcurrentDictionary<Guid, ViewProjection>() },
@@ -73,6 +74,10 @@
             Try(() => _dbSets[typeof(T).Name].TryRemove(viewProjection.Id, out _)
                 ? Unit.Create()
                 : throw new Exception("Erreur lors de la tentative de suppression de la projection")).Run();
+
+        public Task Commit() => Task.CompletedTask;
+
+        public Task Rollback() => Task.CompletedTask;
 
         private readonly Func<(Event, List<EventLine>), Exceptional<Unit>> AddEventToLines = (tuple) =>
             Try(() =>

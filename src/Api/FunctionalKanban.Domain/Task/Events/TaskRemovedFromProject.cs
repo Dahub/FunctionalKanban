@@ -4,7 +4,7 @@
     using FunctionalKanban.Domain.Common;
     using LaYumba.Functional;
 
-    public record TaskRemovedFromProject : Event
+    public sealed record TaskRemovedFromProject : Event
     {
         public Option<Guid> OldProjectId { get; init; }
 

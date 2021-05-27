@@ -8,6 +8,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
+    using FunctionalKanban.Infrastructure.Abstraction;
 
     internal class DoNothingStartup : Startup, ITestStartup
     {
@@ -18,6 +19,8 @@
         public DoNothingStartup(IConfiguration configuration) : base(configuration)
         {
         }
+
+        protected override IDatabaseFactory BuildDatabaseFactory() => new InMemoryDatabaseFactory();
 
         protected override Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) => (id) => (Option<State>)None;
 

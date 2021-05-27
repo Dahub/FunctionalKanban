@@ -29,7 +29,7 @@
 
         protected override State With(Event @event) =>
             @event switch
-            {
+            {                
                 ProjectCreated e        => this with { ProjectId = e.EntityId, Version = e.EntityVersion, ProjectName = e.Name, ProjectStatus = e.Status, IsDeleted = e.IsDeleted },
                 ProjectNewTaskLinked e  => this with { Version = e.EntityVersion, AssociatedTaskIds = AssociatedTaskIds.Append(e.TaskId) },
                 ProjectDeleted e        => this with { Version = e.EntityVersion, IsDeleted = e.IsDeleted },

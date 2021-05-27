@@ -4,7 +4,7 @@
     using FunctionalKanban.Domain.Task.Commands;
     using LaYumba.Functional;
 
-    internal class LinkToProjectValidator : ValidatorBase<LinkToProject>
+    internal class LinkToProjectValidator : Validator<LinkToProject>
     {
         protected override IEnumerable<Error> GetErrors(LinkToProject c)
         {

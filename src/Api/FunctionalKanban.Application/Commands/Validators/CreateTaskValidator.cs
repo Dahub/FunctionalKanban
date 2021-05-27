@@ -4,7 +4,7 @@
     using FunctionalKanban.Domain.Task.Commands;
     using LaYumba.Functional;
 
-    internal class CreateTaskValidator : ValidatorBase<CreateTask>
+    internal class CreateTaskValidator : Validator<CreateTask>
     {
         protected override IEnumerable<Error> GetErrors(CreateTask c)
         {

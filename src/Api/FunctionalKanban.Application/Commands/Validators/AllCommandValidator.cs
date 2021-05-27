@@ -4,7 +4,7 @@
     using FunctionalKanban.Domain.Common;
     using LaYumba.Functional;
 
-    internal class AllCommandValidator : ValidatorBase<Command>
+    internal class AllCommandValidator : Validator<Command>
     {
         protected override IEnumerable<Error> GetErrors(Command c)
         {

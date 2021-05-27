@@ -10,21 +10,23 @@
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
     using Predicate = System.Func<Domain.Common.ViewProjection, bool>;
+    using ExceptionalViewProjections = LaYumba.Functional.Exceptional<System.Collections.Generic.IEnumerable<Domain.Common.ViewProjection>>;
+    using ExceptionalDtos = LaYumba.Functional.Exceptional<System.Collections.Generic.IEnumerable<Dtos.Dto>>;
 
     public class QueryHandler
     {
-        private readonly Func<Type, Predicate, Exceptional<IEnumerable<ViewProjection>>> _findProjections;
+        private readonly Func<Type, Predicate, ExceptionalViewProjections> _findProjections;
 
         public QueryHandler(
-                Func<Type, Predicate, Exceptional<IEnumerable<ViewProjection>>> findProjections) =>
+                Func<Type, Predicate, ExceptionalViewProjections> findProjections) =>
             _findProjections = findProjections;
 
-        public Exceptional<IEnumerable<Dto>> Handle<TQuery>(Dictionary<string, string> parameters)
+        public ExceptionalDtos Handle<TQuery>(Dictionary<string, string> parameters)
                 where TQuery : Query, new() =>
             new TQuery().WithParameters(parameters).
-            Bind(LoadProjections);
+            Bind(GetProjections);
 
-        private Exceptional<IEnumerable<Dto>> LoadProjections(Query query) =>
+        private ExceptionalDtos GetProjections(Query query) =>
             query switch
             {
                 GetTaskQuery q          => ApplyQueryToViewProjections<TaskViewProjection, TaskDto>(q),
@@ -33,13 +35,13 @@
                 _                       => new Exception("Type de requête non pris en charge")
             };
 
-        private Exceptional<IEnumerable<Dto>> ApplyQueryToViewProjections<TProjection, TDto>(Query q)
+        private ExceptionalDtos ApplyQueryToViewProjections<TProjection, TDto>(Query q)
                 where TProjection : ViewProjection
                 where TDto : Dto =>
             _findProjections(typeof(TProjection), q.BuildPredicate())
             .Bind(ConvertToDto<TProjection, TDto>);
 
-        private static Exceptional<IEnumerable<Dto>> ConvertToDto<TProjection, TDto>(IEnumerable<ViewProjection> projections)
+        private static ExceptionalDtos ConvertToDto<TProjection, TDto>(IEnumerable<ViewProjection> projections)
                 where TProjection : ViewProjection    
                 where TDto : Dto =>
             projections.
@@ -47,7 +49,7 @@
             ToDto<TProjection, TDto>().
             Bind(Convert);
 
-         private static Exceptional<IEnumerable<Dto>> Convert<TDto>(IEnumerable<TDto> dtos) where TDto : Dto =>
+         private static ExceptionalDtos Convert<TDto>(IEnumerable<TDto> dtos) where TDto : Dto =>
             Try(() => dtos.Map(d => (Dto)d)).Run();
     }
 }

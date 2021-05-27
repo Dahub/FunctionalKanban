@@ -32,12 +32,12 @@
             command.Validate().Bind(command => 
             (command) switch
             {
-                CreateTask c            => TaskEntity.Create(c).PublishEvent(_publishEvent),
+                CreateTask c            => TaskEntity.Create(c).Publish(_publishEvent),
                 ChangeTaskStatus c      => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeStatus(c)),
                 DeleteTask c            => Handle<TaskEntityState>(c, _getEntity, (e) => e.Delete(c)),
                 ChangeRemaningWork c    => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeRemaningWork(c)),
                 LinkToProject c         => Handle(TaskAndProjectLinkService.HandleLinkToProjectCommand(c, LoadEntity)),
-                CreateProject c         => ProjectEntity.Create(c).PublishEvent(_publishEvent),
+                CreateProject c         => ProjectEntity.Create(c).Publish(_publishEvent),
                 DeleteProject c         => Handle(DeleteProjectService.HandleDeleteProjectCommand(c, LoadEntity)),
                 _                       => Invalid("Commande non prise en charge")
             });
@@ -60,23 +60,23 @@
                         Bind(f).
                         Match(
                             None: ()    => Invalid($"Entité d'id {command.EntityId} introuvable"),
-                            Some: (x)   => x.PublishEvent(_publishEvent))
+                            Some: (x)   => x.Publish(_publishEvent))
                 );
 
         private Validation<Exceptional<Unit>> Handle(Exceptional<Validation<IEnumerable<Event>>> events) =>
               events.Match(
-                Exception: (ex) => (Exceptional<Unit>)ex,
-                Success: (events) => events.PublishEvents(_publishEvent));
+                Exception:  (ex)        => (Exceptional<Unit>)ex,
+                Success:    (events)    => events.Publish(_publishEvent));
     }
 
     internal static class CommandHandlerExt
     {
-        public static Validation<Exceptional<Unit>> PublishEvent(
+        public static Validation<Exceptional<Unit>> Publish(
                             this Validation<EventAndState> v,
                             Func<Event, Exceptional<Unit>> publishEvent) => 
             v.Bind<EventAndState, Exceptional<Unit>>((x) => publishEvent(x.Event));
 
-        public static Validation<Exceptional<Unit>> PublishEvents(
+        public static Validation<Exceptional<Unit>> Publish(
                             this Validation<IEnumerable<Event>> events,
                             Func<Event, Exceptional<Unit>> publishEvent) =>
             events.Bind<IEnumerable<Event>, Exceptional<Unit>>((evts) => evts.Aggregate(

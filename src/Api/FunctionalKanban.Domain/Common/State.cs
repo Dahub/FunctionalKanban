@@ -10,7 +10,10 @@
     {
         public uint Version { get; init; }
 
-        public Validation<EventAndState> ApplyEvent(Event @event) => new EventAndState(@event, With(@event));
+        public Validation<EventAndState> ApplyEvent(Event @event) => 
+            @event.EntityVersion != Version + 1 
+            ? Invalid($"Version d'événement {@event.EntityVersion} incorrecte, attendue {Version + 1}")
+            : new EventAndState(@event, With(@event));
 
         protected abstract State With(Event @event);
 

@@ -208,7 +208,7 @@
 
         private static bool AreEquals(IEnumerable<Event> firsts, IEnumerable<Event> seconds) => 
             firsts.Count() == seconds.Count()
-            && !firsts.Any(f => seconds.Where(s => AreEquals(f, s)).Count() == 0);
+            && !firsts.Any(f => !seconds.Where(s => AreEquals(f, s)).Any());
 
         private static bool AreEquals(Event first, Event second) => 
             first.Equals(second);

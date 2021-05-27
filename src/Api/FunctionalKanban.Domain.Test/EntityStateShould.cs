@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using FluentAssertions;
     using FunctionalKanban.Domain.Common;
     using FunctionalKanban.Domain.Task;
@@ -12,6 +11,28 @@
 
     public class EntityStateShould
     {
+        [Fact]
+        public void ReturnInvalidWhenApplyEventWithWrongVersion()
+        {
+            var taskId = Guid.NewGuid();
+
+            var @event = new TaskStatusChanged()
+            {
+                EntityId = taskId,
+                EntityName = typeof(TaskEntityState).FullName,
+                EntityVersion = 2,
+                NewStatus = TaskStatus.Done,
+                RemaningWork = 0,
+                TimeStamp = DateTime.Now
+            };
+
+            var taskEntityState = new TaskEntityState();
+
+            taskEntityState.ApplyEvent(@event).Match(
+                Invalid:    _ => true,
+                Valid:      _ => false).Should().BeTrue();
+        }
+
         [Fact]
         public void BeMutatedWhenHydrated()
         {
@@ -69,8 +90,8 @@
             var taskEntityState = new TaskEntityState().From(events);
 
             _ = taskEntityState.Match(
-                None: () => false,
-                Some: (t) => CheckTask(t as TaskEntityState)).Should().BeTrue();
+                None: ()    => false,
+                Some: (t)   => CheckTask(t as TaskEntityState)).Should().BeTrue();
 
 
             bool CheckTask(TaskEntityState t) =>
@@ -81,7 +102,7 @@
                 && t.IsDeleted == false
                 && t.RemaningWork == expectedRemaningWork
                 && t.TaskStatus == expectedStatus
-                && t.Version == events.Count();
+                && t.Version == events.Count;
         }
     }
 }

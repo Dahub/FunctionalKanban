@@ -7,7 +7,7 @@
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
 
-    internal abstract class ValidatorBase<T> : IValidator where T : Command
+    internal abstract class Validator<T> : IValidator where T : Command
     {
         public bool CanValidate(Command command) => command is T;
 
