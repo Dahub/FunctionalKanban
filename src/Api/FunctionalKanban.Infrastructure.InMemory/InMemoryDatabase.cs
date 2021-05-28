@@ -30,7 +30,8 @@
             };
         }
 
-        public IEnumerable<Event> Events => _eventLines.Select(l => l.Data).ToList().AsReadOnly();
+        public IEnumerable<Event> EventsByEntityId(Guid entityId) =>
+             _eventLines.Where(e => e.EntityId.Equals(entityId)).Select(l => l.Data).ToList().AsReadOnly();
 
         public IEnumerable<T> GetProjections<T>() where T : ViewProjection =>
             _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet

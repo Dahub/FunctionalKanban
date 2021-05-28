@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Api
+﻿namespace FunctionalKanban.Web.Api
 {
     using System.Threading.Tasks;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -16,8 +16,8 @@
 
             var task = context.Response.StatusCode switch
             {
-                >= 200 and < 400 => dataBase.Commit(),
-                _ => dataBase.Rollback()
+                >= 200 and < 400    => dataBase.Commit(),
+                _                   => dataBase.Rollback()
             };
 
             await task;

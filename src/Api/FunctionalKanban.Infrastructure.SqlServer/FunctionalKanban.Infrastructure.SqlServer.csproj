@@ -8,12 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Infrastructure.Abstraction\FunctionalKanban.Infrastructure.Abstraction.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="LaYumba.Functional" Version="0.10.0" />
   </ItemGroup>
 
 </Project>

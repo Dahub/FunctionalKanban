@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Api.Test
+﻿namespace FunctionalKanban.Web.Api.Test
 {
     using System;
     using System.Net;
@@ -6,7 +6,7 @@
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using FunctionalKanban.Api.Test.Tools;
+    using FunctionalKanban.Web.Api.Test.Tools;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;

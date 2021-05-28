@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Api.Test.Tools
+﻿namespace FunctionalKanban.Web.Api.Test.Tools
 {
     using System;
     using System.Net.Http;

@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Api
+﻿namespace FunctionalKanban.Web.Api
 {
     using System;
     using System.Collections.Generic;

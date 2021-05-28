@@ -1,4 +1,4 @@
-namespace FunctionalKanban.Api.Test
+namespace FunctionalKanban.Web.Api.Test
 {
     using System;
     using System.Linq;
@@ -6,7 +6,7 @@ namespace FunctionalKanban.Api.Test
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using FluentAssertions;
-    using FunctionalKanban.Api.Test.Tools;
+    using FunctionalKanban.Web.Api.Test.Tools;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
@@ -127,7 +127,7 @@ namespace FunctionalKanban.Api.Test
                         RemaningWork =  10
                     });
 
-            var events = eventDataBase.Events.Where(e => e.EntityId.Equals(expectedEntityId));
+            var events = eventDataBase.EventsByEntityId(expectedEntityId);
 
             events.Should().HaveCount(1);
 

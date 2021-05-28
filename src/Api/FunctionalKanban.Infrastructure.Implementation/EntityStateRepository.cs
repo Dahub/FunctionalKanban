@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Infrastructure
+﻿namespace FunctionalKanban.Infrastructure.Implementation
 {
     using System;
     using System.Collections.Generic;
@@ -16,15 +16,15 @@
         public EntityStateRepository(IEventDataBase database) => _database = database;
 
         public Exceptional<Option<State>> GetById(Guid id) =>
-            AllEventsOfEntity(_database.Events, id).
+            AllEventsOfEntity(_database, id).
             Bind(WithEntityType).
             Bind(WithStateInstance).
             Bind(Hydrate).Run();
 
-        private static Try<Option<IEnumerable<Event>>> AllEventsOfEntity(IEnumerable<Event> allEvents, Guid id) =>
+        private static Try<Option<IEnumerable<Event>>> AllEventsOfEntity(IEventDataBase database, Guid id) =>
             Try(() =>
             {
-                var events = allEvents.Where(e => e.EntityId.Equals(id));
+                var events = database.EventsByEntityId(id);
                 return events.Any()
                     ? Some(events)
                     : None;

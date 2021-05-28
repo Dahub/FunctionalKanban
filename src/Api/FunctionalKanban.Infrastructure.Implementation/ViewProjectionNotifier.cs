@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Infrastructure
+﻿namespace FunctionalKanban.Infrastructure.Implementation
 {
     using System;
     using FunctionalKanban.Domain.Common;

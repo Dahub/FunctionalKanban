@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Api.Test.Tools
+﻿namespace FunctionalKanban.Web.Api.Test.Tools
 {
     using FunctionalKanban.Infrastructure.Abstraction;
     using FunctionalKanban.Infrastructure.InMemory;
@@ -12,7 +12,7 @@
 
         public InMemoryStartup(IConfiguration configuration) : base(configuration) { }
 
-        protected override IDatabaseFactory BuildDatabaseFactory() => 
+        protected override IDatabaseFactory GetDatabaseFactory() => 
             new InMemoryDatabaseFactory(EventDataBase, ViewProjectionDataBase);
     }
 }

@@ -1,4 +1,4 @@
-namespace FunctionalKanban.Api
+namespace FunctionalKanban.Web.Api
 {
     using System;
     using System.Collections.Generic;
@@ -9,9 +9,8 @@ namespace FunctionalKanban.Api
     using FunctionalKanban.Domain.Project.Queries;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Queries;
-    using FunctionalKanban.Infrastructure;
+    using FunctionalKanban.Infrastructure.Implementation;
     using FunctionalKanban.Infrastructure.Abstraction;
-    using FunctionalKanban.Infrastructure.InMemory;
     using FunctionalKanban.Infrastructure.SqlServer;
     using LaYumba.Functional;
     using Microsoft.AspNetCore.Builder;
@@ -30,8 +29,8 @@ namespace FunctionalKanban.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped(s => BuildDatabaseFactory().CreateEventDatabase());
-            services.AddScoped(s => BuildDatabaseFactory().CreateViewProjectionDatabase());
+            services.AddScoped(s => GetDatabaseFactory().GetEventDatabase());
+            services.AddScoped(s => GetDatabaseFactory().GetViewProjectionDatabase());
             services.AddScoped<IEventStream, EventStream>();
 
             services.AddScoped<IEntityStateRepository, EntityStateRepository>();
@@ -80,7 +79,7 @@ namespace FunctionalKanban.Api
             });
         }
 
-        protected virtual IDatabaseFactory BuildDatabaseFactory()
+        protected virtual IDatabaseFactory GetDatabaseFactory()
           => new SqlServerEfContextFactory(
               Configuration.GetConnectionString("EventDatabaseConnexionString"),
               Configuration.GetConnectionString("ViewProjectionDatabaseConnexionString"));

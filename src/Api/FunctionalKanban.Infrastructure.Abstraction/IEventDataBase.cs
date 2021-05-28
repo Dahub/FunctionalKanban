@@ -9,7 +9,7 @@
 
     public interface IEventDataBase
     {
-        IEnumerable<Event> Events { get; }
+        IEnumerable<Event> EventsByEntityId(Guid entityId);
 
         Exceptional<Unit> Add(Guid entityId, string entityName, uint entityVersion, string eventName, Event @event);
 

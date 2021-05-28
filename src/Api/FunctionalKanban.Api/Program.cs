@@ -1,4 +1,4 @@
-namespace FunctionalKanban.Api
+namespace FunctionalKanban.Web.Api
 {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;

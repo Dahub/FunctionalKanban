@@ -17,8 +17,8 @@
             _viewProjectionDatabaseConnexionString = viewProjectionDatabaseConnexionString;
         }
 
-        public IEventDataBase CreateEventDatabase() => throw new NotImplementedException();
+        public IEventDataBase GetEventDatabase() => throw new NotImplementedException();
 
-        public IViewProjectionDataBase CreateViewProjectionDatabase() => throw new NotImplementedException();
+        public IViewProjectionDataBase GetViewProjectionDatabase() => throw new NotImplementedException();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Api.Test.Tools
+﻿namespace FunctionalKanban.Web.Api.Test.Tools
 {
     using System;
     using FunctionalKanban.Domain.Common;
@@ -20,7 +20,7 @@
         {
         }
 
-        protected override IDatabaseFactory BuildDatabaseFactory() => new InMemoryDatabaseFactory();
+        protected override IDatabaseFactory GetDatabaseFactory() => new InMemoryDatabaseFactory();
 
         protected override Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) => (id) => (Option<State>)None;
 

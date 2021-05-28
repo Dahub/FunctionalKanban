@@ -1,11 +1,11 @@
-﻿namespace FunctionalKanban.Api.Test
+﻿namespace FunctionalKanban.Web.Api.Test
 {
     using System;
     using System.Linq;
     using System.Net;
     using System.Net.Http.Json;
     using FluentAssertions;
-    using FunctionalKanban.Api.Test.Tools;
+    using FunctionalKanban.Web.Api.Test.Tools;
     using FunctionalKanban.Domain.Project.Commands;
     using FunctionalKanban.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.InMemory;

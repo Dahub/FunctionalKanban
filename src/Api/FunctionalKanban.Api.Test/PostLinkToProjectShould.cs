@@ -1,11 +1,11 @@
-﻿namespace FunctionalKanban.Api.Test
+﻿namespace FunctionalKanban.Web.Api.Test
 {
     using System;
     using System.Linq;
     using System.Net;
     using System.Net.Http.Json;
     using FluentAssertions;
-    using FunctionalKanban.Api.Test.Tools;
+    using FunctionalKanban.Web.Api.Test.Tools;
     using FunctionalKanban.Domain.Project.Events;
     using FunctionalKanban.Domain.Task.Commands;
     using FunctionalKanban.Domain.Task.Events;
@@ -39,14 +39,14 @@
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var lines = eventDataBase.Events.Where(e => e.EntityId.Equals(taskId));
+            var lines = eventDataBase.EventsByEntityId(taskId);
             lines.Should().HaveCount(2);
 
             var taskLinkToProjectEvent = lines.FirstOrDefault(e => e is TaskLinkedToProject);
             taskLinkToProjectEvent.Should().NotBeNull();
             ((TaskLinkedToProject)taskLinkToProjectEvent).ProjectId.Should().Be(Some(projectId));
 
-            lines = eventDataBase.Events.Where(e => e.EntityId.Equals(projectId));
+            lines = eventDataBase.EventsByEntityId(projectId);
 
             var projectNewTaskLinkedEvent = lines.FirstOrDefault(e => e is ProjectNewTaskLinked);
             projectNewTaskLinkedEvent.Should().NotBeNull();

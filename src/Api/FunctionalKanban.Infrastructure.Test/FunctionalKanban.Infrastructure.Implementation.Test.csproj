@@ -2,14 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-
+    <LangVersion>9.0</LangVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="5.0.5" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -23,10 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FunctionalKanban.Api\FunctionalKanban.Api.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Application\FunctionalKanban.Application.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Infrastructure\FunctionalKanban.Infrastructure.csproj" />
+    <ProjectReference Include="..\FunctionalKanban.Infrastructure.Implementation\FunctionalKanban.Infrastructure.Implementation.csproj" />
   </ItemGroup>
 
 </Project>

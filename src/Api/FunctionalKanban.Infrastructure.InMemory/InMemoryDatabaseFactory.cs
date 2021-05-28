@@ -22,8 +22,8 @@
             _viewProjectionDataBase = viewProjectionDatabase;
         }
 
-        public IEventDataBase CreateEventDatabase() => _eventDataBase;
+        public IEventDataBase GetEventDatabase() => _eventDataBase;
 
-        public IViewProjectionDataBase CreateViewProjectionDatabase() => _viewProjectionDataBase;
+        public IViewProjectionDataBase GetViewProjectionDatabase() => _viewProjectionDataBase;
     }
 }

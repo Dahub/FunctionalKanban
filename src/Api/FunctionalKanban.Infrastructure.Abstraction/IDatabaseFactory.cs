@@ -2,8 +2,8 @@
 {
     public interface IDatabaseFactory
     {
-        IEventDataBase CreateEventDatabase();
+        IEventDataBase GetEventDatabase();
 
-        IViewProjectionDataBase CreateViewProjectionDatabase();
+        IViewProjectionDataBase GetViewProjectionDatabase();
     }
 }
