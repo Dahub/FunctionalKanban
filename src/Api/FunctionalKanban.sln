@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "92_Infrastructure", "92_Inf
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "93_Web", "93_Web", "{C63FF25F-E225-405E-BC47-29F81B841DFA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalKanban.Infrastructure.SqlServer.Test", "FunctionalKanban.Infrastructure.SqlServer.Test\FunctionalKanban.Infrastructure.SqlServer.Test.csproj", "{B1890933-5139-4D88-99D7-34E323F74BD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{2285CC8E-F1BD-4F2D-BCA4-5AD6ACED9466}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2285CC8E-F1BD-4F2D-BCA4-5AD6ACED9466}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2285CC8E-F1BD-4F2D-BCA4-5AD6ACED9466}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1890933-5139-4D88-99D7-34E323F74BD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1890933-5139-4D88-99D7-34E323F74BD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1890933-5139-4D88-99D7-34E323F74BD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1890933-5139-4D88-99D7-34E323F74BD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,6 +135,7 @@ Global
 		{83DBECD2-19FA-4CA2-A318-C6999B7E39E3} = {F922D6C3-92A0-41AE-B5C6-9DC08B9E152D}
 		{32F9C722-D929-4F4C-BC8C-6ACB87ADAEEE} = {F922D6C3-92A0-41AE-B5C6-9DC08B9E152D}
 		{C63FF25F-E225-405E-BC47-29F81B841DFA} = {F922D6C3-92A0-41AE-B5C6-9DC08B9E152D}
+		{B1890933-5139-4D88-99D7-34E323F74BD6} = {32F9C722-D929-4F4C-BC8C-6ACB87ADAEEE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B1507AD5-4CB4-4FDB-97F5-F6FD342B1F60}
