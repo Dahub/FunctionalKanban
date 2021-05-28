@@ -6,7 +6,7 @@
     using FunctionalKanban.Domain.Project;
     using FunctionalKanban.Domain.Task;
     using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Shared;
+    using FunctionalKanban.Core.Shared;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
     using FunctionalKanban.Service.Common;

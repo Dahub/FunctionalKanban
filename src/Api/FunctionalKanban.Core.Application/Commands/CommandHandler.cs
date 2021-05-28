@@ -12,7 +12,7 @@
     using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
     using FunctionalKanban.Service;
-    using FunctionalKanban.Shared;
+    using FunctionalKanban.Core.Shared;
 
     public class CommandHandler
     {

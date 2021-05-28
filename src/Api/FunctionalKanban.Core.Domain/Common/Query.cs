@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using FunctionalKanban.Shared;
+    using FunctionalKanban.Core.Shared;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
 

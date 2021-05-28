@@ -23,10 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FunctionalKanban.Api\FunctionalKanban.Web.Api.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Application\FunctionalKanban.Application.csproj" />
-    <ProjectReference Include="..\FunctionalKanban.Domain\FunctionalKanban.Domain.csproj" />
+    <ProjectReference Include="..\FunctionalKanban.Core.Application\FunctionalKanban.Application.csproj" />
+    <ProjectReference Include="..\FunctionalKanban.Core.Domain\FunctionalKanban.Domain.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Infrastructure.InMemory\FunctionalKanban.Infrastructure.InMemory.csproj" />
+    <ProjectReference Include="..\FunctionalKanban.Web.Api\FunctionalKanban.Web.Api.csproj" />
   </ItemGroup>
 
 </Project>

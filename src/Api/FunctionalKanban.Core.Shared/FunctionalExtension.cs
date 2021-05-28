@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Shared
+﻿namespace FunctionalKanban.Core.Shared
 {
     using System;
     using System.Collections.Generic;
