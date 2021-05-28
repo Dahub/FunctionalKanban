@@ -6,8 +6,8 @@
     using System.Net.Http.Json;
     using FluentAssertions;
     using FunctionalKanban.Web.Api.Test.Tools;
-    using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 

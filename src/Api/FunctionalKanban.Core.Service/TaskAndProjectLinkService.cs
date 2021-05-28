@@ -1,12 +1,12 @@
-﻿namespace FunctionalKanban.Service
+﻿namespace FunctionalKanban.Core.Service
 {
     using System;
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project;
-    using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Task.Commands;
-    using FunctionalKanban.Service.Common;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Project;
+    using FunctionalKanban.Core.Domain.Task;
+    using FunctionalKanban.Core.Domain.Task.Commands;
+    using FunctionalKanban.Core.Service.Common;
     using LaYumba.Functional;
 
     public static class TaskAndProjectLinkService

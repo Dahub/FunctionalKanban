@@ -1,7 +1,7 @@
 ﻿namespace FunctionalKanban.Application.Commands.Validators
 {
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
 
     internal class AllCommandValidator : Validator<Command>

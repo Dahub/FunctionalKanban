@@ -1,7 +1,7 @@
 ﻿namespace FunctionalKanban.Web.Api.Test.Tools
 {
     using System;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
     using FunctionalKanban.Infrastructure.InMemory;
     using Microsoft.Extensions.Configuration;

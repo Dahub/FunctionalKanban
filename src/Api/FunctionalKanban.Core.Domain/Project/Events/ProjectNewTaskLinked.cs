@@ -1,7 +1,7 @@
-﻿namespace FunctionalKanban.Domain.Project.Events
+﻿namespace FunctionalKanban.Core.Domain.Project.Events
 {
     using System;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
 
     public sealed record ProjectNewTaskLinked : Event
     {

@@ -7,9 +7,9 @@
     using System.Threading.Tasks;
     using FluentAssertions;
     using FunctionalKanban.Web.Api.Test.Tools;
-    using FunctionalKanban.Domain.Project;
-    using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Project;
+    using FunctionalKanban.Core.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 

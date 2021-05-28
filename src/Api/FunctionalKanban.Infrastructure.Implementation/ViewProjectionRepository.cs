@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
     using static LaYumba.Functional.F;

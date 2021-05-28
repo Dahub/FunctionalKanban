@@ -2,11 +2,11 @@
 {
     using System;
     using FluentAssertions;
-    using FunctionalKanban.Domain.Project;
-    using FunctionalKanban.Domain.Project.Events;
-    using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Task.Events;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Project;
+    using FunctionalKanban.Core.Domain.Project.Events;
+    using FunctionalKanban.Core.Domain.Task;
+    using FunctionalKanban.Core.Domain.Task.Events;
+    using FunctionalKanban.Core.Domain.ViewProjections;
     using LaYumba.Functional;
     using Xunit;
     using static LaYumba.Functional.F;

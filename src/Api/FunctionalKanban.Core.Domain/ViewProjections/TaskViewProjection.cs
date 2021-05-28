@@ -1,9 +1,9 @@
-﻿namespace FunctionalKanban.Domain.ViewProjections
+﻿namespace FunctionalKanban.Core.Domain.ViewProjections
 {
     using System;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Task.Events;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Task;
+    using FunctionalKanban.Core.Domain.Task.Events;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
 

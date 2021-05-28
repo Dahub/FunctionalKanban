@@ -1,6 +1,6 @@
 ﻿namespace FunctionalKanban.Application.Commands.Validators
 {
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
 
     internal interface IValidator

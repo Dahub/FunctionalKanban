@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Task.Events;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Task;
+    using FunctionalKanban.Core.Domain.Task.Events;
     using Xunit;
     using static LaYumba.Functional.F;
 

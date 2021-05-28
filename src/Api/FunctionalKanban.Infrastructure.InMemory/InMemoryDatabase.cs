@@ -5,8 +5,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.Abstraction;
     using LaYumba.Functional;
     using static FunctionalKanban.Infrastructure.InMemory.InMemoryDatabase;

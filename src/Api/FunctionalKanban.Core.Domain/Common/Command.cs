@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Domain.Common
+﻿namespace FunctionalKanban.Core.Domain.Common
 {
     using System;
 

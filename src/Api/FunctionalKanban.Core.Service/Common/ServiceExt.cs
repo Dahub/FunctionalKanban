@@ -1,8 +1,8 @@
-﻿namespace FunctionalKanban.Service.Common
+﻿namespace FunctionalKanban.Core.Service.Common
 {
     using System;
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Core.Shared;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;

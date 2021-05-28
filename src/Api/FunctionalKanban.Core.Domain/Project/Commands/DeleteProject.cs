@@ -1,6 +1,6 @@
-﻿namespace FunctionalKanban.Domain.Project.Commands
+﻿namespace FunctionalKanban.Core.Domain.Project.Commands
 {
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
 
     public record DeleteProject : Command
     {

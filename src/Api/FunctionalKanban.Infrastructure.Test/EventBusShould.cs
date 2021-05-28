@@ -2,7 +2,7 @@ namespace FunctionalKanban.Infrastructure.Implementation.Test
 {
     using System;
     using FluentAssertions;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Infrastructure.Implementation;
     using Xunit;
     using Unit = System.ValueTuple;

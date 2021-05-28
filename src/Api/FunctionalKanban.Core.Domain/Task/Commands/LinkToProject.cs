@@ -1,7 +1,7 @@
-﻿namespace FunctionalKanban.Domain.Task.Commands
+﻿namespace FunctionalKanban.Core.Domain.Task.Commands
 {
     using System;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
 
     public sealed record LinkToProject : Command
     {

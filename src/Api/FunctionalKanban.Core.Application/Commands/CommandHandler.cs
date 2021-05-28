@@ -3,15 +3,15 @@
     using System;
     using System.Linq;
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project;
-    using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Project;
+    using FunctionalKanban.Core.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.Task;
+    using FunctionalKanban.Core.Domain.Task.Commands;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
-    using FunctionalKanban.Service;
+    using FunctionalKanban.Core.Service;
     using FunctionalKanban.Core.Shared;
 
     public class CommandHandler

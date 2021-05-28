@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FunctionalKanban.Core.Domain\FunctionalKanban.Domain.csproj" />
+    <ProjectReference Include="..\FunctionalKanban.Core.Domain\FunctionalKanban.Core.Domain.csproj" />
     <ProjectReference Include="..\FunctionalKanban.Infrastructure.Abstraction\FunctionalKanban.Infrastructure.Abstraction.csproj" />
   </ItemGroup>
 

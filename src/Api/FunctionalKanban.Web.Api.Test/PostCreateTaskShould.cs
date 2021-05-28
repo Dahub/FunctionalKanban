@@ -7,10 +7,10 @@ namespace FunctionalKanban.Web.Api.Test
     using System.Threading.Tasks;
     using FluentAssertions;
     using FunctionalKanban.Web.Api.Test.Tools;
-    using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Task.Commands;
-    using FunctionalKanban.Domain.Task.Events;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Task;
+    using FunctionalKanban.Core.Domain.Task.Commands;
+    using FunctionalKanban.Core.Domain.Task.Events;
+    using FunctionalKanban.Core.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 
@@ -149,7 +149,7 @@ namespace FunctionalKanban.Web.Api.Test
 
             var expectedEntityId = Guid.NewGuid();
             var expectedEntityName = Guid.NewGuid().ToString();
-            var expectedStatus = Domain.Task.TaskStatus.Todo;
+            var expectedStatus = Core.Domain.Task.TaskStatus.Todo;
             var expectedRemaningWork = 10u;
 
             _ = await httpClient

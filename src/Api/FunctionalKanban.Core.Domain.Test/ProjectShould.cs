@@ -4,10 +4,10 @@
     using System.Linq;
     using System.Collections.Generic;
     using FluentAssertions;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project;
-    using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Domain.Project.Events;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Project;
+    using FunctionalKanban.Core.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.Project.Events;
     using LaYumba.Functional;
     using Xunit;
 

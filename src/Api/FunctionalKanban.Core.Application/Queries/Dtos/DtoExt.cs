@@ -2,8 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.ViewProjections;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
 

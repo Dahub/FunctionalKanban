@@ -1,7 +1,7 @@
-﻿namespace FunctionalKanban.Domain.Task.Events
+﻿namespace FunctionalKanban.Core.Domain.Task.Events
 {
     using System;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
 
     public sealed record TaskRemaningWorkChanged : Event

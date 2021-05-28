@@ -4,11 +4,11 @@ namespace FunctionalKanban.Web.Api
     using System.Collections.Generic;
     using FunctionalKanban.Application.Commands;
     using FunctionalKanban.Application.Queries;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Domain.Project.Queries;
-    using FunctionalKanban.Domain.Task.Commands;
-    using FunctionalKanban.Domain.Task.Queries;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.Project.Queries;
+    using FunctionalKanban.Core.Domain.Task.Commands;
+    using FunctionalKanban.Core.Domain.Task.Queries;
     using FunctionalKanban.Infrastructure.Implementation;
     using FunctionalKanban.Infrastructure.Abstraction;
     using FunctionalKanban.Infrastructure.SqlServer;

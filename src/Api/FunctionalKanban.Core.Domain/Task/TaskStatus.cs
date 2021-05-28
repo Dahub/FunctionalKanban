@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Domain.Task
+﻿namespace FunctionalKanban.Core.Domain.Task
 {
     public enum TaskStatus
     {

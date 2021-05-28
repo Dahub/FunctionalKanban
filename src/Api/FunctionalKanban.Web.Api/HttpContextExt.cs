@@ -8,7 +8,7 @@
     using FunctionalKanban.Application.Commands;
     using FunctionalKanban.Application.Queries.Dtos;
     using FunctionalKanban.Application.Queries;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;

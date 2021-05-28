@@ -1,7 +1,7 @@
 ﻿namespace FunctionalKanban.Application.Queries.Dtos
 {
-    using FunctionalKanban.Domain.Project;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Project;
+    using FunctionalKanban.Core.Domain.ViewProjections;
 
     public record ProjectDto : Dto
     {

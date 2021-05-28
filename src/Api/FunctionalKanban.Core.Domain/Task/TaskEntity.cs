@@ -1,9 +1,9 @@
-﻿namespace FunctionalKanban.Domain.Task
+﻿namespace FunctionalKanban.Core.Domain.Task
 {
     using System;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Task.Commands;
-    using FunctionalKanban.Domain.Task.Events;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Task.Commands;
+    using FunctionalKanban.Core.Domain.Task.Events;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
 

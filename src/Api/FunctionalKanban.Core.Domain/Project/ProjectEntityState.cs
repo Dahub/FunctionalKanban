@@ -1,11 +1,11 @@
-﻿namespace FunctionalKanban.Domain.Project
+﻿namespace FunctionalKanban.Core.Domain.Project
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Domain.Project.Events;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.Project.Events;
 
     public sealed record ProjectEntityState : State
     {

@@ -1,8 +1,8 @@
 ﻿namespace FunctionalKanban.Infrastructure.Implementation
 {
     using System;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.ViewProjections;
     using LaYumba.Functional;
     using FunctionalKanban.Infrastructure.Abstraction;
     using Unit = System.ValueTuple;

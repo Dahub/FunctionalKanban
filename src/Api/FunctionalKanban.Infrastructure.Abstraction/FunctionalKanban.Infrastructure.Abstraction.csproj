@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FunctionalKanban.Core.Domain\FunctionalKanban.Domain.csproj" />
+    <ProjectReference Include="..\FunctionalKanban.Core.Domain\FunctionalKanban.Core.Domain.csproj" />
   </ItemGroup>
 
 </Project>

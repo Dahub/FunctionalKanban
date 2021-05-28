@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Domain.Task.Events
+﻿namespace FunctionalKanban.Core.Domain.Task.Events
 {
     public sealed record TaskStatusChanged : Common.Event
     {

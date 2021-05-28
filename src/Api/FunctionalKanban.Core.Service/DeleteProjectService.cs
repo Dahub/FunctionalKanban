@@ -1,15 +1,15 @@
-﻿namespace FunctionalKanban.Service
+﻿namespace FunctionalKanban.Core.Service
 {
     using System;
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project;
-    using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Project;
+    using FunctionalKanban.Core.Domain.Task;
+    using FunctionalKanban.Core.Domain.Project.Commands;
     using FunctionalKanban.Core.Shared;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
-    using FunctionalKanban.Service.Common;
+    using FunctionalKanban.Core.Service.Common;
     using System.Linq;
 
     public static class DeleteProjectService

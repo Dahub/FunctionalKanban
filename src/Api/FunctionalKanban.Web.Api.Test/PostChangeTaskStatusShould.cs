@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
     using FluentAssertions;
     using FunctionalKanban.Web.Api.Test.Tools;
-    using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Core.Domain.Task.Commands;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 
@@ -29,7 +29,7 @@
                     new ChangeTaskStatus()
                     {
                         EntityId = entityId,
-                        TaskStatus = Domain.Task.TaskStatus.InProgress
+                        TaskStatus = Core.Domain.Task.TaskStatus.InProgress
                     }); 
 
             httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);

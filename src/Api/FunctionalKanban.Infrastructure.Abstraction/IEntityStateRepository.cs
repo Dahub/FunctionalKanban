@@ -1,7 +1,7 @@
 ﻿namespace FunctionalKanban.Infrastructure.Abstraction
 {
     using System;
-    using FunctionalKanban.Domain.Common;
+    using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
 
     public interface IEntityStateRepository

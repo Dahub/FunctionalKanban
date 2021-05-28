@@ -4,8 +4,8 @@
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
-    using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Domain.Task.Commands;
+    using FunctionalKanban.Core.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.Task.Commands;
     using FunctionalKanban.Infrastructure.InMemory;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.TestHost;

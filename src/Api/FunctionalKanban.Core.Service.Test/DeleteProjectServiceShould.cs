@@ -1,15 +1,16 @@
-﻿namespace FunctionalKanban.Service.Test
+﻿namespace FunctionalKanban.Core.Service.Test
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.Project;
-    using FunctionalKanban.Domain.Project.Commands;
-    using FunctionalKanban.Domain.Project.Events;
-    using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.Task.Events;
+    using FunctionalKanban.Core.Service;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.Project;
+    using FunctionalKanban.Core.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.Project.Events;
+    using FunctionalKanban.Core.Domain.Task;
+    using FunctionalKanban.Core.Domain.Task.Events;
     using LaYumba.Functional;
     using Xunit;
     using static LaYumba.Functional.F;

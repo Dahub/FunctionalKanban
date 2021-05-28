@@ -1,9 +1,9 @@
-﻿namespace FunctionalKanban.Domain.Project.Queries
+﻿namespace FunctionalKanban.Core.Domain.Project.Queries
 {
     using System;
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.Common;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Core.Domain.ViewProjections;
     using LaYumba.Functional;
 
     public record GetProjectByIdQuery : Query

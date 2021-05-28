@@ -1,7 +1,7 @@
 ﻿namespace FunctionalKanban.Application.Commands.Validators
 {
     using System.Collections.Generic;
-    using FunctionalKanban.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.Project.Commands;
     using LaYumba.Functional;
 
     internal class CreateProjectValidator : Validator<CreateProject>

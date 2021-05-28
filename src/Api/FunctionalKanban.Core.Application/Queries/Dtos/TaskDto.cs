@@ -1,8 +1,8 @@
 ﻿namespace FunctionalKanban.Application.Queries.Dtos
 {
     using System;
-    using FunctionalKanban.Domain.Task;
-    using FunctionalKanban.Domain.ViewProjections;
+    using FunctionalKanban.Core.Domain.Task;
+    using FunctionalKanban.Core.Domain.ViewProjections;
 
     public record TaskDto : Dto
     {

@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
     using FluentAssertions;
     using FunctionalKanban.Web.Api.Test.Tools;
-    using FunctionalKanban.Domain.Project.Commands;
+    using FunctionalKanban.Core.Domain.Project.Commands;
     using FunctionalKanban.Infrastructure.InMemory;
     using Xunit;
 
