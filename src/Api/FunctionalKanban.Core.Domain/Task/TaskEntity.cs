@@ -151,6 +151,6 @@
                 this TaskEntityState state, Guid projectId) =>
             state.ProjectId == projectId
                 ? Valid(state)
-                : Invalid("La tâche nest pas associée au projet");
+                : Invalid("La tâche n'est pas associée au projet");
     }
 }
