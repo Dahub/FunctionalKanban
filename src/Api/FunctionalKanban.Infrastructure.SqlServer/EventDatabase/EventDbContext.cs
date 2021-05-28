@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Infrastructure.SqlServer
+﻿namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase
 {
     using System;
     using System.Collections.Generic;
@@ -6,11 +6,11 @@
     using System.Threading.Tasks;
     using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Infrastructure.Abstraction;
-    using FunctionalKanban.Infrastructure.SqlServer.EfEntities;
+    using FunctionalKanban.Infrastructure.SqlServer.EventDatabase.EfEntities;
     using LaYumba.Functional;
     using Microsoft.EntityFrameworkCore;
 
-    internal class EventDbContext : DbContext, IEventDataBase
+    public class EventDbContext : DbContext, IEventDataBase
     {
         public EventDbContext([NotNull] DbContextOptions options) : base(options) { }
 

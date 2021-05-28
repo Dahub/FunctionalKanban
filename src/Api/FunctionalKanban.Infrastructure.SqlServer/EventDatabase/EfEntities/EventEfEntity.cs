@@ -1,8 +1,8 @@
-﻿namespace FunctionalKanban.Infrastructure.SqlServer.EfEntities
+﻿namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase.EfEntities
 {
     using System;
 
-    internal class EventEfEntity
+    public class EventEfEntity
     {
         public EventEfEntity()
         {

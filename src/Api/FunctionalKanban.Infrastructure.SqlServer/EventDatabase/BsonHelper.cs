@@ -1,5 +1,5 @@
 ﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("FunctionalKanban.Infrastructure.SqlServer.Test")]
-namespace FunctionalKanban.Infrastructure.SqlServer
+namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase
 {
     using System.IO;
     using System.Text.Json;

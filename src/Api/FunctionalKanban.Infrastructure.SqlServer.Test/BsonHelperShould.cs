@@ -3,6 +3,7 @@ namespace FunctionalKanban.Infrastructure.SqlServer.Test
     using System;
     using FluentAssertions;
     using FunctionalKanban.Core.Domain.Common;
+    using FunctionalKanban.Infrastructure.SqlServer.EventDatabase;
     using Xunit;
 
     public class BsonHelperShould
