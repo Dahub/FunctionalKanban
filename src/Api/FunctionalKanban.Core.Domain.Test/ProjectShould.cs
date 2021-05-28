@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Domain.Test
+﻿namespace FunctionalKanban.Core.Domain.Test
 {
     using System;
     using System.Linq;

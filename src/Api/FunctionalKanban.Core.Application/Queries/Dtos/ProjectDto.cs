@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Application.Queries.Dtos
+﻿namespace FunctionalKanban.Core.Application.Queries.Dtos
 {
     using FunctionalKanban.Core.Domain.Project;
     using FunctionalKanban.Core.Domain.ViewProjections;

@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Application.Commands.Validators
+﻿namespace FunctionalKanban.Core.Application.Commands.Validators
 {
     using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;

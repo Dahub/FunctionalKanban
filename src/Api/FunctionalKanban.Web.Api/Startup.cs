@@ -2,8 +2,8 @@ namespace FunctionalKanban.Web.Api
 {
     using System;
     using System.Collections.Generic;
-    using FunctionalKanban.Application.Commands;
-    using FunctionalKanban.Application.Queries;
+    using FunctionalKanban.Core.Application.Commands;
+    using FunctionalKanban.Core.Application.Queries;
     using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Core.Domain.Project.Commands;
     using FunctionalKanban.Core.Domain.Project.Queries;

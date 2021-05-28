@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Application.Commands
+﻿namespace FunctionalKanban.Core.Application.Commands
 {
     using System;
     using System.Linq;

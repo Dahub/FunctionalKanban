@@ -5,9 +5,9 @@
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    using FunctionalKanban.Application.Commands;
-    using FunctionalKanban.Application.Queries.Dtos;
-    using FunctionalKanban.Application.Queries;
+    using FunctionalKanban.Core.Application.Commands;
+    using FunctionalKanban.Core.Application.Queries.Dtos;
+    using FunctionalKanban.Core.Application.Queries;
     using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
     using Microsoft.AspNetCore.Http;

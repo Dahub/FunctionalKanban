@@ -1,8 +1,8 @@
-namespace FunctionalKanban.Application.Test
+namespace FunctionalKanban.Core.Application.Test
 {
     using System;
     using FluentAssertions;
-    using FunctionalKanban.Application.Commands;
+    using FunctionalKanban.Core.Application.Commands;
     using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Core.Domain.Project;
     using FunctionalKanban.Core.Domain.Project.Commands;

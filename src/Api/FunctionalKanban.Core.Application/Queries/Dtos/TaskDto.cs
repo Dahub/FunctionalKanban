@@ -1,4 +1,4 @@
-﻿namespace FunctionalKanban.Application.Queries.Dtos
+﻿namespace FunctionalKanban.Core.Application.Queries.Dtos
 {
     using System;
     using FunctionalKanban.Core.Domain.Task;
