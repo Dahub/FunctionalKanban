@@ -1,6 +1,7 @@
 ﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("FunctionalKanban.Infrastructure.SqlServer.Test")]
 namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase
 {
+    using System;
     using System.IO;
     using System.Text.Json;
     using FunctionalKanban.Core.Domain.Common;
@@ -20,6 +21,14 @@ namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase
         public static Option<T> FromBson<T>(byte[] objBytes) where T : notnull, Event
         {
             var result = JsonSerializer.Deserialize<T>(objBytes);
+            return result == null
+                ? None
+                : Some(result);
+        }
+
+        public static Option<Event> FromBson(Type eventType, byte[] objBytes)
+        {
+            var result = JsonSerializer.Deserialize(objBytes, eventType) as Event;
             return result == null
                 ? None
                 : Some(result);

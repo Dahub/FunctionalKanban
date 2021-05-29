@@ -4,7 +4,6 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Core.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -48,12 +47,7 @@
                 ? Exceptional(dbSet.Values.ToList().AsReadOnly().AsEnumerable())
                 : new Exception($"projection de type {type} non prise en charge");
 
-        public Exceptional<Unit> Add(
-            Guid entityId,
-            string entityName,
-            uint entityVersion,
-            string eventName,
-            Event @event) => @event.CheckUnicity(_eventLines).Bind(AddEventToLines);
+        public Exceptional<Unit> Add(Event @event) => @event.CheckUnicity(_eventLines).Bind(AddEventToLines);
 
         public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection =>
             Try(() =>
@@ -75,10 +69,6 @@
             Try(() => _dbSets[typeof(T).Name].TryRemove(viewProjection.Id, out _)
                 ? Unit.Create()
                 : throw new Exception("Erreur lors de la tentative de suppression de la projection")).Run();
-
-        public Task Commit() => Task.CompletedTask;
-
-        public Task Rollback() => Task.CompletedTask;
 
         private readonly Func<(Event, List<EventLine>), Exceptional<Unit>> AddEventToLines = (tuple) =>
             Try(() =>

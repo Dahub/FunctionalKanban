@@ -1,18 +1,14 @@
 ﻿namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase
 {
-    using System;
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Threading.Tasks;
-    using FunctionalKanban.Core.Domain.Common;
-    using FunctionalKanban.Infrastructure.Abstraction;
     using FunctionalKanban.Infrastructure.SqlServer.EventDatabase.EfEntities;
-    using LaYumba.Functional;
     using Microsoft.EntityFrameworkCore;
 
-    public class EventDbContext : DbContext, IEventDataBase
+    public class EventDbContext : DbContext
     {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public EventDbContext([NotNull] DbContextOptions options) : base(options) { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,14 +52,6 @@
                 .IsRequired();
         }
 
-        public DbSet<EventEfEntity>? Events { get; set; }
-
-        public Exceptional<ValueTuple> Add(Guid entityId, string entityName, uint entityVersion, string eventName, Event @event) => throw new NotImplementedException();
-
-        public IEnumerable<Event> EventsByEntityId(Guid entityId) => throw new NotImplementedException();
-
-        public Task Commit() => base.SaveChangesAsync();
-
-        public Task Rollback() => Task.CompletedTask;
+        public DbSet<EventEfEntity> Events { get; set; }
     }
 }

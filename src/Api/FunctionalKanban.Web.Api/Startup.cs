@@ -20,6 +20,8 @@ namespace FunctionalKanban.Web.Api
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Unit = System.ValueTuple;
+    using FunctionalKanban.Infrastructure.SqlServer.EventDatabase;
+    using Microsoft.EntityFrameworkCore;
 
     public class Startup
     {
@@ -29,13 +31,14 @@ namespace FunctionalKanban.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<EventDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("EventDatabaseConnexionString")));
+            //services.AddScoped<IEventDataBase, SqlServerEventDatabase>();
             services.AddScoped(s => GetDatabaseFactory().GetEventDatabase());
             services.AddScoped(s => GetDatabaseFactory().GetViewProjectionDatabase());
             services.AddScoped<IEventStream, EventStream>();
-
             services.AddScoped<IEntityStateRepository, EntityStateRepository>();
             services.AddScoped<IViewProjectionRepository, ViewProjectionRepository>();
-
             services.AddScoped<INotifier, ViewProjectionNotifier>();
             services.AddScoped<IEventBus>(e => new EventBus(
                 streamEvent: StreamEventMethod(services),
@@ -60,8 +63,6 @@ namespace FunctionalKanban.Web.Api
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseMiddleware<EndRequestMiddleware>();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => await context.Response.WriteAsync("Hello world !"));
@@ -79,10 +80,7 @@ namespace FunctionalKanban.Web.Api
             });
         }
 
-        protected virtual IDatabaseFactory GetDatabaseFactory()
-          => new SqlServerEfContextFactory(
-              Configuration.GetConnectionString("EventDatabaseConnexionString"),
-              Configuration.GetConnectionString("ViewProjectionDatabaseConnexionString"));
+        protected virtual IDatabaseFactory GetDatabaseFactory() => new SqlServerEfContextFactory();
 
         protected virtual Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) =>
             (id) => GetService<IEntityStateRepository>(services).GetById(id);

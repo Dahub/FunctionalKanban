@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
     using Unit = System.ValueTuple;
@@ -11,10 +10,6 @@
     {
         IEnumerable<Event> EventsByEntityId(Guid entityId);
 
-        Exceptional<Unit> Add(Guid entityId, string entityName, uint entityVersion, string eventName, Event @event);
-
-        Task Commit();
-
-        Task Rollback();
+        Exceptional<Unit> Add(Event @event);
     }
 }

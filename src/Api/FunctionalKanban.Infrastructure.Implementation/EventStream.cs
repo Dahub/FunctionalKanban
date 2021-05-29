@@ -12,12 +12,6 @@
 
         public EventStream(IEventDataBase database) => _database = database;
 
-        public Exceptional<Unit> Push(Event @event) =>
-            _database.Add(
-                Guid.NewGuid(),
-                @event.EntityName,
-                @event.EntityVersion,
-                @event.EventName,
-                @event);
+        public Exceptional<Unit> Push(Event @event) => _database.Add(@event);
     }
 }
