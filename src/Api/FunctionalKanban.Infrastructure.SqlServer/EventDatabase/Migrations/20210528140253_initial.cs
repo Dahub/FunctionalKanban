@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase.Migrations
+﻿namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

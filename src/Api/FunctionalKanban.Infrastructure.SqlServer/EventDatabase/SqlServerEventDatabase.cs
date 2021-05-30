@@ -23,7 +23,7 @@
 
         private static Exceptional<Unit> AddEventToContext(EventDbContext context, Event @event)
         {
-            context.Add(@event.ToEventEfEntity());
+            context.Add(@event.ToEfEntity());
             context.SaveChanges();
             return Unit.Create();
         }

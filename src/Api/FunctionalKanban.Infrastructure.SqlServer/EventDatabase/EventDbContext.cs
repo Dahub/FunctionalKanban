@@ -62,6 +62,6 @@
                 .HasIndex(e => e.EntityId);
         }
 
-        public DbSet<EventEfEntity> Events { get; set; }
+        internal DbSet<EventEfEntity> Events { get; set; }
     }
 }

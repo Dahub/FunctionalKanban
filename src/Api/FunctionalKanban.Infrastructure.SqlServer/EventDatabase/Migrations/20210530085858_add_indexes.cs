@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase.Migrations
+﻿namespace FunctionalKanban.Infrastructure.SqlServer.EventDatabase.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     public partial class add_indexes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -11,7 +11,7 @@
 
     internal static class SqlServerEventDatabaseExt
     {
-        public static EventEfEntity ToEventEfEntity<T>(this T @event) where T : notnull, Event=>
+        public static EventEfEntity ToEfEntity<T>(this T @event) where T : notnull, Event=>
             new()
             {
                 EntityId = @event.EntityId,

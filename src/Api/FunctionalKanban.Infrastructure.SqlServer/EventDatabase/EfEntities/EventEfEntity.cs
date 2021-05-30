@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class EventEfEntity
+    internal class EventEfEntity
     {
         public EventEfEntity()
         {
