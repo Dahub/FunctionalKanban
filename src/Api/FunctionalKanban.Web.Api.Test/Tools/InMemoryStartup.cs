@@ -3,6 +3,7 @@
     using FunctionalKanban.Infrastructure.Abstraction;
     using FunctionalKanban.Infrastructure.InMemory;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
 
     internal class InMemoryStartup : Startup, ITestStartup
     {
@@ -12,7 +13,13 @@
 
         public InMemoryStartup(IConfiguration configuration) : base(configuration) { }
 
-        protected override IDatabaseFactory GetDatabaseFactory() => 
+        protected override void ConfigureDatabases(IServiceCollection services)
+        {
+            services.AddScoped(_ => GetDatabaseFactory().GetEventDatabase());
+            services.AddScoped(_ => GetDatabaseFactory().GetViewProjectionDatabase());
+        }
+
+        private IDatabaseFactory GetDatabaseFactory() => 
             new InMemoryDatabaseFactory(EventDataBase, ViewProjectionDataBase);
     }
 }

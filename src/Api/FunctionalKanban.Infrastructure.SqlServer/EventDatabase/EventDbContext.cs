@@ -50,6 +50,16 @@
                 .HasColumnName("Version")
                 .HasColumnType("integer")
                 .IsRequired();
+            modelBuilder.Entity<EventEfEntity>()
+                .HasIndex(e => new
+                {
+                    e.EntityId,
+                    e.EntityName,
+                    e.Version
+                })
+                .IsUnique(true);
+            modelBuilder.Entity<EventEfEntity>()
+                .HasIndex(e => e.EntityId);
         }
 
         public DbSet<EventEfEntity> Events { get; set; }

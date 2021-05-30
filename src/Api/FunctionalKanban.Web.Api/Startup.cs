@@ -9,19 +9,19 @@ namespace FunctionalKanban.Web.Api
     using FunctionalKanban.Core.Domain.Project.Queries;
     using FunctionalKanban.Core.Domain.Task.Commands;
     using FunctionalKanban.Core.Domain.Task.Queries;
-    using FunctionalKanban.Infrastructure.Implementation;
     using FunctionalKanban.Infrastructure.Abstraction;
-    using FunctionalKanban.Infrastructure.SqlServer;
+    using FunctionalKanban.Infrastructure.Implementation;
+    using FunctionalKanban.Infrastructure.InMemory;
+    using FunctionalKanban.Infrastructure.SqlServer.EventDatabase;
     using LaYumba.Functional;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Unit = System.ValueTuple;
-    using FunctionalKanban.Infrastructure.SqlServer.EventDatabase;
-    using Microsoft.EntityFrameworkCore;
 
     public class Startup
     {
@@ -31,11 +31,8 @@ namespace FunctionalKanban.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<EventDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("EventDatabaseConnexionString")));
-            //services.AddScoped<IEventDataBase, SqlServerEventDatabase>();
-            services.AddScoped(s => GetDatabaseFactory().GetEventDatabase());
-            services.AddScoped(s => GetDatabaseFactory().GetViewProjectionDatabase());
+            ConfigureDatabases(services);
+
             services.AddScoped<IEventStream, EventStream>();
             services.AddScoped<IEntityStateRepository, EntityStateRepository>();
             services.AddScoped<IViewProjectionRepository, ViewProjectionRepository>();
@@ -52,6 +49,14 @@ namespace FunctionalKanban.Web.Api
                 findProjections: GetFindProjectionsMethod(services)));
 
             services.AddRouting();
+        }
+
+        protected virtual void ConfigureDatabases(IServiceCollection services)
+        {
+            services.AddDbContext<EventDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("EventDatabaseConnexionString")));
+            services.AddScoped<IEventDataBase, SqlServerEventDatabase>();
+            services.AddScoped<IViewProjectionDataBase, InMemoryDatabase>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -79,8 +84,6 @@ namespace FunctionalKanban.Web.Api
                 endpoints.MapPost("/project/delete", async context => await context.ExecuteCommand<DeleteProject>());
             });
         }
-
-        protected virtual IDatabaseFactory GetDatabaseFactory() => new SqlServerEfContextFactory();
 
         protected virtual Func<Guid, Exceptional<Option<State>>> GetEntityMethod(IServiceCollection services) =>
             (id) => GetService<IEntityStateRepository>(services).GetById(id);
