@@ -37,7 +37,7 @@
                     Event @event) where T : ViewProjection, new() =>
             GetProjection<T>(repository, projectionId).
             Bind((p) => p.With(@event).Match(
-                Some: (value)   => repository.Upsert(value),
+                Some: (value)   => p != value ? repository.Upsert(value) : Unit.Create(),
                 None: ()        => repository.Delete(p)));
 
         private static Exceptional<T> GetProjection<T>(

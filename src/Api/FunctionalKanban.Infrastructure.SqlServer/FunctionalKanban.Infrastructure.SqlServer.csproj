@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <Folder Include="EventDatabase\Migrations\" />
+    <Folder Include="ViewProjectionDatabase\Migrations\" />
   </ItemGroup>
 
 </Project>

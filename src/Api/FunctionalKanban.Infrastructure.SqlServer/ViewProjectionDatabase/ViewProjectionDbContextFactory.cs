@@ -5,9 +5,9 @@
     using Microsoft.EntityFrameworkCore.Design;
     using Microsoft.Extensions.Configuration;
 
-    public class ViewProjectionDatabaseDbContextFactory : IDesignTimeDbContextFactory<ViewProjectionDatabaseDbContext>
+    public class ViewProjectionDbContextFactory : IDesignTimeDbContextFactory<ViewProjectionDbContext>
     {
-        public ViewProjectionDatabaseDbContext CreateDbContext(string[] args)
+        public ViewProjectionDbContext CreateDbContext(string[] args)
         {
             var configuration = new ConfigurationBuilder()
                  .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "ViewProjectionDatabase"))
@@ -15,15 +15,15 @@
                  .AddEnvironmentVariables()
                  .Build();
 
-            var builder = new DbContextOptionsBuilder();
+            var builder = new DbContextOptionsBuilder<ViewProjectionDbContext>();
 
             var connectionString = configuration
                         .GetConnectionString("ViewProjectionDatabaseConnexionString");
 
             builder.UseSqlServer(connectionString,
-                        x => x.MigrationsAssembly(typeof(ViewProjectionDatabaseDbContextFactory).Assembly.FullName));
+                        x => x.MigrationsAssembly(typeof(ViewProjectionDbContextFactory).Assembly.FullName));
 
-            return new ViewProjectionDatabaseDbContext(builder.Options);
+            return new ViewProjectionDbContext(builder.Options);
         }
     }
 }

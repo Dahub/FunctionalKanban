@@ -26,6 +26,16 @@
                 None: () => true,
                 Some: (v) => valueToCompare < v);
 
+        public static bool MoreOrEqualThan(this int valueToCompare, Option<uint> value) =>
+           value.Match(
+               None: () => true,
+               Some: (v) => valueToCompare >= v);
+
+        public static bool StrictlyLessThan(this int valueToCompare, Option<uint> value) =>
+            value.Match(
+                None: () => true,
+                Some: (v) => valueToCompare < v);
+
         public static bool EqualTo<TValue>(this TValue valueToCompare, Option<TValue> value) where TValue : notnull =>
             value.Match(
                 None: () => true,

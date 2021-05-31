@@ -8,11 +8,9 @@
     {
         public string? Name { get; init; }
 
-        public uint RemaningWork { get; init; }
+        public int RemaningWork { get; init; }
 
         public TaskStatus Status { get; init; }
-
-        public bool IsDeleted { get; init; }
 
         public Guid? ProjectId { get; init; }
 

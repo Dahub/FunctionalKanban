@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.Migrations
 {
-    [DbContext(typeof(ViewProjectionDatabaseDbContext))]
-    [Migration("20210530190138_initial")]
-    partial class initial
+    [DbContext(typeof(ViewProjectionDbContext))]
+    [Migration("20210530202354_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,7 +22,7 @@ namespace FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.Migra
                 .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.EfEntities.DeletedTask", b =>
+            modelBuilder.Entity("FunctionalKanban.Core.Domain.ViewProjections.DeletedTaskViewProjection", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -38,7 +38,7 @@ namespace FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.Migra
                     b.ToTable("DeletedTasks");
                 });
 
-            modelBuilder.Entity("FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.EfEntities.Project", b =>
+            modelBuilder.Entity("FunctionalKanban.Core.Domain.ViewProjections.ProjectViewProjection", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -58,7 +58,7 @@ namespace FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.Migra
                         .HasColumnType("integer")
                         .HasColumnName("Status");
 
-                    b.Property<int>("TotalRemaningWork")
+                    b.Property<long>("TotalRemaningWork")
                         .HasColumnType("integer")
                         .HasColumnName("TotalRemaningWork");
 
@@ -67,23 +67,23 @@ namespace FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.Migra
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.EfEntities.Task", b =>
+            modelBuilder.Entity("FunctionalKanban.Core.Domain.ViewProjections.TaskViewProjection", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueIdentifier")
                         .HasColumnName("Id");
 
+                    b.Property<Guid?>("EfProjectId")
+                        .HasColumnType("uniqueIdentifier")
+                        .HasColumnName("ProjectId");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(512)")
                         .HasColumnName("Name");
 
-                    b.Property<Guid?>("ProjectId")
-                        .HasColumnType("uniqueIdentifier")
-                        .HasColumnName("ProjectId");
-
-                    b.Property<int>("RemaningWork")
+                    b.Property<long>("RemaningWork")
                         .HasColumnType("integer")
                         .HasColumnName("RemaningWork");
 

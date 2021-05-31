@@ -2,92 +2,93 @@
 {
     using System.Diagnostics.CodeAnalysis;
     using FunctionalKanban.Core.Domain.ViewProjections;
-    using FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.EfEntities;
     using Microsoft.EntityFrameworkCore;
 
-    public class ViewProjectionDatabaseDbContext : DbContext
+    public class ViewProjectionDbContext : DbContext
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public ViewProjectionDatabaseDbContext([NotNull] DbContextOptions options) : base(options) { }
+        public ViewProjectionDbContext([NotNull] DbContextOptions<ViewProjectionDbContext> options) : base(options) { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("dbo");
 
-            modelBuilder.Entity<DeletedTask>().ToTable("DeletedTasks");
-            modelBuilder.Entity<DeletedTask>().HasKey(r => r.Id);
-            modelBuilder.Entity<DeletedTask>()
+            modelBuilder.Entity<DeletedTaskViewProjection>().ToTable("DeletedTasks");
+            modelBuilder.Entity<DeletedTaskViewProjection>().HasKey(r => r.Id);
+            modelBuilder.Entity<DeletedTaskViewProjection>()
                 .Property(r => r.Id)
                 .HasColumnName("Id")
                 .HasColumnType("uniqueIdentifier")
                 .IsRequired();
-            modelBuilder.Entity<DeletedTask>()
+            modelBuilder.Entity<DeletedTaskViewProjection>()
                 .Property(r => r.DeletedAt)
                 .HasColumnName("DeletedAt")
                 .HasColumnType("datetime")
                 .IsRequired();
 
-            modelBuilder.Entity<Project>().ToTable("Projects");
-            modelBuilder.Entity<Project>().HasKey(r => r.Id);
-            modelBuilder.Entity<Project>()
+            modelBuilder.Entity<ProjectViewProjection>().ToTable("Projects");
+            modelBuilder.Entity<ProjectViewProjection>().HasKey(r => r.Id);
+            modelBuilder.Entity<ProjectViewProjection>()
                 .Property(r => r.Id)
                 .HasColumnName("Id")
                 .HasColumnType("uniqueIdentifier")
                 .IsRequired();
-            modelBuilder.Entity<Project>()
+            modelBuilder.Entity<ProjectViewProjection>()
                 .Property(r => r.IsDeleted)
                 .HasColumnName("IsDeleted")
                 .HasColumnType("bit")
                 .IsRequired();
-            modelBuilder.Entity<Project>()
+            modelBuilder.Entity<ProjectViewProjection>()
                 .Property(r => r.Name)
                 .HasColumnName("Name")
                 .HasColumnType("nvarchar(512)")
                 .IsRequired();
-            modelBuilder.Entity<Project>()
+            modelBuilder.Entity<ProjectViewProjection>()
                 .Property(r => r.Status)
                 .HasColumnName("Status")
                 .HasColumnType("integer")
                 .IsRequired();
-            modelBuilder.Entity<Project>()
+            modelBuilder.Entity<ProjectViewProjection>()
                 .Property(r => r.TotalRemaningWork)
                 .HasColumnName("TotalRemaningWork")
                 .HasColumnType("integer")
                 .IsRequired();
 
-            modelBuilder.Entity<Task>().ToTable("Tasks");
-            modelBuilder.Entity<Task>().HasKey(r => r.Id);
-            modelBuilder.Entity<Task>()
+            modelBuilder.Entity<TaskViewProjection>().ToTable("Tasks");
+            modelBuilder.Entity<TaskViewProjection>().HasKey(r => r.Id);
+            modelBuilder.Entity<TaskViewProjection>()
                 .Property(r => r.Id)
                 .HasColumnName("Id")
                 .HasColumnType("uniqueIdentifier")
                 .IsRequired();
-            modelBuilder.Entity<Task>()
+            modelBuilder.Entity<TaskViewProjection>()
                 .Property(r => r.Name)
                 .HasColumnName("Name")
                 .HasColumnType("nvarchar(512)")
                 .IsRequired();
-            modelBuilder.Entity<Task>()
-                .Property(r => r.ProjectId)
+            modelBuilder.Entity<TaskViewProjection>()
+                .Property(r => r.EfProjectId)
                 .HasColumnName("ProjectId")
                 .HasColumnType("uniqueIdentifier");
-            modelBuilder.Entity<Task>()
+            modelBuilder.Entity<TaskViewProjection>()
                 .Property(r => r.RemaningWork)
                 .HasColumnName("RemaningWork")
                 .HasColumnType("integer")
                 .IsRequired();
-            modelBuilder.Entity<Task>()
+            modelBuilder.Entity<TaskViewProjection>()
                .Property(r => r.Status)
                .HasColumnName("Status")
                .HasColumnType("integer")
                .IsRequired();
+            modelBuilder.Entity<TaskViewProjection>()
+                .Ignore(r => r.ProjectId);
         }
 
-        internal DbSet<DeletedTask> DeletedTasks { get; set; }
+        internal DbSet<DeletedTaskViewProjection> DeletedTasks { get; set; }
 
-        internal DbSet<Project> Projects { get; set; }
+        internal DbSet<ProjectViewProjection> Projects { get; set; }
 
-        internal DbSet<Task> Tasks { get; set; }
+        internal DbSet<TaskViewProjection> Tasks { get; set; }
     }
 }

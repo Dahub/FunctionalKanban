@@ -13,6 +13,7 @@ namespace FunctionalKanban.Web.Api
     using FunctionalKanban.Infrastructure.Implementation;
     using FunctionalKanban.Infrastructure.InMemory;
     using FunctionalKanban.Infrastructure.SqlServer.EventDatabase;
+    using FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase;
     using LaYumba.Functional;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -55,8 +56,10 @@ namespace FunctionalKanban.Web.Api
         {
             services.AddDbContext<EventDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("EventDatabaseConnexionString")));
+            services.AddDbContext<ViewProjectionDbContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("ViewProjectionDatabaseConnexionString")));
             services.AddScoped<IEventDataBase, SqlServerEventDatabase>();
-            services.AddScoped<IViewProjectionDataBase, InMemoryDatabase>();
+            services.AddScoped<IViewProjectionDataBase, SqlServerViewProjectionDatabase>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

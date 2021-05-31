@@ -5,7 +5,7 @@
     using Microsoft.EntityFrameworkCore.Design;
     using Microsoft.Extensions.Configuration;
 
-    public class EventDatabaseDbContextFactory : IDesignTimeDbContextFactory<EventDbContext>
+    public class EventDbContextFactory : IDesignTimeDbContextFactory<EventDbContext>
     {
         public EventDbContext CreateDbContext(string[] args)
         {
@@ -15,13 +15,13 @@
                  .AddEnvironmentVariables()
                  .Build();
 
-            var builder = new DbContextOptionsBuilder();
+            var builder = new DbContextOptionsBuilder<EventDbContext>();
 
             var connectionString = configuration
                         .GetConnectionString("EventDatabaseConnexionString");
 
             builder.UseSqlServer(connectionString,
-                        x => x.MigrationsAssembly(typeof(EventDatabaseDbContextFactory).Assembly.FullName));
+                        x => x.MigrationsAssembly(typeof(EventDbContextFactory).Assembly.FullName));
 
             return new EventDbContext(builder.Options);
         }

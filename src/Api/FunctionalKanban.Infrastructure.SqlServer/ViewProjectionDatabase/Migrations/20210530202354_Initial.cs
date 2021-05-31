@@ -1,9 +1,9 @@
-﻿namespace FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.Migrations
-{
-    using System;
-    using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
-    public partial class initial : Migration
+namespace FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase.Migrations
+{
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -29,10 +29,10 @@
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueIdentifier", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(512)", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    TotalRemaningWork = table.Column<int>(type: "integer", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    TotalRemaningWork = table.Column<long>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,9 +46,9 @@
                 {
                     Id = table.Column<Guid>(type: "uniqueIdentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(512)", nullable: false),
+                    RemaningWork = table.Column<long>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    ProjectId = table.Column<Guid>(type: "uniqueIdentifier", nullable: true),
-                    RemaningWork = table.Column<int>(type: "integer", nullable: false)
+                    ProjectId = table.Column<Guid>(type: "uniqueIdentifier", nullable: true)
                 },
                 constraints: table =>
                 {
