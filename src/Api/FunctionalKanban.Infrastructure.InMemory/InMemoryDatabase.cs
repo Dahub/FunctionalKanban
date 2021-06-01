@@ -42,9 +42,9 @@
                 ? Exceptional(dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsEnumerable())
                 : new Exception($"projection de type {typeof(T).Name} non prise en charge");
 
-        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type) =>
+        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type, Func<ViewProjection, bool> predicate) =>
             _dbSets[type.Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
-                ? Exceptional(dbSet.Values.ToList().AsReadOnly().AsEnumerable())
+                ? Exceptional(dbSet.Values.Where(predicate).ToList().AsReadOnly().AsEnumerable())
                 : new Exception($"projection de type {type} non prise en charge");
 
         public Exceptional<Unit> Add(Event @event) => @event.CheckUnicity(_eventLines).Bind(AddEventToLines);

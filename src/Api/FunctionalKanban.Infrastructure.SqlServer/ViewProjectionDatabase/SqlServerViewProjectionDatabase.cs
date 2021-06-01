@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Core.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -28,8 +29,19 @@
         public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection =>
             Try(() => _context.Set<T>().AsEnumerable()).Run();
 
-        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type) =>
-            Try(() => _context.Set<TaskViewProjection>().Select(t => (ViewProjection)t).AsEnumerable()).Run();
+        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type, Func<ViewProjection, bool> predicate)
+        {
+            Expression<Func<T, bool>> FuncToExpression<T>(Func<T, bool> f)
+            {
+                return x => f(x);
+            }
+
+            Func<TaskViewProjection, bool> pr = (p) => p.Name.Equals("plop");
+            var tt = FuncToExpression(pr);
+          
+
+            return Try(() => _context.Set<TaskViewProjection>().Where(tt).ToList().Select(e => e as ViewProjection)).Run();
+        }
 
         public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection =>
             Try(() =>

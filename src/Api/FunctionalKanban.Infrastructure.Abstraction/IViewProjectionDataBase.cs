@@ -10,7 +10,7 @@
     {
         Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection;
 
-        Exceptional<IEnumerable<ViewProjection>> Projections(Type type);
+        Exceptional<IEnumerable<ViewProjection>> Projections(Type type, Func<ViewProjection, bool> predicate);
 
         Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection;
 
