@@ -7,11 +7,11 @@
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
 
-    public abstract record Query
+    public abstract record Query<T> where T : ViewProjection
     {
-        public abstract Func<ViewProjection, bool> BuildPredicate();
+        public abstract Func<T, bool> BuildPredicate();
 
-        public abstract Exceptional<Query> WithParameters(IDictionary<string, string> parameters);
+        public abstract Exceptional<Query<T>> WithParameters(IDictionary<string, string> parameters);
     }
 
     internal static class QueryExt

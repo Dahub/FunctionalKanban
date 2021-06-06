@@ -34,17 +34,17 @@
 
         public IEnumerable<T> GetProjections<T>() where T : ViewProjection =>
             _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
-                ? dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsEnumerable()
+                ? dbSet.Values.Select(value => (T)value).ToList().AsReadOnly()
                 : Enumerable.Empty<T>();
 
-        public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection =>
+        public Exceptional<IQueryable<T>> Projections<T>() where T : ViewProjection =>
             _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
-                ? Exceptional(dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsEnumerable())
+                ? Exceptional(dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsQueryable())
                 : new Exception($"projection de type {typeof(T).Name} non prise en charge");
 
-        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type, Func<ViewProjection, bool> predicate) =>
+        public Exceptional<IQueryable<ViewProjection>> Projections(Type type, Func<ViewProjection, bool> predicate) =>
             _dbSets[type.Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
-                ? Exceptional(dbSet.Values.Where(predicate).ToList().AsReadOnly().AsEnumerable())
+                ? Exceptional(dbSet.Values.Where(predicate).ToList().AsReadOnly().AsQueryable())
                 : new Exception($"projection de type {type} non prise en charge");
 
         public Exceptional<Unit> Add(Event @event) => @event.CheckUnicity(_eventLines).Bind(AddEventToLines);

@@ -6,7 +6,7 @@
     using FunctionalKanban.Core.Domain.ViewProjections;
     using LaYumba.Functional;
 
-    public record GetTaskQuery : Query
+    public record GetTaskQuery : Query<TaskViewProjection>
     {
         public Option<uint> MinRemaningWork { get; private set; }
 
@@ -20,9 +20,8 @@
 
         public GetTaskQuery WithTaskStatus(TaskStatus taskStatus) => this with { TaskStatus = taskStatus };
 
-        public override Func<ViewProjection, bool> BuildPredicate() => (viewProjection) =>
-            viewProjection is TaskViewProjection p
-            && p.RemaningWork.MoreOrEqualThan(MinRemaningWork)
+        public override Func<TaskViewProjection, bool> BuildPredicate() => (viewProjection) =>
+            p.RemaningWork.MoreOrEqualThan(MinRemaningWork)
             && p.RemaningWork.StrictlyLessThan(MaxRemaningWork)
             && p.Status.EqualTo(TaskStatus)
             && p.Status.DifferentFrom(Task.TaskStatus.Archived);

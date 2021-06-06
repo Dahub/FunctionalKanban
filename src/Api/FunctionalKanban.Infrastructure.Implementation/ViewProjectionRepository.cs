@@ -18,7 +18,7 @@
         public Exceptional<IEnumerable<ViewProjection>> Get(
                 Type projectionType,
                 Func<ViewProjection, bool> predicate) =>
-            _dataBase.Projections(projectionType, predicate); //.Bind(ps => GetByPredicate(predicate, ps));
+            _dataBase.Projections(projectionType, predicate).Map(e => e.AsEnumerable());
 
         public Exceptional<Option<T>> GetById<T>(Guid id) where T : ViewProjection =>
             Try(() => 

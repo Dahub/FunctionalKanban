@@ -26,10 +26,10 @@
                 return Unit.Create();
             }).Run();
 
-        public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection =>
-            Try(() => _context.Set<T>().AsEnumerable()).Run();
+        public Exceptional<IQueryable<T>> Projections<T>() where T : ViewProjection =>
+            Try(() => _context.Set<T>().AsQueryable()).Run();
 
-        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type, Func<ViewProjection, bool> predicate)
+        public Exceptional<IQueryable<ViewProjection>> Projections(Type type, Func<ViewProjection, bool> predicate)
         {
             Expression<Func<T, bool>> FuncToExpression<T>(Func<T, bool> f)
             {
@@ -37,10 +37,10 @@
             }
 
             Func<TaskViewProjection, bool> pr = (p) => p.Name.Equals("plop");
-            var tt = FuncToExpression(pr);
+            var tt = FuncToExpression(predicate);
           
 
-            return Try(() => _context.Set<TaskViewProjection>().Where(tt).ToList().Select(e => e as ViewProjection)).Run();
+            return Try(() => _context.Set<TaskViewProjection>().Where(tt).ToList().Select(e => e as ViewProjection).AsQueryable()).Run();
         }
 
         public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection =>
