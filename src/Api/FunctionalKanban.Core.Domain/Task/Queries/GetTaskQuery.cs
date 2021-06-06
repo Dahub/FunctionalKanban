@@ -2,11 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
     using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Core.Domain.ViewProjections;
     using LaYumba.Functional;
 
-    public record GetTaskQuery : Query<TaskViewProjection>
+    public record GetTaskQuery : Query
     {
         public Option<uint> MinRemaningWork { get; private set; }
 
@@ -20,11 +21,11 @@
 
         public GetTaskQuery WithTaskStatus(TaskStatus taskStatus) => this with { TaskStatus = taskStatus };
 
-        public override Func<TaskViewProjection, bool> BuildPredicate() => (viewProjection) =>
-            p.RemaningWork.MoreOrEqualThan(MinRemaningWork)
-            && p.RemaningWork.StrictlyLessThan(MaxRemaningWork)
-            && p.Status.EqualTo(TaskStatus)
-            && p.Status.DifferentFrom(Task.TaskStatus.Archived);
+        public override Expression<Func<ViewProjection, bool>> BuildPredicate() => (p) =>            
+            ((TaskViewProjection)p).RemaningWork.MoreOrEqualThan(MinRemaningWork)
+            && ((TaskViewProjection)p).RemaningWork.StrictlyLessThan(MaxRemaningWork)
+            && ((TaskViewProjection)p).Status.EqualTo(TaskStatus)
+            && ((TaskViewProjection)p).Status.DifferentFrom(Task.TaskStatus.Archived);
 
         public override Exceptional<Query> WithParameters(IDictionary<string, string> parameters) => this.
             WithParameterValue<GetTaskQuery, uint>(parameters, "minRemaningWork", WithMinRemaningWork).Bind(q => q.

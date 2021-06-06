@@ -68,7 +68,7 @@
                     });
 
             dataBase.GetProjections<TaskViewProjection>().
-                Single(v => v.Id.Equals(entityId)).RemaningWork.Should().Be(expectedRemaningWork);
+                Single(v => v.Id.Equals(entityId)).RemaningWork.Should().Be((int)expectedRemaningWork);
         }
     }
 }

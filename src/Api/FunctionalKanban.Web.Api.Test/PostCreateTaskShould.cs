@@ -170,7 +170,7 @@ namespace FunctionalKanban.Web.Api.Test
 
             taskViewProjection.Name.Should().Be(expectedEntityName);
             taskViewProjection.Status.Should().Be(expectedStatus);
-            taskViewProjection.RemaningWork.Should().Be(expectedRemaningWork);
+            taskViewProjection.RemaningWork.Should().Be((int)expectedRemaningWork);
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
     using FunctionalKanban.Core.Domain.Common;
     using LaYumba.Functional;
     using Unit = System.ValueTuple;
@@ -14,6 +15,6 @@
 
         Exceptional<Unit> Delete<T>(T viewProjection) where T : ViewProjection;
 
-        Exceptional<IEnumerable<ViewProjection>> Get(Type projectionType, Func<ViewProjection, bool> predicate);
+        Exceptional<IEnumerable<ViewProjection>> Get(Type projectionType, Expression<Func<ViewProjection, bool>> predicate);
     }
 }

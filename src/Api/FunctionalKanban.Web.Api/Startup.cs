@@ -2,6 +2,7 @@ namespace FunctionalKanban.Web.Api
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
     using FunctionalKanban.Core.Application.Commands;
     using FunctionalKanban.Core.Application.Queries;
     using FunctionalKanban.Core.Domain.Common;
@@ -100,7 +101,7 @@ namespace FunctionalKanban.Web.Api
         protected virtual Func<Event, Exceptional<Unit>> StreamEventMethod(IServiceCollection services) =>
             (evt) => GetService<IEventStream>(services).Push(evt);
 
-        protected virtual Func<Type, Func<ViewProjection, bool>, Exceptional<IEnumerable<ViewProjection>>> GetFindProjectionsMethod(IServiceCollection services) =>
+        protected virtual Func<Type, Expression<Func<ViewProjection, bool>>, Exceptional<IEnumerable<ViewProjection>>> GetFindProjectionsMethod(IServiceCollection services) =>
              GetService<IViewProjectionRepository>(services).Get;
 
         private static T GetService<T>(IServiceCollection services) where T : notnull => services.BuildServiceProvider().GetRequiredService<T>();

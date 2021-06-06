@@ -9,7 +9,7 @@
     using FunctionalKanban.Core.Domain.ViewProjections;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
-    using Predicate = System.Func<Domain.Common.ViewProjection, bool>;
+    using Predicate = System.Linq.Expressions.Expression<System.Func<Domain.Common.ViewProjection, bool>>;
     using ExceptionalViewProjections = LaYumba.Functional.Exceptional<System.Collections.Generic.IEnumerable<Domain.Common.ViewProjection>>;
     using ExceptionalDtos = LaYumba.Functional.Exceptional<System.Collections.Generic.IEnumerable<Dtos.Dto>>;
 

@@ -4,6 +4,7 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Core.Domain.ViewProjections;
     using FunctionalKanban.Infrastructure.Abstraction;
@@ -34,17 +35,17 @@
 
         public IEnumerable<T> GetProjections<T>() where T : ViewProjection =>
             _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
-                ? dbSet.Values.Select(value => (T)value).ToList().AsReadOnly()
+                ? dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsEnumerable()
                 : Enumerable.Empty<T>();
 
-        public Exceptional<IQueryable<T>> Projections<T>() where T : ViewProjection =>
+        public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection =>
             _dbSets[typeof(T).Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
-                ? Exceptional(dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsQueryable())
+                ? Exceptional(dbSet.Values.Select(value => (T)value).ToList().AsReadOnly().AsEnumerable())
                 : new Exception($"projection de type {typeof(T).Name} non prise en charge");
 
-        public Exceptional<IQueryable<ViewProjection>> Projections(Type type, Func<ViewProjection, bool> predicate) =>
+        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type, Expression<Func<ViewProjection, bool>> predicate) =>
             _dbSets[type.Name] is ConcurrentDictionary<Guid, ViewProjection> dbSet
-                ? Exceptional(dbSet.Values.Where(predicate).ToList().AsReadOnly().AsQueryable())
+                ? Exceptional(dbSet.Values.Where(predicate.Compile()).ToList().AsReadOnly().AsEnumerable())
                 : new Exception($"projection de type {type} non prise en charge");
 
         public Exceptional<Unit> Add(Event @event) => @event.CheckUnicity(_eventLines).Bind(AddEventToLines);

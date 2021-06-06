@@ -8,6 +8,7 @@
     using FunctionalKanban.Infrastructure.Abstraction;
     using static LaYumba.Functional.F;
     using Unit = System.ValueTuple;
+    using System.Linq.Expressions;
 
     public class ViewProjectionRepository : IViewProjectionRepository
     {
@@ -17,7 +18,7 @@
 
         public Exceptional<IEnumerable<ViewProjection>> Get(
                 Type projectionType,
-                Func<ViewProjection, bool> predicate) =>
+                Expression<Func<ViewProjection, bool>> predicate) =>
             _dataBase.Projections(projectionType, predicate).Map(e => e.AsEnumerable());
 
         public Exceptional<Option<T>> GetById<T>(Guid id) where T : ViewProjection =>

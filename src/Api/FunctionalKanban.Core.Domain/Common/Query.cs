@@ -3,15 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Linq.Expressions;
     using FunctionalKanban.Core.Shared;
     using LaYumba.Functional;
     using static LaYumba.Functional.F;
 
-    public abstract record Query<T> where T : ViewProjection
+    public abstract record Query
     {
-        public abstract Func<T, bool> BuildPredicate();
+        public abstract Expression<Func<ViewProjection, bool>> BuildPredicate();
 
-        public abstract Exceptional<Query<T>> WithParameters(IDictionary<string, string> parameters);
+        public abstract Exceptional<Query> WithParameters(IDictionary<string, string> parameters);
     }
 
     internal static class QueryExt

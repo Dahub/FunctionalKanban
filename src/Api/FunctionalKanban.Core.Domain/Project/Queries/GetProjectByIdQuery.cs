@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
     using FunctionalKanban.Core.Domain.Common;
     using FunctionalKanban.Core.Domain.ViewProjections;
     using LaYumba.Functional;
@@ -12,10 +13,9 @@
 
         public GetProjectByIdQuery WithId(Guid id) => this with { Id = id };
 
-        public override Func<ViewProjection, bool> BuildPredicate() => (viewProjection) =>
-            viewProjection is ProjectViewProjection p
-            && p.Id.Equals(Id)
-            && p.IsDeleted.EqualTo(false);
+        public override Expression<Func<ViewProjection, bool>> BuildPredicate() => (p) =>
+            p.Id.Equals(Id)
+            && ((ProjectViewProjection)p).IsDeleted.EqualTo(false);
 
         public override Exceptional<Query> WithParameters(IDictionary<string, string> parameters) => this.
             WithParameterValue<GetProjectByIdQuery, Guid>(parameters, "id", WithId).
