@@ -11,11 +11,11 @@
     {
         protected override Expression<Func<ViewProjection, bool>> Predicate { get; init; } = (p) => p is TaskViewProjection;
 
-        public GetTaskQuery WithMinRemaningWork(uint minRemaningWork) => this with { Predicate = PredicateBuilder.And(Predicate, (p) => ((TaskViewProjection)p).RemaningWork >= minRemaningWork) };
+        public GetTaskQuery WithMinRemaningWork(uint minRemaningWork) => this with { Predicate = Predicate.And((p) => ((TaskViewProjection)p).RemaningWork >= minRemaningWork) };
 
-        public GetTaskQuery WithMaxRemaningWork(uint maxRemaningWork) => this with { Predicate = PredicateBuilder.And(Predicate, (p) => ((TaskViewProjection)p).RemaningWork < maxRemaningWork) };
+        public GetTaskQuery WithMaxRemaningWork(uint maxRemaningWork) => this with { Predicate = Predicate.And((p) => ((TaskViewProjection)p).RemaningWork < maxRemaningWork) };
 
-        public GetTaskQuery WithTaskStatus(TaskStatus taskStatus) => this with { Predicate = PredicateBuilder.And(Predicate, (p) => ((TaskViewProjection)p).Status == taskStatus) };
+        public GetTaskQuery WithTaskStatus(TaskStatus taskStatus) => this with { Predicate = Predicate.And((p) => ((TaskViewProjection)p).Status == taskStatus) };
 
         public override Exceptional<Query> WithParameters(IDictionary<string, string> parameters) => this.
             WithParameterValue<GetTaskQuery, uint>(parameters, "minRemaningWork", WithMinRemaningWork).Bind(q => q.

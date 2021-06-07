@@ -11,7 +11,7 @@
     {
         protected override Expression<Func<ViewProjection, bool>> Predicate { get; init; } = (p) => p is TaskViewProjection;
 
-        public GetTaskByIdQuery WithId(Guid id) => this with { Predicate = PredicateBuilder.And(Predicate, (p) => p.Id == id) };
+        public GetTaskByIdQuery WithId(Guid id) => this with { Predicate = Predicate.And((p) => p.Id == id) };
 
         public override Exceptional<Query> WithParameters(IDictionary<string, string> parameters) => this.
             WithParameterValue<GetTaskByIdQuery, Guid>(parameters, "id", WithId).
