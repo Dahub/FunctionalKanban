@@ -9,28 +9,18 @@
 
     public record GetTaskQuery : Query
     {
-        public Option<uint> MinRemaningWork { get; private set; }
+        protected override Expression<Func<ViewProjection, bool>> Predicate { get; init; } = (p) => p is TaskViewProjection;
 
-        public Option<uint> MaxRemaningWork { get; private set; }
+        public GetTaskQuery WithMinRemaningWork(uint minRemaningWork) => this with { Predicate = PredicateBuilder.And(Predicate, (p) => ((TaskViewProjection)p).RemaningWork >= minRemaningWork) };
 
-        public Option<TaskStatus> TaskStatus { get; private set; }
+        public GetTaskQuery WithMaxRemaningWork(uint maxRemaningWork) => this with { Predicate = PredicateBuilder.And(Predicate, (p) => ((TaskViewProjection)p).RemaningWork < maxRemaningWork) };
 
-        public GetTaskQuery WithMinRemaningWork(uint minRemaningWork) => this with { MinRemaningWork = minRemaningWork };
-
-        public GetTaskQuery WithMaxRemaningWork(uint maxRemaningWork) => this with { MaxRemaningWork = maxRemaningWork };
-
-        public GetTaskQuery WithTaskStatus(TaskStatus taskStatus) => this with { TaskStatus = taskStatus };
-
-        public override Expression<Func<ViewProjection, bool>> BuildPredicate() => (p) =>            
-            ((TaskViewProjection)p).RemaningWork.MoreOrEqualThan(MinRemaningWork)
-            && ((TaskViewProjection)p).RemaningWork.StrictlyLessThan(MaxRemaningWork)
-            && ((TaskViewProjection)p).Status.EqualTo(TaskStatus)
-            && ((TaskViewProjection)p).Status.DifferentFrom(Task.TaskStatus.Archived);
+        public GetTaskQuery WithTaskStatus(TaskStatus taskStatus) => this with { Predicate = PredicateBuilder.And(Predicate, (p) => ((TaskViewProjection)p).Status == taskStatus) };
 
         public override Exceptional<Query> WithParameters(IDictionary<string, string> parameters) => this.
             WithParameterValue<GetTaskQuery, uint>(parameters, "minRemaningWork", WithMinRemaningWork).Bind(q => q.
             WithParameterValue<GetTaskQuery, uint>(parameters, "maxRemaningWork", q.WithMaxRemaningWork)).Bind(q => q.
             WithParameterValue<GetTaskQuery, TaskStatus>(parameters, "taskStatus", q.WithTaskStatus)).
-            ToExceptional();
+            ToExceptional();     
     }
 }

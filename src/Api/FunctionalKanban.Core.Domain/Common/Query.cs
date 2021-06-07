@@ -10,9 +10,46 @@
 
     public abstract record Query
     {
-        public abstract Expression<Func<ViewProjection, bool>> BuildPredicate();
+        public Expression<Func<ViewProjection, bool>> BuildPredicate() => Predicate;
 
         public abstract Exceptional<Query> WithParameters(IDictionary<string, string> parameters);
+
+        protected abstract Expression<Func<ViewProjection, bool>> Predicate { get; init; } 
+
+        protected static class PredicateBuilder
+        {
+            public static Expression<Func<T, bool>> And<T>(Expression<Func<T, bool>> a, Expression<Func<T, bool>> b)
+            {
+                var p = a.Parameters[0];
+                var visitor = new SubstExpressionVisitor();
+                visitor.subst[b.Parameters[0]] = p;
+                var body = Expression.AndAlso(a.Body, visitor.Visit(b.Body));
+                return Expression.Lambda<Func<T, bool>>(body, p);
+            }
+
+            public static Expression<Func<T, bool>> Or<T>(Expression<Func<T, bool>> a, Expression<Func<T, bool>> b)
+            {
+                var p = a.Parameters[0];
+                var visitor = new SubstExpressionVisitor();
+                visitor.subst[b.Parameters[0]] = p;
+                var body = Expression.OrElse(a.Body, visitor.Visit(b.Body));
+                return Expression.Lambda<Func<T, bool>>(body, p);
+            }
+
+            private class SubstExpressionVisitor : ExpressionVisitor
+            {
+                public Dictionary<Expression, Expression> subst = new();
+
+                protected override Expression VisitParameter(ParameterExpression node)
+                {
+                    if (subst.TryGetValue(node, out var newValue))
+                    {
+                        return newValue;
+                    }
+                    return node;
+                }
+            }
+        }
     }
 
     internal static class QueryExt
