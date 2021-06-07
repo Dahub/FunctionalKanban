@@ -84,7 +84,7 @@
             modelBuilder.Entity<TaskViewProjection>()
                 .Ignore(r => r.ProjectId);
         }
-
+        
         internal DbSet<DeletedTaskViewProjection> DeletedTasks { get; set; }
 
         internal DbSet<ProjectViewProjection> Projects { get; set; }

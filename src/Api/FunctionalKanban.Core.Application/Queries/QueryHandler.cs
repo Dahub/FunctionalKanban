@@ -38,7 +38,7 @@
         private ExceptionalDtos ApplyQueryToViewProjections<TProjection, TDto>(Query q)
                 where TProjection : ViewProjection
                 where TDto : Dto =>
-            _findProjections(typeof(TProjection), q.BuildPredicate())
+            _findProjections(typeof(TProjection), q.GetPredicate())
             .Bind(ConvertToDto<TProjection, TDto>);
 
         private static ExceptionalDtos ConvertToDto<TProjection, TDto>(IEnumerable<ViewProjection> projections)

@@ -10,7 +10,7 @@
 
     public abstract record Query
     {
-        public Expression<Func<ViewProjection, bool>> BuildPredicate() => Predicate;
+        public Expression<Func<ViewProjection, bool>> GetPredicate() => Predicate;
 
         public abstract Exceptional<Query> WithParameters(IDictionary<string, string> parameters);
 
@@ -32,14 +32,8 @@
         {
             public Dictionary<Expression, Expression> subst = new();
 
-            protected override Expression VisitParameter(ParameterExpression node)
-            {
-                if (subst.TryGetValue(node, out var newValue))
-                {
-                    return newValue;
-                }
-                return node;
-            }
+            protected override Expression VisitParameter(ParameterExpression node) => 
+                subst.TryGetValue(node, out var newValue) ? newValue : node;
         }
 
         public static Validation<TQuery> WithParameterValue<TQuery, TParam>(

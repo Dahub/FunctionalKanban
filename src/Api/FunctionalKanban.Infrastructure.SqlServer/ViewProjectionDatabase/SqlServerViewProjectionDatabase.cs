@@ -29,8 +29,17 @@
         public Exceptional<IEnumerable<T>> Projections<T>() where T : ViewProjection =>
             Try(() => _context.Set<T>().AsEnumerable()).Run();
 
-        public Exceptional<IEnumerable<ViewProjection>> Projections(Type type, Expression<Func<ViewProjection, bool>> predicate) => 
-            Try(() => _context.Set<TaskViewProjection>().Where(predicate).AsEnumerable()).Run();
+        public Exceptional<IEnumerable<ViewProjection>> Projections(
+                Type type, 
+                Expression<Func<ViewProjection, bool>> predicate) => 
+            Try(() =>
+                type.Name switch
+                {
+                    nameof(TaskViewProjection)          => _context.Set<TaskViewProjection>().Where(predicate).AsEnumerable(),
+                    nameof(ProjectViewProjection)       => _context.Set<ProjectViewProjection>().Where(predicate).AsEnumerable(),
+                    nameof(DeletedTaskViewProjection)   => _context.Set<DeletedTaskViewProjection>().Where(predicate).AsEnumerable(),
+                    _                                   => throw new ArgumentException($"Type de projection {type.Name} non pris en charge"),
+                }).Run();
 
         public Exceptional<Unit> Upsert<T>(T viewProjection) where T : ViewProjection =>
             Try(() =>
