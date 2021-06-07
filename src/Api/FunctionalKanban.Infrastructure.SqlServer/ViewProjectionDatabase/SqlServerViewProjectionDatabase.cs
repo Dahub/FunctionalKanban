@@ -46,7 +46,7 @@
                 FindEntity(_context, viewProjection).Match(
                     None: ()    => AddEntity(_context, viewProjection),
                     Some: (e)   => UpdateEntity(_context, e, viewProjection))
-            ).Run();
+                ).Run();
 
         private static Unit UpdateEntity<T>(ViewProjectionDbContext context, T existingEntity, T viewProjection) where T : ViewProjection
         {

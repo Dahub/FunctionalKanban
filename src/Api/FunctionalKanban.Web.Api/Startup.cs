@@ -12,14 +12,10 @@ namespace FunctionalKanban.Web.Api
     using FunctionalKanban.Core.Domain.Task.Queries;
     using FunctionalKanban.Infrastructure.Abstraction;
     using FunctionalKanban.Infrastructure.Implementation;
-    using FunctionalKanban.Infrastructure.InMemory;
-    using FunctionalKanban.Infrastructure.SqlServer.EventDatabase;
-    using FunctionalKanban.Infrastructure.SqlServer.ViewProjectionDatabase;
     using LaYumba.Functional;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -31,37 +27,23 @@ namespace FunctionalKanban.Web.Api
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            ConfigureDatabases(services);
-
-            services.AddScoped<IEventStream, EventStream>();
-            services.AddScoped<IEntityStateRepository, EntityStateRepository>();
-            services.AddScoped<IViewProjectionRepository, ViewProjectionRepository>();
-            services.AddScoped<INotifier, ViewProjectionNotifier>();
-            services.AddScoped<IEventBus>(e => new EventBus(
+        public void ConfigureServices(IServiceCollection services) => 
+            ConfigureDatabases(services).
+            WithRepositories().
+            AddScoped<IEventStream, EventStream>().
+            AddScoped<INotifier, ViewProjectionNotifier>().
+            AddScoped<IEventBus>(e => new EventBus(
                 streamEvent: StreamEventMethod(services),
-                notifySubscribers: NotitySubscribersMethod(services)));
-
-            services.AddScoped(s => new CommandHandler(
+                notifySubscribers: NotitySubscribersMethod(services))).
+            AddScoped(s => new CommandHandler(
                 getEntity: GetEntityMethod(services),
-                publishEvent: PublishEventMethod(services)));
+                publishEvent: PublishEventMethod(services))).
+            AddScoped(s => new QueryHandler(
+                findProjections: GetFindProjectionsMethod(services))).
+            AddRouting();
 
-            services.AddScoped(s => new QueryHandler(
-                findProjections: GetFindProjectionsMethod(services)));
-
-            services.AddRouting();
-        }
-
-        protected virtual void ConfigureDatabases(IServiceCollection services)
-        {
-            services.AddDbContext<EventDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("EventDatabaseConnexionString")));
-            services.AddDbContext<ViewProjectionDbContext>(options =>
-               options.UseSqlServer(Configuration.GetConnectionString("ViewProjectionDatabaseConnexionString")));
-            services.AddScoped<IEventDataBase, SqlServerEventDatabase>();
-            services.AddScoped<IViewProjectionDataBase, SqlServerViewProjectionDatabase>();
-        }
+        protected virtual IServiceCollection ConfigureDatabases(IServiceCollection services) => 
+            services.WithSqlServer(Configuration);       
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
