@@ -8,7 +8,7 @@
 
         public Guid EntityId { get; init; }
 
-        public string EntityName { get; set; }
+        public string EntityName { get; init; }
 
         public DateTime TimeStamp { get; init; }
 

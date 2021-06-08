@@ -12,28 +12,6 @@
     public class EntityStateShould
     {
         [Fact]
-        public void ReturnInvalidWhenApplyEventWithWrongVersion()
-        {
-            var taskId = Guid.NewGuid();
-
-            var @event = new TaskStatusChanged()
-            {
-                EntityId = taskId,
-                EntityName = typeof(TaskEntityState).FullName,
-                EntityVersion = 2,
-                NewStatus = TaskStatus.Done,
-                RemaningWork = 0,
-                TimeStamp = DateTime.Now
-            };
-
-            var taskEntityState = new TaskEntityState();
-
-            taskEntityState.ApplyEvent(@event).Match(
-                Invalid:    _ => true,
-                Valid:      _ => false).Should().BeTrue();
-        }
-
-        [Fact]
         public void BeMutatedWhenHydrated()
         {
             var taskId = Guid.NewGuid();

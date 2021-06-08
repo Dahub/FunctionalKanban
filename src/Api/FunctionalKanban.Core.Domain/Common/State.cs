@@ -10,10 +10,8 @@
     {
         public uint Version { get; init; }
 
-        public Validation<EventAndState> ApplyEvent(Event @event) => 
-            @event.EntityVersion != Version + 1 
-            ? Invalid($"Version d'événement {@event.EntityVersion} incorrecte, attendue {Version + 1}")
-            : new EventAndState(@event, With(@event));
+        public Validation<EventAndState> ApplyEvent(Event @event) =>
+            WithVersionAndName(@event).Bind(evt => Valid(new EventAndState(evt, With(evt))));
 
         protected abstract State With(Event @event);
 
@@ -22,6 +20,9 @@
                 OrderEvents(history).
                     Bind(HistoryIsValid).
                     Bind((evts) => Some(Hydrate(evts, this, (state, evt) => state.With(evt))));
+
+        private Validation<Event> WithVersionAndName(Event evt) =>
+            evt with { EntityVersion = Version + 1, EntityName = GetType().FullName ?? string.Empty };
 
         private static Option<IEnumerable<Event>> OrderEvents(IEnumerable<Event> events) =>
             Some(events.OrderBy(e => e.EntityVersion).AsEnumerable());

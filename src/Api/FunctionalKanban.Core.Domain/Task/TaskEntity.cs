@@ -9,20 +9,16 @@
 
     public static class TaskEntity
     {
-        private static readonly string _entityName = typeof(TaskEntityState).FullName ?? string.Empty;
-
         public static Validation<EventAndState> Create(CreateTask cmd)
         {
             var @event = new TaskCreated()
             {
                 EntityId        = cmd.EntityId,
-                EntityName      = _entityName,
                 Name            = cmd.Name,
                 RemaningWork    = cmd.RemaningWork,
                 IsDeleted       = false,
                 TimeStamp       = cmd.TimeStamp,
                 Status          = TaskStatus.Todo,
-                EntityVersion   = 1,
                 ProjectId       = None
             };
 
@@ -35,9 +31,7 @@
         {
             var @event = new TaskStatusChanged()
             {
-                EntityId     = cmd.EntityId,
-                EntityName   = _entityName,
-                EntityVersion   = state.Version + 1,
+                EntityId        = cmd.EntityId,
                 NewStatus       = cmd.TaskStatus,
                 TimeStamp       = cmd.TimeStamp,
                 RemaningWork    = cmd.TaskStatus.Equals(
@@ -60,8 +54,6 @@
             var @event = new TaskDeleted()
             {
                 EntityId = state.TaskId,
-                EntityName = _entityName,
-                EntityVersion = state.Version + 1,
                 TimeStamp = timeStamp,
                 IsDeleted = true,
                 RemaningWork = 0u,
@@ -79,8 +71,6 @@
             var @event = new TaskRemaningWorkChanged()
             {
                 EntityId = cmd.EntityId,
-                EntityName = _entityName,
-                EntityVersion = state.Version + 1,
                 TimeStamp = cmd.TimeStamp,
                 RemaningWork = cmd.RemaningWork,
                 OldRemaningWork = state.RemaningWork,
@@ -98,8 +88,6 @@
             var @event = new TaskRemovedFromProject()
             {
                 EntityId = state.TaskId,
-                EntityName = _entityName,
-                EntityVersion = state.Version + 1,
                 TimeStamp = timeStamp,
                 ProjectId = None,
                 OldProjectId = state.ProjectId,
@@ -120,8 +108,6 @@
             var @event = new TaskLinkedToProject()
             {
                 EntityId = state.TaskId,
-                EntityName = _entityName,
-                EntityVersion = state.Version + 1,
                 TimeStamp = timeStamp,
                 ProjectId = projectId,
                 RemaningWork = state.RemaningWork

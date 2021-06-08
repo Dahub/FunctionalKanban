@@ -8,19 +8,15 @@
 
     public static class ProjectEntity
     {
-        private static readonly string _entityName = typeof(ProjectEntityState).FullName ?? string.Empty;
-
         public static Validation<EventAndState> Create(CreateProject cmd)
         {
             var @event = new ProjectCreated()
             {
                 EntityId = cmd.EntityId,
-                EntityName = _entityName,
                 Name = cmd.Name,
                 IsDeleted = false,
                 TimeStamp = cmd.TimeStamp,
-                Status = ProjectStatus.New,
-                EntityVersion = 1
+                Status = ProjectStatus.New
             };
 
             return new ProjectEntityState().ApplyEvent(@event);
@@ -34,8 +30,6 @@
             var @event = new ProjectNewTaskLinked()
             {
                 EntityId = state.ProjectId,
-                EntityName = _entityName,
-                EntityVersion = state.Version + 1,
                 TaskId = taskId,
                 TimeStamp = timeStamp
             };
@@ -50,8 +44,6 @@
             var @event = new ProjectDeleted()
             {
                 EntityId = state.ProjectId,
-                EntityName = _entityName,
-                EntityVersion = state.Version + 1,
                 TimeStamp = cmd.TimeStamp,
                 DeleteChildrenTasks = cmd.DeleteChildrenTasks,
                 IsDeleted = true
