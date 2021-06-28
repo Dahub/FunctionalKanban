@@ -30,7 +30,7 @@
 
         public Validation<Exceptional<Unit>> Handle(Command command) =>
             command.Validate().Bind(command => 
-            (command) switch
+            command switch
             {
                 CreateTask c            => TaskEntity.Create(c).Publish(_publishEvent),
                 ChangeTaskStatus c      => Handle<TaskEntityState>(c, _getEntity, (e) => e.ChangeStatus(c)),
@@ -79,8 +79,9 @@
         public static Validation<Exceptional<Unit>> Publish(
                             this Validation<IEnumerable<Event>> events,
                             Func<Event, Exceptional<Unit>> publishEvent) =>
-            events.Bind<IEnumerable<Event>, Exceptional<Unit>>((evts) => evts.Aggregate(
-                        seed: new Exceptional<Unit>(),
-                        func: (ex, next) => ex.Bind(_ => publishEvent(next))));
+            events.Bind<IEnumerable<Event>, Exceptional<Unit>>((evts) => 
+                evts.Aggregate(
+                    seed: new Exceptional<Unit>(),
+                    func: (ex, next) => ex.Bind(_ => publishEvent(next))));
     }
 }

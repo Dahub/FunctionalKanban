@@ -19,6 +19,9 @@
         public static Option<T> ToOption<T>(this T value) =>
             value == null ? None : Some(value);
 
+        public static Option<IEnumerable<T>> ToOption<T>(this IEnumerable<T> value) => 
+            !value.Any() ? None : Some(value);
+
         public static Exceptional<IEnumerable<T>> ToMonadOfList<T>(this IEnumerable<Exceptional<T>> exceptionals) =>
           exceptionals.Aggregate(
               seed: Exceptional(Enumerable.Empty<T>()),

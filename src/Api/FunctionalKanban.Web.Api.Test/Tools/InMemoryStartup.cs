@@ -14,10 +14,7 @@
         public InMemoryStartup(IConfiguration configuration) : base(configuration) { }
 
         protected override IServiceCollection ConfigureDatabases(IServiceCollection services) => services.
-            AddScoped(_ => GetDatabaseFactory().GetEventDatabase()).
-            AddScoped(_ => GetDatabaseFactory().GetViewProjectionDatabase());
-
-        private IDatabaseFactory GetDatabaseFactory() => 
-            new InMemoryDatabaseFactory(EventDataBase, ViewProjectionDataBase);
+            AddScoped<IEventDataBase>(_ => EventDataBase).
+            AddScoped<IViewProjectionDataBase>(_ => ViewProjectionDataBase);
     }
 }

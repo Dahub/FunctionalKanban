@@ -19,22 +19,22 @@
             _context.Events.Where(e => e.EntityId.Equals(entityId)).ToEvent();
 
         public Exceptional<Unit> Add(Event @event) =>
-            CheckUnicity(@event, _context).Bind(_ => AddEventToContext(_context, @event));
+            CheckUnicity((_context, @event)).Bind(AddEventToContext);
 
-        private static Exceptional<Unit> AddEventToContext(EventDbContext context, Event @event)
+        private static Exceptional<Unit> AddEventToContext((EventDbContext context, Event @event) tuple)
         {
-            context.Add(@event.ToEfEntity());
-            context.SaveChanges();
+            tuple.context.Add(tuple.@event.ToEfEntity());
+            tuple.context.SaveChanges();
             return Unit.Create();
         }
 
-        private static Exceptional<Unit> CheckUnicity(Event @event, EventDbContext context) =>
+        private static Exceptional<(EventDbContext, Event)> CheckUnicity((EventDbContext context, Event @event) tuple) =>
             Try(() =>
-                context.Events.Any(
-                    l => l.EntityId == @event.EntityId
-                    && l.EntityName == @event.EntityName
-                    && l.Version == @event.EntityVersion)
+                tuple.context.Events.Any(
+                    l => l.EntityId == tuple.@event.EntityId
+                    && l.EntityName == tuple.@event.EntityName
+                    && l.Version == tuple.@event.EntityVersion)
                 ? throw new AggregateException("Un événement pour cette version d'entité est déjà présent")
-                : Unit.Create()).Run();
+                : tuple).Run();
     }
 }

@@ -26,7 +26,9 @@
                 Bind(HandleWithQueryHandler<TQuery>(context)).
                 Match(
                     Exception:  (ex)    => context.SetResponseInternalServerError(ex),
-                    Success:    (v)     => context.SetResponseOk(v));
+                    Success:    (v)     => v.Any() 
+                                            ? context.SetResponseOk(v)
+                                            : context.SetResponseNotFound());
 
         private static Exceptional<Dictionary<string, string>> ExtractParameters(this HttpContext context) =>
             Try(() =>
@@ -78,6 +80,12 @@
         {
             try { return await asyncMethod(); }
             catch (Exception ex) { return ex; }
+        }
+
+        private static async Task SetResponseNotFound(this HttpContext context)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await Task.CompletedTask;
         }
 
         private static async Task SetResponseBadRequest(this HttpContext context, IEnumerable<Error> errors)

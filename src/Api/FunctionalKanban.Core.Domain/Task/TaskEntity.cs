@@ -45,7 +45,8 @@
 
         public static Validation<EventAndState> Delete(
                 this TaskEntityState state,
-                DeleteTask cmd) => state.Delete(cmd.TimeStamp);
+                DeleteTask cmd) => 
+            state.WithCheckNotDeleted().Bind(s => state.Delete(cmd.TimeStamp));
 
         public static Validation<EventAndState> Delete(
                 this TaskEntityState state,
@@ -61,7 +62,7 @@
                 ProjectId = None
             };
 
-            return state.ApplyEvent(@event);
+            return state.WithCheckNotDeleted().Bind(s => s.ApplyEvent(@event));
         }
 
         public static Validation<EventAndState> ChangeRemaningWork(

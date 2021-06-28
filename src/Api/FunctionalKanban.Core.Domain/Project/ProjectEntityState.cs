@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using FunctionalKanban.Core.Domain.Common;
-    using FunctionalKanban.Core.Domain.Project.Commands;
     using FunctionalKanban.Core.Domain.Project.Events;
 
     public sealed record ProjectEntityState : State
